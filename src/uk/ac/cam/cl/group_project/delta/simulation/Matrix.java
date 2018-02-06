@@ -65,6 +65,7 @@ class Matrix {
 	 * Set element (i, j) in the matrix.
 	 * @param i       Zero-indexed row position.
 	 * @param j       Zero-indexed col position.
+	 * @param val     Value to set the element to.
 	 */
 	public void set(int i, int j, double val) {
 		this.data[i * cols + j] = val;
@@ -94,9 +95,15 @@ class Matrix {
 	 * Generic exception for matrix issues.
 	 */
 	public static class MatrixException extends Exception {
+
+		/**
+		 * Initialise exception.
+		 * @param s    String message for this exception.
+		 */
 		public MatrixException(String s) {
 			super(s);
 		}
+
 	}
 
 }
