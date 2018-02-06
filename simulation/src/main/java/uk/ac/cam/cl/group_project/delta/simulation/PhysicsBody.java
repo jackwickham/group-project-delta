@@ -25,13 +25,13 @@ public class PhysicsBody {
 	 * Solve motion equations for this body.
 	 * @param dt    Timestep in seconds.
 	 */
-	public void update(double dt) {
+	public void update(double dt) throws SimulationException {
 		try {
 			position = position.add(velocity.multiply(dt));
 			velocity = velocity.add(acceleration.multiply(dt));
 		}
 		catch (Matrix.MatrixException e) {
-			throw SimulationException("Matrix operations failed");
+			throw new SimulationException("Matrix operations failed");
 		}
 	}
 
