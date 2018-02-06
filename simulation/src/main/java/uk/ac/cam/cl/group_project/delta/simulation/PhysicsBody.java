@@ -27,8 +27,8 @@ public class PhysicsBody {
 	 */
 	public void update(double dt) throws SimulationException {
 		try {
-			position = position.add(velocity.multiply(dt));
-			velocity = velocity.add(acceleration.multiply(dt));
+			position = (Vector2D) position.add(velocity.multiply(dt));
+			velocity = (Vector2D) velocity.add(acceleration.multiply(dt));
 		}
 		catch (Matrix.MatrixException e) {
 			throw new SimulationException("Matrix operations failed");
