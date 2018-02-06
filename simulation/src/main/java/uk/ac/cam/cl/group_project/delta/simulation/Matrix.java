@@ -1,14 +1,12 @@
-package uk.ac.cam.cl.group_project.delta.simulation;
+package src.main.java.uk.ac.cam.cl.group_project.delta.simulation;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.lang.Exception;
 
 /**
  * Represents a double precision floating-point matrix of arbitary dimensions.
  */
 class Matrix {
-	
+
 	/**
 	 * Number of rows in this matrix. A non-negative value.
 	 */
