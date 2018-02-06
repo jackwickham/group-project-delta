@@ -23,7 +23,7 @@ public interface CommsInterface {
 	/**
 	 * Retrieves the last received message from a vehicle ahead, 
 	 * where an input of 1 will retrieve the message from the vehicle 
-	 * directly ahead. Throws an exception if the input isn’t positive, 
+	 * directly ahead. Throws an exception if the input isn't positive, 
 	 * and returns null if it is out of the bounds of the platoon.
 	 * 
 	 * @param inFront - the number of vehicles in front to receive

@@ -1,0 +1,36 @@
+apply plugin: 'org.hidetake.ssh'
+apply plugin: 'application'
+
+mainClassName = 'uk.ac.cam.cl.group_project.delta.lego.MainClass'
+
+dependencies {
+	compile project(':common')
+	compile group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
+}
+
+// Define the connection to the mindstorms
+remotes {
+	mindstorms001 {
+		host = '10.0.1.1'
+		user = 'root'
+		password = 'any password works'
+		authentications = ['password']
+		fileTransfer = 'scp'
+	}
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': mainClassName
+	}
+}
+
+task deployMindstorms(dependsOn: jar) {
+	doLast {
+		ssh.run {
+			session(remotes.mindstorms001) {
+				put from: jar.archivePath, into: '/home/lejos/programs'
+			}
+		}
+	}
+}
