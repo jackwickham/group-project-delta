@@ -25,4 +25,10 @@ subprojects {
 
 	// Force compilers to use UTF-8
 	compileJava.options.encoding = 'UTF-8'
+
+	dependencies  {
+		// Dependencies for running the code. testCompile means dependencies used for tests, while compile means
+		// dependencies used for production code
+		testCompile 'junit:junit:5.0'
+	}
 }

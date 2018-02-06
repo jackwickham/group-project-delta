@@ -54,10 +54,10 @@ local.properties
 .worksheet
 
 ### Eclipse Patch ###
-# Eclipse Core		
+# Eclipse Core
 .project
 
-# JDT-specific (Eclipse Java Development Tools)		
+# JDT-specific (Eclipse Java Development Tools)
 .classpath
 
 ### Intellij ###
@@ -176,3 +176,7 @@ gradle-app.setting
 # End of https://www.gitignore.io/api/gradle
 
 .vscode/*
+
+# The gradle wrapper is added in the repo, but can be rebuilt by IDEs, and we don't want those changes to be committed
+# each time
+gradle/wrapper/*
