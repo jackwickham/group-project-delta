@@ -11,6 +11,10 @@ buildscript {
 allprojects {
 	description = 'Platooning code for Group Project team Delta'
 	version = '1.0'
+
+	repositories {
+		jcenter()
+	}
 }
 
 subprojects {
