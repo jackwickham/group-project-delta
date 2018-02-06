@@ -11,5 +11,5 @@ public class Vector2D extends Vector {
 	public Vector2D() {
 		super(2);
 	}
-	
+
 }
