@@ -2,6 +2,8 @@
 
 The code to implement platooning in simulation and on LEGOⓇ Mindstorms robots.
 
+[![Build Status](https://travis-ci.com/jackwickham/group-project-delta.svg?token=DtrLKaeqQLW7MbyBRvfb&branch=master)](https://travis-ci.com/jackwickham/group-project-delta)
+
 ## Building
 To build all the code, just run `./gradlew build` (Linux) or `gradlew.bat build` (Windows).
 
