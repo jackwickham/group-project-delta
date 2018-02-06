@@ -94,7 +94,6 @@ class Matrix {
 	 * Generic exception for matrix issues.
 	 */
 	public static class MatrixException extends Exception {
-		static final long serialVersionUID = 1;
 		public MatrixException(String s) {
 			super(s);
 		}
