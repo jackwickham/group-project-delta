@@ -1,4 +1,4 @@
-package src.main.java.uk.ac.cam.cl.group_project.delta.simulation;
+package uk.ac.cam.cl.group_project.delta.simulation;
 
 /**
  * Wraps a 1x2 matrix.

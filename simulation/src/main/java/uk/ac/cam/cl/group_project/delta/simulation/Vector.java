@@ -1,4 +1,4 @@
-package src.main.java.uk.ac.cam.cl.group_project.delta.simulation;
+package uk.ac.cam.cl.group_project.delta.simulation;
 
 /**
  * Specialisation of a matrix with a single dimension.
