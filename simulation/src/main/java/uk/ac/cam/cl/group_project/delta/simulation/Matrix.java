@@ -87,6 +87,21 @@ class Matrix {
 		return result;
 	}
 
+	/**
+	 * Scale the matrix by the given factor.
+	 * @param x    Scale factor.
+	 * @return     Scaled matrix.
+	 */
+	public Matrix multiply(double x) {
+		Matrix result = new Matrix(this.getRows(), this.getCols());
+		for (int i = 0; i < this.getRows(); ++i) {
+			for (int j = 0; j < this.getCols(); ++j) {
+				result.set(i, j, this.get(i, j) * x);
+			}
+		}
+		return result;
+	}
+
 	// TODO: multiply, subtract, negate, dot, ...
 
 	/**
