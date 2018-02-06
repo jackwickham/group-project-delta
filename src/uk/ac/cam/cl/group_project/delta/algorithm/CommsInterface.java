@@ -9,7 +9,7 @@ public interface CommsInterface {
 	 * 
 	 * @param message to be sent
 	 */
-	public void sendMessage(Message message);
+	public void sendMessage(MessageData message);
 
 	/**
 	 * Retrieves the last received message from the platoon leader. 
@@ -18,7 +18,7 @@ public interface CommsInterface {
 	 * 
 	 * @return the latest leader's message
 	 */
-	public Message getLeaderMessage();
+	public MessageData getLeaderMessage();
 
 	/**
 	 * Retrieves the last received message from a vehicle ahead, 
@@ -30,7 +30,7 @@ public interface CommsInterface {
 	 * @return the latest message from the vehicle (inFront) 
 	 * 		or null if this is beyond the leader
 	 */
-	public Message getPredecessorMessage(int inFront);
+	public MessageData getPredecessorMessage(int inFront);
 
 	/**
 	 * Returns a boolean value indicating if this vehicle is the current 
