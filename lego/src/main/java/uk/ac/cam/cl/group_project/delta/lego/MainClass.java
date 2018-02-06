@@ -10,7 +10,7 @@ class MainClass {
 		EV3 ev3 = (EV3) BrickFinder.getLocal();
 		TextLCD lcd = ev3.getTextLCD();
 		Keys keys = ev3.getKeys();
-		
+
 		lcd.drawString("Hello World", 4, 4);
 		keys.waitForAnyPress();
 	}
