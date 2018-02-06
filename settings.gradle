@@ -1,0 +1,2 @@
+rootProject.name = 'autonomous-highways'
+include 'common', 'lego', 'simulation'

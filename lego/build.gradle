@@ -1,0 +1,25 @@
+apply plugin: 'org.hidetake.ssh'
+
+dependencies {
+    compile project(':common')
+}
+
+// Define the connection to the mindstorms
+remotes {
+    mindstorms001 {
+        host = '10.0.1.1'
+        user = 'root'
+        password = 'any password works'
+        authentications = ['password']
+    }
+}
+
+task deployMindstorms(type: Copy) {
+    doLast {
+        ssh.run {
+            session(remotes.mindstorms001) {
+                put from: createJar, into: '/home/lejos/programs'
+            }
+        }
+    }
+}

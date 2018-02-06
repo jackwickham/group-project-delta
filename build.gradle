@@ -1,0 +1,21 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		// Dependencies for gradle itself - probably don't want to modify this
+		classpath 'org.hidetake:gradle-ssh-plugin:2.9.0'
+	}
+}
+
+allprojects {
+	description = 'Platooning code for Group Project team Delta'
+	version = '1.0'
+}
+
+subprojects {
+	apply plugin: 'java'
+
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+}

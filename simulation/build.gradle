@@ -1,0 +1,7 @@
+apply plugin: 'application'
+
+mainClassName = 'uk.ac.cam.cl.group_project.delta.simulation.MainClass'
+
+dependencies {
+    compile project(':common')
+}

@@ -69,6 +69,9 @@ local.properties
 .idea/**/tasks.xml
 .idea/dictionaries
 
+# Add whole idea dir
+.idea/
+
 # Sensitive or high-churn files:
 .idea/**/dataSources/
 .idea/**/dataSources.ids
@@ -171,3 +174,5 @@ gradle-app.setting
 
 
 # End of https://www.gitignore.io/api/gradle
+
+.vscode/*
