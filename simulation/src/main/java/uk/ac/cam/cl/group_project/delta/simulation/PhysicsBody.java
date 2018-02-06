@@ -26,8 +26,13 @@ public class PhysicsBody {
 	 * @param dt    Timestep in seconds.
 	 */
 	public void update(double dt) {
-		position = position.add(velocity.multiply(dt));
-		velocity = velocity.add(acceleration.multiply(dt));
+		try {
+			position = position.add(velocity.multiply(dt));
+			velocity = velocity.add(acceleration.multiply(dt));
+		}
+		catch (Matrix.MatrixException e) {
+			throw SimulationException("Matrix operations failed");
+		}
 	}
 
 }
