@@ -9,4 +9,4 @@ To build all the code, just run `./gradlew build` (Linux) or `gradlew.bat build`
 
 To run the simulation, run `./gradlew :simulation:run` (Linux) or `gradlew.bat :simulation:run` (Windows).
 
-To build the code for the Mindstorms, and download it to a Mindstorms device that is connected via USB, execute `./gradlew :lego:deployMindstorms` (Linux) or `gradlew.bad :lego:deployMindstorms` (Windows).
+To build the code for the Mindstorms, and download it to a Mindstorms device that is connected via USB, execute `./gradlew :lego:deployMindstorms` (Linux) or `gradlew.bat :lego:deployMindstorms` (Windows).
