@@ -8,10 +8,9 @@ public class PhysicsCar extends PhysicsBody {
 	/**
 	 * Update the kinematic state of the car, considering friction forces.
 	 * @param dt                      Timestep in seconds.
-	 * @throws SimulationException    An error occurred during simulation.
 	 */
 	@Override
-	public void update(double dt) throws SimulationException {
+	public void update(double dt) {
 		// TODO: implementation
 		super.update(dt);
 	}

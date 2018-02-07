@@ -24,16 +24,10 @@ public class PhysicsBody {
 	/**
 	 * Solve motion equations for this body.
 	 * @param dt                      Timestep in seconds.
-	 * @throws SimulationException    An error occurred during simulation.
 	 */
-	public void update(double dt) throws SimulationException {
-		try {
-			position = (Vector2D) position.add(velocity.multiply(dt));
-			velocity = (Vector2D) velocity.add(acceleration.multiply(dt));
-		}
-		catch (Matrix.MatrixException e) {
-			throw new SimulationException("Matrix operations failed");
-		}
+	public void update(double dt) {
+		position = position.add(velocity.multiply(dt));
+		velocity = velocity.add(acceleration.multiply(dt));
 	}
 
 }

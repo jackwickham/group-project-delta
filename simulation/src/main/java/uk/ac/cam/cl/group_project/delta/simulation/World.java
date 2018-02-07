@@ -15,9 +15,8 @@ public class World {
 	/**
 	 * Update all objects with this environment.
 	 * @param dt                      Timestep in seconds.
-	 * @throws SimulationException    An error occurred during simulation.
 	 */
-	public void update(double dt) throws SimulationException {
+	public void update(double dt) {
 		for (PhysicsBody body : bodies) {
 			body.update(dt);
 		}
