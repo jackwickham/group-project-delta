@@ -4,7 +4,7 @@ package uk.ac.cam.cl.group_project.delta.simulation;
  * Represents an abstract simulated body with position, velocity and
  * acceleration.
  */
-abstract public class PhysicsBody {
+public class PhysicsBody {
 
 	/**
 	 * Absolute position in world space - in metres.
@@ -15,7 +15,9 @@ abstract public class PhysicsBody {
 	 * Update this object.
 	 * @param dt                      Timestep in seconds.
 	 */
-	abstract public void update(double dt);
+	public void update(double dt) {
+		// Nothing to do.
+	}
 
 	/**
 	 * Fetch body's position.
