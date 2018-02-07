@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,6 +12,13 @@ public class World {
 	 * A list of bodies contain within this environment.
 	 */
 	private List<PhysicsBody> bodies;
+
+	/**
+	 * Initialise an empty world.
+	 */
+	public World() {
+		this.bodies = new ArrayList<>();
+	}
 
 	/**
 	 * Update all objects with this environment.
