@@ -18,8 +18,16 @@ public class KinematicBody extends PhysicsBody {
 	 */
 	@Override
 	public void update(double dt) {
-		this.setPosition(this.getPosition().add(this.getVelocity()));
-		this.setVelocity(this.getVelocity().add(this.getAcceleration()));
+		this.setPosition(
+			this.getPosition().add(
+				this.getVelocity().multiply(dt)
+			)
+		);
+		this.setVelocity(
+			this.getVelocity().add(
+				this.getAcceleration().multiply(dt)
+			)
+		);
 	}
 
 	/**
