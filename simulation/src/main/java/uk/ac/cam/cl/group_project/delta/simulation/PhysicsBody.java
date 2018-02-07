@@ -4,7 +4,7 @@ package uk.ac.cam.cl.group_project.delta.simulation;
  * Represents an abstract simulated body with position, velocity and
  * acceleration.
  */
-public class PhysicsBody {
+abstract public class PhysicsBody {
 
 	/**
 	 * Absolute position in world space - in metres.
@@ -12,22 +12,25 @@ public class PhysicsBody {
 	private Vector2D position;
 
 	/**
-	 * Vector velocity in metres per second.
-	 */
-	private Vector2D velocity;
-
-	/**
-	 * Vector acceleration in metres per second per second.
-	 */
-	private Vector2D acceleration;
-
-	/**
-	 * Solve motion equations for this body.
+	 * Update this object.
 	 * @param dt                      Timestep in seconds.
 	 */
-	public void update(double dt) {
-		position = position.add(velocity.multiply(dt));
-		velocity = velocity.add(acceleration.multiply(dt));
+	abstract public void update(double dt);
+
+	/**
+	 * Fetch body's position.
+	 * @return    Position of body.
+	 */
+	public Vector2D getPosition() {
+		return position;
+	}
+
+	/**
+	 * Set body's position.
+	 * @param position    Position to set to.
+	 */
+	public void setPosition(Vector2D position) {
+		this.position = position;
 	}
 
 }
