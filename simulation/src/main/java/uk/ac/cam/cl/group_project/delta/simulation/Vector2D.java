@@ -150,4 +150,21 @@ public class Vector2D {
 		return Vector2D.normal(this);
 	}
 
+	/**
+	 * Computes magnitude length of given vector.
+	 * @param vec    Vector.
+	 * @return       Vector's length.
+	 */
+	public static double magnitude(Vector2D vec) {
+		return Math.sqrt(dot(vec, vec));
+	}
+
+	/**
+	 * Computes magnitude length of this vector.
+	 * @return    This vector's length.
+	 */
+	public double magnitude() {
+		return Vector2D.magnitude(this);
+	}
+
 }
