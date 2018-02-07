@@ -50,6 +50,22 @@ public class Vector2D {
 	}
 
 	/**
+	 * Set the x component.
+	 * @param x    Value to set to.
+	 */
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	/**
+	 * Set the y component.
+	 * @param y    Value to set to.
+	 */
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	/**
 	 * Sum the two vectors, piecewise.
 	 * @param a    Left-hand side vector.
 	 * @param b    Right-hand side vector.
