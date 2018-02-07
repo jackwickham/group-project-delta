@@ -6,42 +6,67 @@ import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Network communication code for the Mindstorms
  *
- * Utilises broadcast on UDP port 5187 to communicate with the other robots
+ * Utilises IP broadcast on UDP port 5187 to communicate with the other robots
  *
- * Assumes that the robot is on the same network as all the others, and that network has address 10.0.2.0/24
+ * @author Jack Wickham
  */
 public class Network implements NetworkInterface {
+	/**
+	 * The socket used to communicate with other robots
+	 */
 	private DatagramSocket socket;
-	private InetAddress address;
+
+	/**
+	 * The broadcast address that messages are transmitted to
+	 */
+	private InetAddress broadcastAddress;
+
+	/**
+	 * The UDP port used for communication
+	 */
 	private static final int port = 5187;
+
+	/**
+	 * A list of messages received since the last call to {@link #pollData}
+	 */
 	private final List<MessageReceipt> receivedMessages;
 
 	/**
 	 * Construct a new network instance
 	 *
+	 * @throws IOException if no suitable broadcast address can be found
 	 * @throws IOException if it is unable to bind to udp:0.0.0.0:5187
 	 */
 	public Network () throws IOException {
-		// Bind the socket to listen to udp port 5187 on 0.0.0.0
+		// Find the broadcast IP
+		java.net.NetworkInterface iface = java.net.NetworkInterface.getByName("wlan0");
+		List<InterfaceAddress> interfaceAddresses = iface.getInterfaceAddresses();
+		if (iface.isUp() && interfaceAddresses.size() > 0) {
+			InterfaceAddress addr = interfaceAddresses.get(0);
+			// InterfaceAddress has a .getBroadcast() method, but for some reason it returns 0.0.0.0 for this
+			// interface, so lets just construct the broadcast address ourselves.
+			byte[] address = addr.getAddress().getAddress();
+			convertToBroadcastAddress(address, addr.getNetworkPrefixLength());
+			broadcastAddress = InetAddress.getByAddress(address);
+		} else {
+			throw new IOException("No supported network found - wifi network is not up or has no address");
+		}
+
+		// Bind the socket to listen to UDP port 5187 on 0.0.0.0
 		byte[] listenAddress = {0, 0, 0, 0};
 		socket = new DatagramSocket(port, InetAddress.getByAddress(listenAddress));
 		socket.setBroadcast(true);
 
-		// Create the send address
-		byte[] broadcastAddress = {(byte) 10, (byte) 0, (byte) 2, (byte) 255};
-		address = InetAddress.getByAddress(broadcastAddress);
-
-		receivedMessages = new ArrayList<>();
-
 		// Start the listener
+		receivedMessages = new ArrayList<>();
 		ListenerThread lt = new ListenerThread();
 		lt.setDaemon(true);
 		lt.start();
@@ -55,7 +80,7 @@ public class Network implements NetworkInterface {
 	@Override
 	public void sendData (byte[] message) {
 		try {
-			DatagramPacket packet = new DatagramPacket(message, message.length, address, port);
+			DatagramPacket packet = new DatagramPacket(message, message.length, broadcastAddress, port);
 			socket.send(packet);
 		} catch (IOException e) {
 			// This isn't good, but we want to try to keep going
@@ -104,6 +129,33 @@ public class Network implements NetworkInterface {
 			} catch (IOException e) {
 				// :( TODO: this will happen when the socket closes, but hopefully not for any other reason
 			}
+		}
+	}
+
+	/**
+	 * Convert an IPv4 address and CIDR netmask length into a network broadcast address
+	 *
+	 * Broadcast = ip | ~netmask
+	 *
+	 * @param address The address to convert (modifies in place)
+	 * @param netmaskLen The length of the netmask (for example, in 10.0.2.3/24, this is 24)
+	 */
+	public static void convertToBroadcastAddress(byte[] address, int netmaskLen) {
+		// Get the index of the first octet that we need to change
+		int octet = netmaskLen / 8;
+		int octetOffset = netmaskLen % 8;
+		if (octetOffset != 0) {
+			int mask = 0;
+			while (octetOffset < 8) {
+				mask = (mask << 1) | 1;
+				octetOffset++;
+			}
+			address[octet] |= mask;
+			++octet;
+		}
+
+		for (; octet < 4; octet++) {
+			address[octet] = (byte) 0xFF;
 		}
 	}
 }
