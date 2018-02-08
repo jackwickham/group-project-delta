@@ -6,6 +6,16 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 public class PhysicsCar extends KinematicBody {
 
 	/**
+	 * The angle at which the wheels are set.
+	 */
+	private double wheelAngle = 0.0;
+
+	/**
+	 * Current power of the engine.
+	 */
+	private double enginePower = 0.0;
+
+	/**
 	 * Update the kinematic state of the car, considering friction forces.
 	 * @param dt                      Timestep in seconds.
 	 */
