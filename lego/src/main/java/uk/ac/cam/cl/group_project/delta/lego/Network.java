@@ -9,6 +9,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -122,12 +123,19 @@ public class Network implements NetworkInterface {
 					byte[] data = new byte[200];
 					DatagramPacket receivedPacket = new DatagramPacket(data, data.length);
 					socket.receive(receivedPacket);
+					if (receivedPacket.getLength() > 200) {
+						// TODO: log error - packet too large
+						continue;
+					}
+					byte[] receivedData = Arrays.copyOf(receivedPacket.getData(), receivedPacket.getLength());
 					synchronized (receivedMessages) {
-						receivedMessages.add(new MessageReceipt(receivedPacket.getData()));
+						receivedMessages.add(new MessageReceipt(receivedData));
 					}
 				}
 			} catch (IOException e) {
-				// :( TODO: this will happen when the socket closes, but hopefully not for any other reason
+				if (!socket.isClosed()) {
+					// TODO: Log error
+				}
 			}
 		}
 	}
@@ -154,6 +162,7 @@ public class Network implements NetworkInterface {
 			++octet;
 		}
 
+		// Update all the rest of the octets
 		for (; octet < 4; octet++) {
 			address[octet] = (byte) 0xFF;
 		}
