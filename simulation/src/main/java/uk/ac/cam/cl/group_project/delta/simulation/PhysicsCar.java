@@ -22,6 +22,10 @@ public class PhysicsCar extends KinematicBody {
 	@Override
 	public void update(double dt) {
 		// TODO: implementation
+		Vector2D heading = new Vector2D(
+			-Math.sin(wheelAngle), Math.cos(wheelAngle)
+		);
+		this.setAcceleration(heading.multiply(enginePower));
 		super.update(dt);
 	}
 
