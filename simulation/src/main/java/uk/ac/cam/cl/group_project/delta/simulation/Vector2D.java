@@ -88,6 +88,28 @@ public class Vector2D {
 	}
 
 	/**
+	 * Subtract the right-hand vector from the left, piecewise.
+	 * @param a    Left-hand side vector.
+	 * @param b    Right-hand side vector.
+	 * @return     Vector result.
+	 */
+	public static Vector2D subtract(Vector2D a, Vector2D b) {
+		return new Vector2D(
+			a.getX() - b.getX(),
+			a.getY() - b.getY()
+		);
+	}
+
+	/**
+	 * Subratct from this vector another, returning a new vector as the result.
+	 * @param other    Vector to subtract.
+	 * @return         Result vector.
+	 */
+	public Vector2D subtract(Vector2D other) {
+		return Vector2D.subtract(this, other);
+	}
+
+	/**
 	 * Multiply both vector components by given scale to produce new vector.
 	 * @param vec      Vector to scale.
 	 * @param scale    Scale factor.
