@@ -5,7 +5,7 @@ mainClassName = 'uk.ac.cam.cl.group_project.delta.lego.MainClass'
 
 dependencies {
 	compile project(':common')
-	compile group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
+	compileOnly group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
 }
 
 // Define the connection to the mindstorms
@@ -22,6 +22,10 @@ remotes {
 jar {
 	manifest {
 		attributes 'Main-Class': mainClassName
+	}
+	// Include all the dependencies
+	from {
+		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 }
 
