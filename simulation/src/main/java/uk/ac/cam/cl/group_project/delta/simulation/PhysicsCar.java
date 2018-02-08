@@ -29,4 +29,36 @@ public class PhysicsCar extends KinematicBody {
 		super.update(dt);
 	}
 
+	/**
+	 * Fetch current wheel angle.
+	 * @return    Current wheel angle.
+	 */
+	public double getWheelAngle() {
+		return wheelAngle;
+	}
+
+	/**
+	 * Set the current wheel angle.
+	 * @param wheelAngle    Wheel angle to set.
+	 */
+	public void setWheelAngle(double wheelAngle) {
+		this.wheelAngle = wheelAngle;
+	}
+
+	/**
+	 * Get current engine power.
+	 * @return    Current engine power.
+	 */
+	public double getEnginePower() {
+		return enginePower;
+	}
+
+	/**
+	 * Set current engine power.
+	 * @param enginePower    Engine power to set.
+	 */
+	public void setEnginePower(double enginePower) {
+		this.enginePower = enginePower;
+	}
+
 }
