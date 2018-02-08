@@ -1,36 +1,95 @@
 apply plugin: 'org.hidetake.ssh'
 apply plugin: 'application'
 
+import uk.ac.cam.cl.group_project.delta.lego.buildTools.MindstormsDetector
+
 mainClassName = 'uk.ac.cam.cl.group_project.delta.lego.MainClass'
 
 dependencies {
 	compile project(':common')
-	compile group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
+	compileOnly group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
 }
 
 // Define the connection to the mindstorms
-remotes {
-	mindstorms001 {
-		host = '10.0.1.1'
+void createMindstormsRemote(String ip, String name) {
+	remotes.create("mindstorms${name}") {
+		role 'mindstorms'
+		host = ip
 		user = 'root'
 		password = 'any password works'
 		authentications = ['password']
 		fileTransfer = 'scp'
+		knownHosts = allowAnyHosts
 	}
+}
+
+// Create the USB connection
+task setupUSBRemote {
+	doFirst {
+		createMindstormsRemote("10.0.1.1", "USB")
+	}
+
 }
 
 jar {
 	manifest {
 		attributes 'Main-Class': mainClassName
 	}
+	// Include all the dependencies
+	from {
+		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
 }
 
-task deployMindstorms(dependsOn: jar) {
+task deployUSB(dependsOn: [jar, 'setupUSBRemote']) {
 	doLast {
 		ssh.run {
-			session(remotes.mindstorms001) {
+			session(remotes.mindstormsUSB) {
 				put from: jar.archivePath, into: '/home/lejos/programs'
 			}
+		}
+	}
+}
+
+task deployWifi(dependsOn: jar) {
+	doFirst {
+		if (project.hasProperty("ip")) {
+			// See if it's a real IP
+			String ip = (String) project.property("ip")
+			if (InetAddress.getByName(ip) == null) {
+				throw new InvalidUserDataException("Provided IP address is invalid")
+			}
+			// Create the device
+			createMindstormsRemote(ip, "IP")
+		} else {
+			throw new InvalidUserDataException("No IP address provided (for example, `gradle deployIP -Pip=10.0.2.2`)")
+		}
+	}
+	doLast {
+		ssh.run {
+			session(remotes.mindstormsIP) {
+				put from: jar.archivePath, into: '/home/lejos/programs'
+			}
+		}
+	}
+}
+
+task deployAll(dependsOn: [jar, 'detectWifiDevices']) {
+	doLast {
+		ssh.run {
+			session(remotes.role('mindstorms')) {
+				put from: jar.archivePath, into: '/home/lejos/programs'
+			}
+		}
+	}
+}
+
+task detectWifiDevices() {
+	doFirst {
+		// See /buildSrc/src/main/java/uk/ac/cam/cl/group_project/delta/lego/buildTools/MindstormsDetector
+		List<String> deviceIPs = MindstormsDetector.detectMindstorms();
+		for (String ip : deviceIPs) {
+			createMindstormsRemote(ip, ip)
 		}
 	}
 }
