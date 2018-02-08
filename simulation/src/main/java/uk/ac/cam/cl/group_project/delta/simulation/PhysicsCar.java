@@ -18,6 +18,11 @@ public class PhysicsCar extends KinematicBody {
 	private double heading = 0.0;
 
 	/**
+	 * Length from rear to front axle, in metres.
+	 */
+	private double wheelBase = 2.5;
+
+	/**
 	 * Current power of the engine.
 	 */
 	private double enginePower = 0.0;
@@ -28,11 +33,18 @@ public class PhysicsCar extends KinematicBody {
 	 */
 	@Override
 	public void update(double dt) {
-		// TODO: implementation
-		Vector2D heading = new Vector2D(
-			-Math.sin(wheelAngle), Math.cos(wheelAngle)
+
+		Vector2D vecHeading = new Vector2D(
+			-Math.sin(heading), Math.cos(heading)
 		);
-		this.setAcceleration(heading.multiply(enginePower));
+		this.setAcceleration(vecHeading.multiply(enginePower));
+
+		/* Geometry dictates that the radius of the circle traced is
+		   wheelBase / sin(wheelAngle) and the angular velocity is
+		   speed / radius. */
+		double radius = wheelAngle / Math.sin(wheelAngle);
+		heading += getVelocity().dot(vecHeading) / radius;
+
 		super.update(dt);
 	}
 
