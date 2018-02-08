@@ -42,11 +42,11 @@ public class PhysicsCar extends KinematicBody {
 		/* Geometry dictates that the radius of the circle traced is
 		   wheelBase / sin(wheelAngle) and the angular velocity is
 		   speed / radius. */
-		double radius = wheelAngle / Math.sin(wheelAngle);
+		double radius = wheelBase / Math.sin(wheelAngle);
 		heading += getVelocity().dot(vecHeading) / radius;
 
 		super.update(dt);
-		
+
 	}
 
 	/**
