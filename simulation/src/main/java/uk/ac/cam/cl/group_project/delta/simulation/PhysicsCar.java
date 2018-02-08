@@ -28,6 +28,14 @@ public class PhysicsCar extends KinematicBody {
 	private double enginePower = 0.0;
 
 	/**
+	 * Initialise physically simulated representation of a car.
+	 * @param wheelBase    Distance from rear to front axle.
+	 */
+	public PhysicsCar(double wheelBase) {
+		this.setWheelBase(wheelBase);
+	}
+
+	/**
 	 * Update the kinematic state of the car, considering friction forces.
 	 * @param dt                      Timestep in seconds.
 	 */
