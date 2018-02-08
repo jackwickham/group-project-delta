@@ -45,13 +45,19 @@ public class PhysicsCar extends KinematicBody {
 		Vector2D vecHeading = new Vector2D(
 			-Math.sin(heading), Math.cos(heading)
 		);
-		this.setAcceleration(vecHeading.multiply(enginePower));
+
+		// Calculate wheel speed (discounting any lateral drift)
+		double speed = getVelocity().dot(vecHeading);
+
+		// Don't brake so hard we go backwards
+		double acceleration = Math.max(enginePower, -speed);
+		this.setAcceleration(vecHeading.multiply(acceleration));
 
 		/* Geometry dictates that the radius of the circle traced is
 		   wheelBase / sin(wheelAngle) and the angular velocity is
 		   speed / radius. */
 		double radius = wheelBase / Math.sin(wheelAngle);
-		this.setHeading(getHeading() + getVelocity().dot(vecHeading) / radius);
+		this.setHeading(getHeading() + speed / radius);
 
 		super.update(dt);
 
