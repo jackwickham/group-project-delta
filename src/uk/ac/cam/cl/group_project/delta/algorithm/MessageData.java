@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import java.nio.ByteBuffer;
+
 public class MessageData {
 
 	private final double speed;
@@ -8,6 +10,7 @@ public class MessageData {
 	private final double chosenSpeed;
 	private final double chosenAcceleration;
 	private final double chosenTurnRate;
+	private final long startTime;
 	
 	/**
 	 * Create an immutable MessageData object to be passed to the algorithm
@@ -21,23 +24,48 @@ public class MessageData {
 	 * @param chosenTurnRate
 	 */
 	public MessageData(double speed, double acceleration, double turnRate, double chosenSpeed,
-			double chosenAcceleration, double chosenTurnRate) {
+			double chosenAcceleration, double chosenTurnRate, long startTime) {
 		this.speed = speed;
 		this.acceleration = acceleration;
 		this.turnRate = turnRate;
 		this.chosenSpeed = chosenSpeed;
 		this.chosenAcceleration = chosenAcceleration;
 		this.chosenTurnRate = chosenTurnRate;
+		this.startTime = startTime;
 	}
 
 	/**
-	 * Recreate the message from the specific byte array
+	 * Recreate the message from the bytebuffer
 	 * 
 	 * @param rawBytes the bytes to be converted
 	 * @return a new data packet with the specific data
 	 */
-	public static MessageData generateDataFromBytes(byte[] rawBytes) {
-		return null;
+	public static MessageData generateDataFromBytes(ByteBuffer bytes) {
+		return new MessageData(
+				bytes.getDouble(),								// speed
+				bytes.getDouble(),								// acceleration
+				bytes.getDouble(),								// turnRate
+				bytes.getDouble(),								// chosenSpeed
+				bytes.getDouble(),								// chosenAcceleration
+				bytes.getDouble(),								// chosenTurnRate
+				bytes.getLong()									// startTime
+				);
+	}
+	
+	/**
+	 * Convert the data to a format which can be sent over the network
+	 * 
+	 * @return a byte representation of the data
+	 */
+	public ByteBuffer toBytes(ByteBuffer bytes) {
+		bytes.putDouble(speed);
+		bytes.putDouble(acceleration);
+		bytes.putDouble(turnRate);
+		bytes.putDouble(chosenSpeed);
+		bytes.putDouble(chosenAcceleration);
+		bytes.putDouble(chosenTurnRate);
+		bytes.putLong(startTime);
+		return bytes;
 	}
 
 	public double getSpeed() {
@@ -63,6 +91,10 @@ public class MessageData {
 	public double getChosenTurnRate() {
 		return chosenTurnRate;
 	}
-	
+
+	public long getStartTime() {
+		return startTime;
+	}
+
 	
 }
