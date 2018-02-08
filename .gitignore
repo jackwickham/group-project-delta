@@ -54,10 +54,10 @@ local.properties
 .worksheet
 
 ### Eclipse Patch ###
-# Eclipse Core		
+# Eclipse Core
 .project
 
-# JDT-specific (Eclipse Java Development Tools)		
+# JDT-specific (Eclipse Java Development Tools)
 .classpath
 
 ### Intellij ###
@@ -68,6 +68,9 @@ local.properties
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+
+# Add whole idea dir
+.idea/
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -151,3 +154,29 @@ hs_err_pid*
 
 
 # End of https://www.gitignore.io/api/java,eclipse,intellij
+# Created by https://www.gitignore.io/api/gradle
+
+### Gradle ###
+.gradle
+**/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties
+
+
+# End of https://www.gitignore.io/api/gradle
+
+.vscode/*
+
+# The gradle wrapper is added in the repo, but can be rebuilt by IDEs, and we don't want those changes to be committed
+# each time
+gradle/wrapper/*
