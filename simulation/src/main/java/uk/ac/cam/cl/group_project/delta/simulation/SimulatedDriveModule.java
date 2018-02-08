@@ -3,8 +3,7 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 
 /**
- * @author jamie
- * @date 08/02/18.
+ * Implements DriveInterface for simulated vehicles.
  */
 public class SimulatedDriveModule implements DriveInterface {
 
