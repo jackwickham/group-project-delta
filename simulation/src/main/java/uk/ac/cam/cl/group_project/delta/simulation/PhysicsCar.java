@@ -46,6 +46,7 @@ public class PhysicsCar extends KinematicBody {
 		heading += getVelocity().dot(vecHeading) / radius;
 
 		super.update(dt);
+		
 	}
 
 	/**
