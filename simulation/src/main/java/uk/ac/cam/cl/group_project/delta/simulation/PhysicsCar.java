@@ -43,7 +43,7 @@ public class PhysicsCar extends KinematicBody {
 		   wheelBase / sin(wheelAngle) and the angular velocity is
 		   speed / radius. */
 		double radius = wheelBase / Math.sin(wheelAngle);
-		heading += getVelocity().dot(vecHeading) / radius;
+		this.setHeading(getHeading() + getVelocity().dot(vecHeading) / radius);
 
 		super.update(dt);
 
@@ -79,6 +79,38 @@ public class PhysicsCar extends KinematicBody {
 	 */
 	public void setEnginePower(double enginePower) {
 		this.enginePower = enginePower;
+	}
+
+	/**
+	 * Get current heading of the car body.
+	 * @return     Current heading.
+	 */
+	public double getHeading() {
+		return heading;
+	}
+
+	/**
+	 * Set the heading of the car body.
+	 * @param heading    Heading to set.
+	 */
+	private void setHeading(double heading) {
+		this.heading = heading;
+	}
+
+	/**
+	 * Get the current wheel base (distance from rear to front axle)
+	 * @return    Current wheel base.
+	 */
+	public double getWheelBase() {
+		return wheelBase;
+	}
+
+	/**
+	 * Set the distance from rear to front axle.
+	 * @param wheelBase    Distance to set.
+	 */
+	private void setWheelBase(double wheelBase) {
+		this.wheelBase = wheelBase;
 	}
 
 }
