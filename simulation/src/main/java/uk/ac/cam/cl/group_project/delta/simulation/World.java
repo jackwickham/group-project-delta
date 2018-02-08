@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
+import uk.ac.cam.cl.group_project.delta.MessageReceipt;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +16,16 @@ public class World {
 	private List<PhysicsBody> bodies;
 
 	/**
+	 * A list of messages that have been sent within this environment.
+	 */
+	private List<MessageReceipt> messages;
+
+	/**
 	 * Initialise an empty world.
 	 */
 	public World() {
 		this.bodies = new ArrayList<>();
+		this.messages = new ArrayList<>();
 	}
 
 	/**
@@ -36,6 +44,14 @@ public class World {
 	 */
 	public List<PhysicsBody> getBodies() {
 		return this.bodies;
+	}
+
+	/**
+	 * Fetch the list of messages within this world.
+	 * @return    List of messages.
+	 */
+	public List<MessageReceipt> getMessages() {
+		return this.messages;
 	}
 
 }
