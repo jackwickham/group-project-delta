@@ -6,9 +6,16 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 public class PhysicsCar extends KinematicBody {
 
 	/**
-	 * The angle at which the wheels are set.
+	 * The angle at which the wheels are set. These are relative to the car
+	 * body.
 	 */
 	private double wheelAngle = 0.0;
+
+	/**
+	 * The angle at which the car body is currently facing. The cardinal axis of
+	 * the car body faces this direction, relative to a global north.
+	 */
+	private double heading = 0.0;
 
 	/**
 	 * Current power of the engine.
