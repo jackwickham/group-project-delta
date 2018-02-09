@@ -40,6 +40,7 @@ public class Communications implements CommsInterface {
 	 */
 	@Override
 	public MessageData getLeaderMessage() {
+		messageLayer.updateMessages();
 		return messageLookup.getOrDefault(messageLayer.getCurrentPosition(), null);
 	}
 
@@ -51,6 +52,7 @@ public class Communications implements CommsInterface {
 	 */
 	@Override
 	public MessageData getPredecessorMessage(int inFront) {
+		messageLayer.updateMessages();
 		if(inFront <= 0) {
 			throw new IllegalArgumentException("Tried to get the message from vehicles behind.");
 		}
