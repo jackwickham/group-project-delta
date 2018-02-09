@@ -91,7 +91,7 @@ public class BasicAlgorithm3 extends Algorithm {
                 }
 
                 //create and send message to other cars
-                MessageData sendMessageData = new MessageData(speed, acceleration, turnRate, chosenSpeed, chosenAcceleration, chosenTurnRate, 0);
+                MessageData sendMessageData = new MessageData(speed, acceleration, turnRate, chosenSpeed, chosenAcceleration, chosenTurnRate);
                 commsInterface.sendMessage(sendMessageData);
 
                 if(Thread.interrupted()) {

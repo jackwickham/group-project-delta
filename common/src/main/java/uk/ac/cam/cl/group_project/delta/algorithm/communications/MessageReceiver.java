@@ -57,16 +57,7 @@ public class MessageReceiver {
 	 * @param message - the message to be sent
 	 */
 	public void sendMessage(MessageData message) {
-		ByteBuffer bytes = ByteBuffer.allocate(NetworkInterface.MAXIMUM_PACKET_SIZE);
-		bytes.putInt(0);					// Initially the length is unknown
-		bytes.putInt(platoonId);
-		bytes.putInt(vehicleId);
-		message.toBytes(bytes);
-		
-		int length = bytes.position();
-		bytes.position(0);					// Go back to start and put in the type and length
-		bytes.putInt((MessageType.Data.getValue() << 24) | (0x00FFFFFF & length));
-		network.sendData(bytes.array());
+		network.sendData(Packet.createDataPacket(message, vehicleId, platoonId));
 	}
 
 	public int getCurrentPosition() {
@@ -84,7 +75,7 @@ public class MessageReceiver {
 	 */
 	public void updateMessages() {
 		for(MessageReceipt message : network.pollData()) {
-			
+			Packet packet = new Packet(message);
 		}
 	}
 }

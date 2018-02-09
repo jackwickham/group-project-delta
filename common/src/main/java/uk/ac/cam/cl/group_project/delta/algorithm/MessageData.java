@@ -10,7 +10,7 @@ public class MessageData {
 	private final double chosenSpeed;
 	private final double chosenAcceleration;
 	private final double chosenTurnRate;
-	private final long startTime;
+	private long startTime;
 	
 	/**
 	 * Create an immutable MessageData object to be passed to the algorithm
@@ -24,14 +24,13 @@ public class MessageData {
 	 * @param chosenTurnRate
 	 */
 	public MessageData(double speed, double acceleration, double turnRate, double chosenSpeed,
-			double chosenAcceleration, double chosenTurnRate, long startTime) {
+			double chosenAcceleration, double chosenTurnRate) {
 		this.speed = speed;
 		this.acceleration = acceleration;
 		this.turnRate = turnRate;
 		this.chosenSpeed = chosenSpeed;
 		this.chosenAcceleration = chosenAcceleration;
 		this.chosenTurnRate = chosenTurnRate;
-		this.startTime = startTime;
 	}
 
 	/**
@@ -47,8 +46,7 @@ public class MessageData {
 				bytes.getDouble(),								// turnRate
 				bytes.getDouble(),								// chosenSpeed
 				bytes.getDouble(),								// chosenAcceleration
-				bytes.getDouble(),								// chosenTurnRate
-				bytes.getLong()									// startTime
+				bytes.getDouble()								// chosenTurnRate
 				);
 	}
 	
@@ -96,5 +94,7 @@ public class MessageData {
 		return startTime;
 	}
 
-	
+	public void setStartTime(long time) {
+		this.startTime = time;
+	}
 }
