@@ -40,12 +40,4 @@ public class World {
 		return this.bodies;
 	}
 
-	/**
-	 * Fetch the list of messages within this world.
-	 * @return    List of messages.
-	 */
-	public List<MessageReceipt> getMessages() {
-		return this.messages;
-	}
-
 }
