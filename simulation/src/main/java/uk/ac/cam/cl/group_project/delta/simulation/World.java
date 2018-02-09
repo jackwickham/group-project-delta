@@ -16,16 +16,10 @@ public class World {
 	private List<PhysicsBody> bodies;
 
 	/**
-	 * A list of messages that have been sent within this environment.
-	 */
-	private List<MessageReceipt> messages;
-
-	/**
 	 * Initialise an empty world.
 	 */
 	public World() {
 		this.bodies = new ArrayList<>();
-		this.messages = new ArrayList<>();
 	}
 
 	/**

@@ -9,49 +9,74 @@ import java.util.List;
 /**
  * Implements the NetworkInterface for simulated vehicles.
  */
-public class SimulatedNetworkModule implements NetworkInterface {
+public class SimulatedNetworkModule
+	implements NetworkInterface, SimulatedNetwork.SimulatedNode
+{
 
 	/**
-	 * The world in which this network is emulated.
+	 * The car which sends messages.
 	 */
-	private World world;
+	private PhysicsCar car;
 
 	/**
-	 * The index of the first message in the message buffer of `world` which we
-	 * have not seen.
+	 * Simulated communications medium.
 	 */
-	private int messageBufferIndex;
+	private SimulatedNetwork network;
+
+	/**
+	 * Buffer of messages received since last call to `pollData`.
+	 */
+	private List<MessageReceipt> messageBuffer;
 
 	/**
 	 * Construct simulated network interface, for the world given.
-	 * @param world    World in which messages are transmitted and received.
+	 * @param car        The car that transmits and receives messages.
+	 * @param network    The network on which to communicate.
 	 */
-	public SimulatedNetworkModule(World world) {
-		this.world = world;
-		this.messageBufferIndex = world.getMessages().size();
+	public SimulatedNetworkModule(PhysicsCar car, SimulatedNetwork network) {
+		this.car = car;
+		this.network = network;
+		this.network.register(this);
+		this.messageBuffer = new ArrayList<>();
 	}
 
 	/**
 	 * Broadcasts raw data to all of the other vehicles on the network.
-	 * @param message in bytes to be sent
+	 * @param message   in bytes to be sent
 	 */
+	@Override
 	public void sendData(byte[] message) {
-		world.getMessages().add(new MessageReceipt(message));
+		this.network.broadcast(this, message);
 	}
 
 	/**
 	 * Returns a list of raw messages received from other vehicles since
 	 * the last time this method was called. These messages are byte
 	 * arrays wrapped in a class which adds a local timestamp upon their arrival.
-	 * @return
+	 * @return    List of messages.
 	 */
-	public List<MessageReceipt> pollData() {
-		List<MessageReceipt> foundMessages = new ArrayList<>();
-		List<MessageReceipt> messages = world.getMessages();
-		for (int i = messageBufferIndex; i < messages.size(); ++i) {
-			foundMessages.add(messages.get(i));
-		}
-		return foundMessages;
+	@Override
+	public synchronized List<MessageReceipt> pollData() {
+		List<MessageReceipt> messages = new ArrayList<>(this.messageBuffer);
+		this.messageBuffer.clear();
+		return messages;
 	}
 
+	/**
+	 * Fetches the node's current position.
+	 * @return    The current position.
+	 */
+	@Override
+	public Vector2D getPosition() {
+		return this.car.getPosition();
+	}
+
+	/**
+	 * Handle a received message.
+	 * @param message    The message received.
+	 */
+	@Override
+	public synchronized void handleMessage(byte[] message) {
+		this.messageBuffer.add(new MessageReceipt(message));
+	}
 }
