@@ -1,7 +1,7 @@
 apply plugin: 'org.hidetake.ssh'
 apply plugin: 'application'
 
-import uk.ac.cam.cl.group_project.delta.lego.buildTools.MindstormsDetector
+import uk.ac.cam.cl.group_project.delta.lego.build_tools.MindstormsDetector
 
 mainClassName = 'uk.ac.cam.cl.group_project.delta.lego.MainClass'
 

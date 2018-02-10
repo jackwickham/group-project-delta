@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.group_project.delta.lego.buildTools;
+package uk.ac.cam.cl.group_project.delta.lego.build_tools;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -22,6 +22,16 @@ public class MindstormsDetector {
 	private static final int LISTEN_DURATION = 3000; // 3s
 
 	/**
+	 * The maximum size of the device names to receive
+	 */
+	private static final int RECEIVE_BUFFER_LENGTH = 15;
+
+	/**
+	 * The expected number of devices that we might detect
+	 */
+	private static final int EXPECTED_DEVICE_COUNT = 3;
+
+	/**
 	 * Detects all Mindstorms devices on the current wifi network (by their broadcasts on port 3016), and returns a list
 	 * of IP addresses belonging to Mindstorms devices.
 	 *
@@ -38,9 +48,9 @@ public class MindstormsDetector {
 			// If there are no devices, we need to make sure we timeout
 			socket.setSoTimeout(LISTEN_DURATION);
 
-			Set<InetAddress> ips = new HashSet<>(3);
+			Set<InetAddress> ips = new HashSet<>(EXPECTED_DEVICE_COUNT);
 
-			byte[] receiveBuffer = new byte[15];
+			byte[] receiveBuffer = new byte[RECEIVE_BUFFER_LENGTH];
 			DatagramPacket packet = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 
 			long startTime = System.currentTimeMillis();
@@ -52,7 +62,7 @@ public class MindstormsDetector {
 					InetAddress ip = packet.getAddress();
 					if (!ips.contains(ip)) {
 						ips.add(ip);
-						String hostname = new String(packet.getData(), 0, Math.min(packet.getLength(), 15));
+						String hostname = new String(packet.getData(), 0, Math.min(packet.getLength(), RECEIVE_BUFFER_LENGTH));
 						System.out.printf("Detected device %s on IP %s\n", hostname, ip.getHostAddress());
 					}
 				}
