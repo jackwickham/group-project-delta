@@ -13,5 +13,8 @@ class MainClass {
 
 		lcd.drawString("This is " + ev3.getName(), 0, 4);
 		keys.waitForAnyPress();
+
+		Drive d = new Drive(ev3);
+		keys.waitForAnyPress();
 	}
 }
