@@ -108,4 +108,14 @@ public class Packet {
 		bytes.rewind();					// Go back to start and put in the type and length
 		bytes.putInt((type.getValue() << 24) | (0x00FFFFFF & length));
 	}
+	
+	/**
+	 * Tests whether the data passed in contains an emergency message
+	 * 
+	 * @param msg - the message to be tested
+	 * @return whether the message is an emergency
+	 */
+	public static boolean isEmergencyMessage(byte[] data) {
+		return MessageType.valueOf(data[0]).equals(MessageType.Emergency);
+	}
 }
