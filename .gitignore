@@ -180,3 +180,5 @@ gradle-app.setting
 # The gradle wrapper is added in the repo, but can be rebuilt by IDEs, and we don't want those changes to be committed
 # each time
 gradle/wrapper/*
+
+!/lib/*

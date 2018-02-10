@@ -23,8 +23,12 @@ subprojects {
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
 
-	// Force compilers to use UTF-8
-	compileJava.options.encoding = 'UTF-8'
+	compileJava {
+		// Force compilers to use UTF-8
+		options.encoding =  'UTF-8'
+		// Compile using jdk 7 libraries to suppress warnings about bootstrap file
+		options.bootstrapClasspath = files(project.rootProject.file("lib/jre7-rt.jar"))
+	}
 
 	dependencies  {
 		// Dependencies for running the code. testCompile means dependencies used for tests, while compile means
