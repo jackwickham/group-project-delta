@@ -12,12 +12,11 @@ class MainClass {
 		Keys keys = ev3.getKeys();
 
 		lcd.drawString("This is " + ev3.getName(), 0, 4);
-		keys.waitForAnyPress();
+		//keys.waitForAnyPress();
 
 		Drive d = new Drive(ev3);
+		d.testDrive();
 		keys.waitForAnyPress();
 
-		d.stop();
-		keys.waitForAnyPress();
 	}
 }
