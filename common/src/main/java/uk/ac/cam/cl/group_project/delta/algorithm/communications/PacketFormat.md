@@ -20,7 +20,8 @@ There are currently at most 256 possible message types as only 1 byte is assigne
 
 ---
 ##### 0. Emergency stop
-This tells each vehicle to emergency stop. This has no payload.
+This tells each vehicle to emergency stop. This has no payload, 
+although a reason could be added at a later time.
 
 ---
 ##### 1. Normal data message
