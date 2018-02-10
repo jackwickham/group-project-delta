@@ -16,5 +16,8 @@ class MainClass {
 
 		Drive d = new Drive(ev3);
 		keys.waitForAnyPress();
+
+		d.stop();
+		keys.waitForAnyPress();
 	}
 }

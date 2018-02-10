@@ -19,6 +19,10 @@ public class Drive implements DriveInterface {
 		L = new EV3LargeRegulatedMotor(portL);
 		R = new EV3LargeRegulatedMotor(portR);
 		steer = new EV3MediumRegulatedMotor(portSteer);
+		//L.backward();
+		//R.backward();
+		//L.setSpeed(360);
+		//R.setSpeed(360);
 	}
 
 	/**
@@ -31,7 +35,7 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void setAcceleration(double acceleration) {
-
+		// degrees/second/second
 	}
 
 	/**
@@ -52,7 +56,8 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void stop() {
-
+		L.stop();
+		R.stop();
 	}
 
 }
