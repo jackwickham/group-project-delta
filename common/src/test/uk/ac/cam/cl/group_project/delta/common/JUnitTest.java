@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.group_project.delta.simulation;
+package uk.ac.cam.cl.group_project.delta.common;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

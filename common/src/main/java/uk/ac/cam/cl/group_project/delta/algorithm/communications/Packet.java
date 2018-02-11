@@ -17,7 +17,7 @@ public class Packet {
 	/**
 	 * The size in bytes of the header of the packet
 	 */
-	private static int SIZE_OF_HEADER = 12;
+	public static int SIZE_OF_HEADER = 12;
 	
 	
 	public final int vehicleId;
@@ -93,7 +93,7 @@ public class Packet {
 	 * @param platoonId
 	 * @return the byte buffer used to create the packet
 	 */
-	public static ByteBuffer createHeader(int vehicleId, int platoonId) {
+	private static ByteBuffer createHeader(int vehicleId, int platoonId) {
 		ByteBuffer bytes = ByteBuffer.allocate(NetworkInterface.MAXIMUM_PACKET_SIZE);
 		bytes.putInt(0);					// Initially the length is unknown
 		bytes.putInt(platoonId);
@@ -108,7 +108,7 @@ public class Packet {
 	 * @param bytes
 	 * @param type
 	 */
-	public static void updateLengthAndType(ByteBuffer bytes, MessageType type) {
+	private static void updateLengthAndType(ByteBuffer bytes, MessageType type) {
 		int length = bytes.position();
 		bytes.rewind();					// Go back to start and put in the type and length
 		bytes.putInt((type.getValue() << 24) | (0x00FFFFFF & length));
