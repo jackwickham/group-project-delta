@@ -316,7 +316,7 @@ public class MessageReceiver {
 	 * @param platoonId - The id of the main platoon
 	 * @param type - The type of the message to be sent
 	 */
-	private void sendBlankMergingMessage(int transactionId, int platoonId, MessageType type) {
+	public void sendBlankMergingMessage(int transactionId, int platoonId, MessageType type) {
 		network.sendData(Packet.createPacket(
 				new byte[] {
 						(byte) (currentMerge.getTransactionId() >>> 24),
@@ -406,7 +406,7 @@ public class MessageReceiver {
 	 * @param bytes - the byte source to be read
 	 * @return the first 4 bytes as an int
 	 */
-	private static int getFirstInt(byte[] bytes) {
+	public static int getFirstInt(byte[] bytes) {
 		if(bytes.length < 4) {
 			throw new IllegalArgumentException("Tried to read an int from an empty array.");
 		}
@@ -422,7 +422,7 @@ public class MessageReceiver {
 	 * @param unsorted - the unsorted map structure
 	 * @return a list of sorted pairs
 	 */
-	private static List<Map.Entry<Integer, Integer>> sortMapByValues(Map<Integer, Integer> unsorted) {
+	public static List<Map.Entry<Integer, Integer>> sortMapByValues(Map<Integer, Integer> unsorted) {
 		List<Map.Entry<Integer, Integer>> list = new LinkedList<>(unsorted.entrySet());
 	    Collections.sort( list, new Comparator<Map.Entry<Integer, Integer>>() {
 	        @Override
