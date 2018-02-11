@@ -1,8 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;

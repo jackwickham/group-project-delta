@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
-
-import javax.swing.RowFilter.Entry;
 
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
