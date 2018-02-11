@@ -34,7 +34,8 @@ public class MessageData {
 	}
 
 	/**
-	 * Recreate the message from the bytebuffer
+	 * Recreate the message from the bytebuffer, the bytebuffer should be
+	 * positioned at the start of the data, not at the start of the packet
 	 * 
 	 * @param rawBytes the bytes to be converted
 	 * @return a new data packet with the specific data
@@ -51,11 +52,13 @@ public class MessageData {
 	}
 	
 	/**
-	 * Convert the data to a format which can be sent over the network
+	 * Append the data in this object to the bytebuffer, the bytebuffer
+	 * should be positioned at the start of the data section or information
+	 * will be overwritten
 	 * 
 	 * @return a byte representation of the data
 	 */
-	public ByteBuffer toBytes(ByteBuffer bytes) {
+	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
 		bytes.putDouble(speed);
 		bytes.putDouble(acceleration);
 		bytes.putDouble(turnRate);

@@ -69,7 +69,7 @@ public class Packet {
 	 */
 	public static byte[] createDataPacket(MessageData message, int vehicleId, int platoonId) {
 		ByteBuffer bytes = createHeader(vehicleId, platoonId);
-		message.toBytes(bytes);
+		message.appendToBuffer(bytes);
 		updateLengthAndType(bytes, MessageType.Data);
 		return bytes.array();
 	}

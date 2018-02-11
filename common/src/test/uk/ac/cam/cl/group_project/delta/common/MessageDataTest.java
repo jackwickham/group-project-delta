@@ -11,7 +11,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
 public class MessageDataTest {
 	
 	@Test
-	public void toBytesTest() {
+	public void appendToBufferTest() {
 		double speed = 1.0, acceleration = 2.0, turnRate = 3.0, chosenSpeed = 4.0;
 		double chosenAcceleration = 5.0, chosenTurnRate = 6.0;
 		
@@ -19,7 +19,7 @@ public class MessageDataTest {
 				speed, acceleration, turnRate, 
 				chosenSpeed, chosenAcceleration, chosenTurnRate);
 		ByteBuffer bytes = ByteBuffer.allocate(8*6+1);
-		md.toBytes(bytes);
+		md.appendToBuffer(bytes);
 		bytes.rewind();
 		assertEquals(speed, bytes.getDouble(), 0.0001);
 		assertEquals(acceleration, bytes.getDouble(), 0.0001);
