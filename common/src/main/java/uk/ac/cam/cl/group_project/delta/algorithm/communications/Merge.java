@@ -36,6 +36,11 @@ public class Merge {
 	private int platoonId;
 	
 	/**
+	 * The id of the merging platoon
+	 */
+	private int mergingPlatoonId;
+	
+	/**
 	 * The transaction id for this merge
 	 */
 	private int transactionId;
@@ -80,6 +85,7 @@ public class Merge {
 	public Merge(int mainPlatoon, int currentPlatoon, int platoonSize) {
 		this.mainPlatoonId = mainPlatoon;
 		this.platoonId = currentPlatoon;
+		this.mergingPlatoonId = currentPlatoon;
 		vehiclesToConfirm = platoonSize;
 		
 		Random r = new Random();
@@ -103,18 +109,22 @@ public class Merge {
 		
 		ByteBuffer bytes = ByteBuffer.wrap(payload);
 		transactionId = bytes.getInt();
+		this.mergingPlatoonId = bytes.getInt();
 		
 		// New platoon merging into this one
 		if(mainPlatoon == currentPlatoon) {
 			int length = bytes.getInt() & 0x00FFFFFF;			// First byte is reserved
 			readNewIdList(bytes, length);
+			changePosition = length;
 		}
 		lastUpdate = System.nanoTime();
 	}
 	
 	/**
+	 * Handle the payload for a specific type of message, if something is incorrect
+	 * then the state is set to Cancelled
 	 * 
-	 * @param payload
+	 * @param payload - the data to be added to this merge
 	 */
 	public void handlePayload(MessageType type, byte[] payload) {
 		ByteBuffer bytes = ByteBuffer.wrap(payload);
@@ -143,6 +153,9 @@ public class Merge {
 			} else {
 				handleConfirmMessage();
 			}
+			break;
+		case MergeComplete:
+			state = MergeState.Confirmed;
 			break;
 		default:
 			break;
@@ -178,6 +191,7 @@ public class Merge {
 				idClashReplacements.put(bytes.getInt(), bytes.getInt());
 			}
 		}
+		lastUpdate = System.nanoTime();
 	}
 	
 	/**
@@ -193,6 +207,7 @@ public class Merge {
 				state = MergeState.Confirmed;
 			}
 		}
+		lastUpdate = System.nanoTime();
 	}
 	
 	/**
@@ -218,12 +233,19 @@ public class Merge {
 		}
 	}
 	
+	public boolean doesAccept() {
+		return state.equals(MergeState.Accepted);
+	}
 	public boolean isConfirmed() {
 		return state.equals(MergeState.Confirmed);
 	}
+
+	public int getMainPlatoonId() {
+		return mainPlatoonId;
+	}
 	
-	public int getPlatoonId() {
-		return platoonId;
+	public int getMergingPlatoonId() {
+		return mergingPlatoonId;
 	}
 
 	public int getTransactionId() {

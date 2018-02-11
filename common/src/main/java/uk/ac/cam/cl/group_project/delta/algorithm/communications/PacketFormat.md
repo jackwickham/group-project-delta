@@ -37,9 +37,10 @@ This is used by a smaller platoon to try to merge to a larger platoon.
 ######Payload:
 
 13-16: Transaction id, generated at random (hope no clash)  
-17: blank (For ease of coding)  
-18-20: The length of the merging platoon  
-21+: An ordered list of the ids of the members of the merging platoon
+17-20: The platoon id for the merging platoon  
+21: blank (For ease of coding)  
+22-24: The length of the merging platoon  
+25+: An ordered list of the ids of the members of the merging platoon
 
 ---
 ##### 3. Accept to merge
