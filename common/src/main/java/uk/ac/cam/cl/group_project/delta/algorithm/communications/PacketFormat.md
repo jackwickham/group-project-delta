@@ -37,7 +37,8 @@ This is used by a smaller platoon to try to merge to a larger platoon.
 ######Payload:
 
 13-16: Transaction id, generated at random (hope no clash)  
-17-20: The length of the merging platoon  
+17: blank (For ease of coding)  
+18-20: The length of the merging platoon  
 21+: An ordered list of the ids of the members of the merging platoon
 
 ---
@@ -47,9 +48,11 @@ This is used to confirm by the leader that the smaller platoon can merge onto th
 ######Payload:
 
 13-16: Transaction id, same as in the RTM  
-17-20: The length of the main platoon  
-21-?: An ordered list of the ids of the members of the main platoon  
-?-end: A list of (id, new\_id) telling vehicle `id` in the merging platoon its new id is `new_id`
+17: The boolean accept / reject for the request, if reject then no more payload  
+18-20: The length of the main platoon  
+21-x: An ordered list of the ids of the members of the main platoon  
+x-x+3: The number of ids which need to be replaced  
+x+4-end: A list of (old\_id, new\_id) telling vehicle `old_id` in the merging platoon its new id is `new_id`
 
 ---
 ##### 4. Confirm merge

@@ -6,11 +6,16 @@ import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
 
+/**
+ * This class handles the parsing and creating of the packets from information.
+ * Any changes to the packet structure should only need to be reflected here.
+ * An instance of this class represents a received packet.
+ * 
+ * @author Aaron Hutton
+ */
 public class Packet {
 	/**
-	 * This class handles the parsing and creating of the packets from information.
-	 * Any changes to the packet structure should only need to be reflected here.
-	 * An instance of this class represents a received packet.
+	 * The size in bytes of the header of the packet
 	 */
 	private static int SIZE_OF_HEADER = 12;
 	

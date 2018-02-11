@@ -8,4 +8,8 @@ public class PlatoonLookup extends HashMap<Integer, MessageData> {
 	/**
 	 * Class for adding simple transactions to swap cars in the platoon
 	 */
+	
+	public void commitPlatoonMerge(Merge merge) {
+		
+	}
 }
