@@ -104,7 +104,10 @@ public class MessageReceiver {
 	
 	/**
 	 * This updates the messages in the messageLookup to reflect the most
-	 * recent messages
+	 * recent messages. It handles the messages used in the merge protocol,
+	 * only looking at messages which are from the platoon leader or have the 
+	 * correct platoon id. If the message does not have either of these 
+	 * characteristics then it is ignored.
 	 */
 	public void updateMessages() {
 		for(MessageReceipt msg : network.pollData()) {
@@ -116,8 +119,11 @@ public class MessageReceiver {
 					messageLookup.put(
 							idToPositionLookup.get(packet.vehicleId), packet.message);
 				} else {
+					// Found a new platoon which we could merge with
 					if(position == 0 && (currentMerge == null || !currentMerge.isValid())) {
 						currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
+						
+						// Send an initial request to join
 						byte[] payload = createNewMergeRequest(currentMerge.getTransactionId());
 						network.sendData(Packet.createPacket(
 								payload, vehicleId, packet.platoonId, MessageType.RequestToMerge));
@@ -126,6 +132,7 @@ public class MessageReceiver {
 				break;
 			case RequestToMerge:
 				if(packet.platoonId == platoonId || packet.vehicleId == leaderId) {
+					// Everyone need to remember this info
 					currentMerge = new Merge(packet.platoonId, platoonId, packet.payload);
 					
 					if(position == 0) {
@@ -148,9 +155,13 @@ public class MessageReceiver {
 				break;
 			case AcceptToMerge:
 				if(packet.platoonId == platoonId || packet.vehicleId == leaderId) {
+					// The merge has been agreed, update the merge information
+					// with the new info from the leader of the main platoon
 					if(currentMerge != null && currentMerge.isValid()) {
 						currentMerge.handlePayload(packet.type, packet.payload);
+						
 						if(currentMerge.doesAccept() && (position != 0)) {
+							// This vehicle is happy so sends a confirmation
 							sendBlankMergingMessage(
 									currentMerge.getTransactionId(), 
 									currentMerge.getMergingPlatoonId(), 
@@ -164,7 +175,10 @@ public class MessageReceiver {
 					if(currentMerge!= null && currentMerge.isValid()) {
 						currentMerge.handlePayload(packet.type, packet.payload);
 						
+
+						// The merge has been agreed by all parties, so commits
 						if(currentMerge.isConfirmed()) {
+							// Tell everyone in both platoons to agree the merge
 							sendBlankMergingMessage(
 									currentMerge.getTransactionId(), 
 									currentMerge.getMergingPlatoonId(), 
@@ -180,6 +194,7 @@ public class MessageReceiver {
 				break;
 			case MergeComplete:
 				if(packet.platoonId == platoonId) {
+					// Check the correct transaction id and commit
 					if(currentMerge != null && 
 							(packet.payload[0] << 24) + 
 							(packet.payload[1] << 16) + 
@@ -229,6 +244,7 @@ public class MessageReceiver {
 	 */
 	private byte[] createNewMergeAccept(int transactionId, boolean allowMerge, List<Integer> newIds) {
 		assert(position == 0);
+		// Calculate which ids conflict
 		List<Integer> conflictingIds = new ArrayList<>();
 		for(Integer i : newIds) {
 			if(idToPositionLookup.containsKey(i)) {
@@ -240,11 +256,13 @@ public class MessageReceiver {
 		result.putInt((transactionId &0x00FFFFFF) | (allowMerge? 0x01000000:0));
 		result.putInt(idToPositionLookup.size());
 		
+		// First add the members of the main platoon
 		for(Map.Entry<Integer, Integer> item:sortMapByValues(idToPositionLookup)) {
 			result.putInt(item.getKey());
 		}
 		result.putInt(conflictingIds.size());
 		Random r = new Random();
+		// Record new names to fix any conflicts
 		for(Integer i : conflictingIds) {
 			result.putInt(i);
 			int newId = r.nextInt();

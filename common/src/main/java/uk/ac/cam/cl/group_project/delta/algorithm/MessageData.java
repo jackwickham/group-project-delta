@@ -62,7 +62,6 @@ public class MessageData {
 		bytes.putDouble(chosenSpeed);
 		bytes.putDouble(chosenAcceleration);
 		bytes.putDouble(chosenTurnRate);
-		bytes.putLong(startTime);
 		return bytes;
 	}
 

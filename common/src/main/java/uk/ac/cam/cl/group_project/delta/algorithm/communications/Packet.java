@@ -7,7 +7,7 @@ import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
 
 /**
- * This class handles the parsing and creating of the packets from information.
+ * This class handles the parsing and creating of the packets from their bytes.
  * Any changes to the packet structure should only need to be reflected here.
  * An instance of this class represents a received packet.
  * 
@@ -19,7 +19,11 @@ public class Packet {
 	 */
 	public static int SIZE_OF_HEADER = 12;
 	
-	
+	/**
+	 * These fields are generated from a packet received from the network.
+	 * So the vehicleId is the vehicle which sent the packet, the type is the
+	 * type of packet etc.
+	 */
 	public final int vehicleId;
 	public final int platoonId;
 	public final int length;
