@@ -45,6 +45,7 @@ public class Communications implements CommsInterface {
 	 * Return the latest message from the vehicle which is inFront ahead
 	 * 
 	 * @param inFront - the relative position ahead to return
+	 * @throws IllegalArgumentException - if the inFront argument is negative or 0
 	 * @return the latest message for the requested vehicle, null if there is no data
 	 */
 	@Override

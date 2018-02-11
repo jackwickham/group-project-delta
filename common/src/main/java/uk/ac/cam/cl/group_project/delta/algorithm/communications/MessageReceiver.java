@@ -116,90 +116,33 @@ public class MessageReceiver {
 			switch(packet.type) {
 			case Data:
 				if(packet.platoonId == platoonId) {
+					// Update the data for that vehicle
 					messageLookup.put(
 							idToPositionLookup.get(packet.vehicleId), packet.message);
 				} else {
-					// Found a new platoon which we could merge with
-					if(position == 0 && (currentMerge == null || !currentMerge.isValid())) {
-						currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
-						
-						// Send an initial request to join
-						byte[] payload = createNewMergeRequest(currentMerge.getTransactionId());
-						network.sendData(Packet.createPacket(
-								payload, vehicleId, packet.platoonId, MessageType.RequestToMerge));
-					}
+					beginMergeProtocol(packet);
 				}
 				break;
 			case RequestToMerge:
 				if(packet.platoonId == platoonId || packet.vehicleId == leaderId) {
-					// Everyone need to remember this info
-					currentMerge = new Merge(packet.platoonId, platoonId, packet.payload);
-					
-					if(position == 0) {
-						// This is the leader of the main platoon, so make a response
-						
-						// Currently always accept merge
-						byte[] payload = createNewMergeAccept(
-								currentMerge.getTransactionId(), true, currentMerge.getAdditionalIdLookups());
-						network.sendData(Packet.createPacket(
-								payload, vehicleId, currentMerge.getMergingPlatoonId(), 
-								MessageType.AcceptToMerge));
-						
-						// Also send confirm message
-						sendBlankMergingMessage(
-								currentMerge.getTransactionId(), 
-								currentMerge.getMergingPlatoonId(), 
-								MessageType.ConfirmMerge);
-					}
+					handleRequestToMerge(packet);
 				}
 				break;
 			case AcceptToMerge:
 				if(packet.platoonId == platoonId || packet.vehicleId == leaderId) {
-					// The merge has been agreed, update the merge information
-					// with the new info from the leader of the main platoon
-					if(currentMerge != null && currentMerge.isValid()) {
-						currentMerge.handlePayload(packet.type, packet.payload);
-						
-						if(currentMerge.doesAccept() && (position != 0)) {
-							// This vehicle is happy so sends a confirmation
-							sendBlankMergingMessage(
-									currentMerge.getTransactionId(), 
-									currentMerge.getMergingPlatoonId(), 
-									MessageType.ConfirmMerge);
-						}
-					}
+					handleAcceptToMerge(packet);
 				}
 				break;
 			case ConfirmMerge:
 				if(packet.platoonId == platoonId && position == 0) {
-					if(currentMerge!= null && currentMerge.isValid()) {
-						currentMerge.handlePayload(packet.type, packet.payload);
-						
-
-						// The merge has been agreed by all parties, so commits
-						if(currentMerge.isConfirmed()) {
-							// Tell everyone in both platoons to agree the merge
-							sendBlankMergingMessage(
-									currentMerge.getTransactionId(), 
-									currentMerge.getMergingPlatoonId(), 
-									MessageType.ConfirmMerge);
-							sendBlankMergingMessage(
-									currentMerge.getTransactionId(), 
-									currentMerge.getMainPlatoonId(), 
-									MessageType.ConfirmMerge);
-							commitMerge();
-						}
-					}
+					handleConfirmMerge(packet);
 				}
 				break;
 			case MergeComplete:
 				if(packet.platoonId == platoonId) {
 					// Check the correct transaction id and commit
 					if(currentMerge != null && 
-							(packet.payload[0] << 24) + 
-							(packet.payload[1] << 16) + 
-							(packet.payload[2] << 8) + 
-							(packet.payload[3]) == currentMerge.getTransactionId()) {
+							getFirstInt(packet.payload) == currentMerge.getTransactionId()) {
 						commitMerge();
 					}
 				}
@@ -209,6 +152,97 @@ public class MessageReceiver {
 			default:
 				// Do nothing
 				break;
+			}
+		}
+	}
+	
+	/**
+	 * Begin the merge protocol by sending a RequestToMerge to the other platoon
+	 * @param packet - the data in Packet format
+	 */
+	private void beginMergeProtocol(Packet packet) {
+		// Found a new platoon which we could merge with
+		if(position == 0 && (currentMerge == null || !currentMerge.isValid())) {
+			currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
+			
+			// Send an initial request to join
+			byte[] payload = createNewMergeRequest(currentMerge.getTransactionId());
+			network.sendData(Packet.createPacket(
+					payload, vehicleId, packet.platoonId, MessageType.RequestToMerge));
+		}
+	}
+	
+	/**
+	 * Handle a RequestToMerge packet by creating a new Merge Object and
+	 * replying if necessary
+	 * @param packet - the data in Packet format
+	 */
+	private void handleRequestToMerge(Packet packet) {
+		// Everyone need to remember this info
+		currentMerge = new Merge(packet.platoonId, platoonId, packet.payload);
+		
+		if(position == 0) {
+			// This is the leader of the main platoon, so make a response
+			
+			// Currently always accept merge
+			byte[] payload = createNewMergeAccept(
+					currentMerge.getTransactionId(), true, currentMerge.getAdditionalIdLookups());
+			network.sendData(Packet.createPacket(
+					payload, vehicleId, currentMerge.getMergingPlatoonId(), 
+					MessageType.AcceptToMerge));
+			
+			// Also send confirm message
+			sendBlankMergingMessage(
+					currentMerge.getTransactionId(), 
+					currentMerge.getMergingPlatoonId(), 
+					MessageType.ConfirmMerge);
+		}
+	}
+	
+	/**
+	 * Handle an AcceptToMerge packet by updating the current Merge Object
+	 * and send a confirmation if accepted
+	 * @param packet - the data in Packet format
+	 */
+	private void handleAcceptToMerge(Packet packet) {
+		// The merge has been agreed, update the merge information
+		// with the new info from the leader of the main platoon
+		if(currentMerge != null && currentMerge.isValid()) {
+			currentMerge.handlePayload(packet.type, packet.payload);
+			
+			if(currentMerge.doesAccept() && (position != 0)) {
+				// This vehicle is happy so sends a confirmation
+				sendBlankMergingMessage(
+						currentMerge.getTransactionId(), 
+						currentMerge.getMergingPlatoonId(), 
+						MessageType.ConfirmMerge);
+			}
+		}
+	}
+	
+	/**
+	 * Handle a ConfirmMerge packet by updating the current Merge Object
+	 * and committing the merge by sending a MergeComplete message to
+	 * both platoons, if everyone has agreed.
+	 * @param packet - the data in Packet format
+	 */
+	private void handleConfirmMerge(Packet packet) {
+		if(currentMerge!= null && currentMerge.isValid()) {
+			currentMerge.handlePayload(packet.type, packet.payload);
+			
+
+			// The merge has been agreed by all parties, so commits
+			if(currentMerge.isConfirmed()) {
+				// Tell everyone in both platoons to agree the merge
+				sendBlankMergingMessage(
+						currentMerge.getTransactionId(), 
+						currentMerge.getMergingPlatoonId(), 
+						MessageType.ConfirmMerge);
+				sendBlankMergingMessage(
+						currentMerge.getTransactionId(), 
+						currentMerge.getMainPlatoonId(), 
+						MessageType.ConfirmMerge);
+				commitMerge();
 			}
 		}
 	}
@@ -300,37 +334,19 @@ public class MessageReceiver {
 			// So switching platoons
 			
 			// Might need to replace some ids
-			for(Integer i : currentMerge.getIdClashReplacements().keySet()) {
-				if(idToPositionLookup.containsKey(i)) {
-					idToPositionLookup.put(
-							currentMerge.getIdClashReplacements().get(i), 
-							idToPositionLookup.get(i));
-					idToPositionLookup.remove(i);
-				}
-			}
+			updateIdsFromMerge();
+			
 			// Add new vehicles to start of platoon
-			for(int i = 0; i < currentMerge.getAdditionalIdLookups().size(); i++) {
-				idToPositionLookup.put(
-						currentMerge.getAdditionalIdLookups().get(i), 
-						position + currentMerge.getAdditionalIdLookups().size() - i);
-			}
+			addVechiclesToHeadOfPlatoon();
+			
 			// Change the leader
 			leaderId = currentMerge.getAdditionalIdLookups().get(0);
-			
-			// Change the vehicle id if necessary
-			if(currentMerge.getIdClashReplacements().containsKey(vehicleId)) {
-				vehicleId = currentMerge.getIdClashReplacements().get(vehicleId);
-			}
 			
 			// Change the recorded id
 			position += currentMerge.getChangePosition();
 		} else {
 			// Add new vehicles to end of platoon
-			for(int i = 0; i < currentMerge.getAdditionalIdLookups().size(); i++) {
-				idToPositionLookup.put(
-						currentMerge.getAdditionalIdLookups().get(i), 
-						position - idToPositionLookup.size() + i);
-			}
+			addVechiclesToEndOfPlatoon();
 		}
 		
 		platoonId = currentMerge.getMainPlatoonId();
@@ -339,6 +355,66 @@ public class MessageReceiver {
 		
 	}
 	
+	/**
+	 * Used during a merge commit to update the ids to the replaced ids to
+	 * remove conflicts
+	 */
+	private void updateIdsFromMerge() {
+		for(Integer i : currentMerge.getIdClashReplacements().keySet()) {
+			if(idToPositionLookup.containsKey(i)) {
+				idToPositionLookup.put(
+						currentMerge.getIdClashReplacements().get(i), 
+						idToPositionLookup.get(i));
+				idToPositionLookup.remove(i);
+			}
+		}
+
+		// Change the vehicle id if necessary
+		if(currentMerge.getIdClashReplacements().containsKey(vehicleId)) {
+			vehicleId = currentMerge.getIdClashReplacements().get(vehicleId);
+		}
+	}
+	
+	/**
+	 * Add the new vehicles from the merge to the head of the platoon,
+	 * used during the merge commit
+	 */
+	private void addVechiclesToHeadOfPlatoon() {
+		for(int i = 0; i < currentMerge.getAdditionalIdLookups().size(); i++) {
+			idToPositionLookup.put(
+					currentMerge.getAdditionalIdLookups().get(i), 
+					position + currentMerge.getAdditionalIdLookups().size() - i);
+		}
+	}
+	
+	/**
+	 * Add the new vehicles from the merge to the end of the platoon,
+	 * used during the merge commit
+	 */
+	private void addVechiclesToEndOfPlatoon() {
+		for(int i = 0; i < currentMerge.getAdditionalIdLookups().size(); i++) {
+			idToPositionLookup.put(
+					currentMerge.getAdditionalIdLookups().get(i), 
+					position - idToPositionLookup.size() + i);
+		}
+	}
+	
+	/**
+	 * Return the first 4 bytes of the argument interpreting them as a
+	 * big-endian integer
+	 * 
+	 * @param bytes - the byte source to be read
+	 * @return the first 4 bytes as an int
+	 */
+	private static int getFirstInt(byte[] bytes) {
+		if(bytes.length < 4) {
+			throw new IllegalArgumentException("Tried to read an int from an empty array.");
+		}
+		return (bytes[0] << 24) + 
+				(bytes[1] << 16) + 
+				(bytes[2] << 8) + 
+				bytes[3];
+	}
 	/**
 	 * Return a list of <Key, values> pairs for the given list which is sorted by 
 	 * the value of the item in the list
