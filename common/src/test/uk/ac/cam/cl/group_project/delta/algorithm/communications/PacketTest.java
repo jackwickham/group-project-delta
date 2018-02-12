@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.group_project.delta.common.communications;
+package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import static org.junit.Assert.*;
 

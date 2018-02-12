@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.group_project.delta.common.communications;
+package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,13 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageReceiver
 
 public class MessageReceiverTest {
 
+	
+	@Test
+	public void Test() {
+		
+	}
 
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void sendBlankMergingMessageTest() {
 		ByteBuffer b = ByteBuffer.allocate(4);

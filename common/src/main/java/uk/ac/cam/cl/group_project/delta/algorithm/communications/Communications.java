@@ -6,7 +6,17 @@ import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
 
 public class Communications implements CommsInterface {
 
+	/**
+	 * The layer which sits above the network layer which messages are
+	 * passed through
+	 */
 	private MessageReceiver messageLayer;
+	
+	/**
+	 * The mapping from relative positions in the platoon to the latest message
+	 * this vehicle has received from them. Where get(0) indicates the current vehicle
+	 * and get(1) indicates the vehicle in front.
+	 */
 	private PlatoonLookup messageLookup;
 	
 	/**
@@ -14,10 +24,14 @@ public class Communications implements CommsInterface {
 	 * Passes messages down to the MessageReceiver as gets messages through the PlatoonLookup
 	 * 
 	 * @param network - the network interface
+	 * @param messageLayer - the layer through which messages are passed
+	 * @param messageLookup - the mapping from relative positions to their latest message
 	 */
-	public Communications(NetworkInterface network) {
+	public Communications(NetworkInterface network, 
+			MessageReceiver messageLayer, 
+			PlatoonLookup messageLookup) {
 		messageLookup = new PlatoonLookup();
-		messageLayer = new MessageReceiver(network, messageLookup);
+		this.messageLayer = messageLayer;
 	}
 	
 	/**

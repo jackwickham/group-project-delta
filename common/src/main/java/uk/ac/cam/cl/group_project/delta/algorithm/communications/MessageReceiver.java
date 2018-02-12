@@ -85,6 +85,35 @@ public class MessageReceiver {
 	}
 
 	/**
+	 * Create a new platoon instance initialised with the specific platoon given
+	 * 
+	 * @param network - the network interface to be used
+	 * @param map - the position to message map to be used
+	 * @param vehicleId - this vehicles initial id
+	 * @param platoonId - the initial platoon id
+	 * @param platoonOrder - a list of the current platoon in terms of their ids
+	 */
+	public MessageReceiver(
+			NetworkInterface network, PlatoonLookup map, int vehicleId, 
+			int platoonId, List<Integer> platoonOrder) {
+		this.vehicleId = vehicleId;
+		this.platoonId = platoonId;
+		this.network = network;
+		this.messageLookup = map;
+		this.leaderId = platoonOrder.get(0);
+		
+		for(int i = 0; i < platoonOrder.size(); i++) {
+			if(vehicleId == platoonOrder.get(i)) {
+				this.position = i;
+			}
+		}
+		
+		for(int i = 0; i < platoonOrder.size(); i++) {
+			idToPositionLookup.put(platoonOrder.get(i), position - i);
+		}
+	}
+	
+	/**
 	 * Send the specific message across the network
 	 * 
 	 * @param message - the message to be sent
