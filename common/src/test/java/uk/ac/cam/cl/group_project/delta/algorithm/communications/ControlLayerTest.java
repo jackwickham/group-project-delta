@@ -1,25 +1,70 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
+import uk.ac.cam.cl.group_project.delta.MessageReceipt;
+import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public class ControlLayerTest {
 
-	
+
 	@Test
-	public void Test() {
+	public void sendMessageTest() {
+		List<Integer> initialPlatoon = Arrays.asList(100, 200);
+		NetworkInterface network = mock(NetworkInterface.class);
 		
+		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+		
+		ControlLayer control = new ControlLayer(network, null, 200, 123, initialPlatoon);
+		
+		control.sendMessage(data);
+		
+		ArgumentCaptor<byte[]> argument = ArgumentCaptor.forClass(byte[].class);
+		verify(network).sendData(argument.capture());
+		
+		byte[] byteData = argument.getValue();
+		Packet p = new Packet(new MessageReceipt(byteData));
+		assertEquals(p.vehicleId, 200);
+		assertEquals(p.platoonId, 123);
+		assertEquals(p.type, MessageType.Data);
+		
+		assertEquals(data.getSpeed(), p.message.getSpeed(), 0.0);
+		assertEquals(data.getChosenAcceleration(), p.message.getChosenAcceleration(), 0.0);
 	}
 
+	@Test
+	public void updateMessagesDataTest() {
+		List<Integer> initialPlatoon = Arrays.asList(100, 200);
+		NetworkInterface network = mock(NetworkInterface.class);
+		PlatoonLookup lookup = new PlatoonLookup();
+		
+		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+		
+		when(network.pollData())
+			.thenReturn(
+				Arrays.asList(
+						new MessageReceipt(
+								Packet.createDataPacket(data, 100, 123))));
+		
+		ControlLayer control = new ControlLayer(network, lookup, 200, 123, initialPlatoon);
+		
+		control.updateMessages();
+		
+		assertEquals(data.getSpeed(), lookup.get(1).getSpeed(), 0.0);
+		assertEquals(data.getChosenAcceleration(), lookup.get(1).getChosenAcceleration(), 0.0);
+	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void sendBlankMergingMessageTest() {

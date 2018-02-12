@@ -21,12 +21,12 @@ public class VehicleDataTest {
 		ByteBuffer bytes = ByteBuffer.allocate(8*6+1);
 		md.appendToBuffer(bytes);
 		bytes.rewind();
-		assertEquals(speed, bytes.getDouble(), 0.0001);
-		assertEquals(acceleration, bytes.getDouble(), 0.0001);
-		assertEquals(turnRate, bytes.getDouble(), 0.0001);
-		assertEquals(chosenSpeed, bytes.getDouble(), 0.0001);
-		assertEquals(chosenAcceleration, bytes.getDouble(), 0.0001);
-		assertEquals(chosenTurnRate, bytes.getDouble(), 0.0001);
+		assertEquals(speed, bytes.getDouble(), 0);
+		assertEquals(acceleration, bytes.getDouble(), 0);
+		assertEquals(turnRate, bytes.getDouble(), 0);
+		assertEquals(chosenSpeed, bytes.getDouble(), 0);
+		assertEquals(chosenAcceleration, bytes.getDouble(), 0);
+		assertEquals(chosenTurnRate, bytes.getDouble(), 0);
 		
 	}
 	@Test
@@ -45,12 +45,12 @@ public class VehicleDataTest {
 		
 		VehicleData md = VehicleData.generateDataFromBytes(bytes);
 		
-		assertEquals(speed, md.getSpeed(), 0.0001);
-		assertEquals(acceleration, md.getAcceleration(), 0.0001);
-		assertEquals(turnRate, md.getTurnRate(), 0.0001);
-		assertEquals(chosenSpeed, md.getChosenSpeed(), 0.0001);
-		assertEquals(chosenAcceleration, md.getChosenAcceleration(), 0.0001);
-		assertEquals(chosenTurnRate, md.getChosenTurnRate(), 0.0001);
+		assertEquals(speed, md.getSpeed(), 0);
+		assertEquals(acceleration, md.getAcceleration(), 0);
+		assertEquals(turnRate, md.getTurnRate(), 0);
+		assertEquals(chosenSpeed, md.getChosenSpeed(), 0);
+		assertEquals(chosenAcceleration, md.getChosenAcceleration(), 0);
+		assertEquals(chosenTurnRate, md.getChosenTurnRate(), 0);
 	}
 
 }

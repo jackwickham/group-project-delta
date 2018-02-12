@@ -102,6 +102,7 @@ public class ControlLayer {
 		this.network = network;
 		this.messageLookup = map;
 		this.leaderId = platoonOrder.get(0);
+		idToPositionLookup = new HashMap<>();
 		
 		for(int i = 0; i < platoonOrder.size(); i++) {
 			if(vehicleId == platoonOrder.get(i)) {
