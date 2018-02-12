@@ -30,5 +30,6 @@ subprojects {
 		// Dependencies for running the code. testCompile means dependencies used for tests, while compile means
 		// dependencies used for production code
 		testCompile 'junit:junit:4.12'
+		testCompile "org.mockito:mockito-core:2.+"
 	}
 }

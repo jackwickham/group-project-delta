@@ -1,6 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
-import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
@@ -23,14 +22,13 @@ public class Communications implements CommsInterface {
 	 * The implementation of the top layer of the communications stack.
 	 * Passes messages down to the MessageReceiver as gets messages through the PlatoonLookup
 	 * 
-	 * @param network - the network interface
 	 * @param messageLayer - the layer through which messages are passed
 	 * @param messageLookup - the mapping from relative positions to their latest message
 	 */
-	public Communications(NetworkInterface network, 
+	public Communications(
 			ControlLayer messageLayer, 
 			PlatoonLookup messageLookup) {
-		messageLookup = new PlatoonLookup();
+		this.messageLookup = messageLookup;
 		this.messageLayer = messageLayer;
 	}
 	
@@ -52,7 +50,12 @@ public class Communications implements CommsInterface {
 	@Override
 	public VehicleData getLeaderMessage() {
 		messageLayer.updateMessages();
-		return messageLookup.getOrDefault(messageLayer.getCurrentPosition(), null);
+		
+		if(messageLookup.containsKey(messageLayer.getCurrentPosition())) {
+			return messageLookup.get(messageLayer.getCurrentPosition());
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -68,7 +71,11 @@ public class Communications implements CommsInterface {
 		if(inFront <= 0) {
 			throw new IllegalArgumentException("Tried to get the message from vehicles behind.");
 		}
-		return messageLookup.getOrDefault(inFront, null);
+		if(messageLookup.containsKey(inFront)) {
+			return messageLookup.get(inFront);
+		} else {
+			return null;
+		}
 	}
 
 	/**
