@@ -2,9 +2,9 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import java.util.HashMap;
 
-import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
-public class PlatoonLookup extends HashMap<Integer, MessageData> {
+public class PlatoonLookup extends HashMap<Integer, VehicleData> {
 	/**
 	 * 
 	 */

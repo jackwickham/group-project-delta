@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
 /**
  * This class handles the parsing and creating of the packets from their bytes.
@@ -29,7 +29,7 @@ public class Packet {
 	public final int length;
 	public final MessageType type;
 	
-	public final MessageData message;
+	public final VehicleData message;
 	public final byte[] payload;
 	
 	/**
@@ -48,7 +48,7 @@ public class Packet {
 		vehicleId = bytes.getInt();
 		
 		if(type.equals(MessageType.Data)) {
-			message = MessageData.generateDataFromBytes(bytes);
+			message = VehicleData.generateDataFromBytes(bytes);
 			message.setStartTime(receipt.getTime());
 			payload = null;
 		} else {
@@ -67,7 +67,7 @@ public class Packet {
 	 * @param platoonId - the current platoon id
 	 * @return the packet to be sent
 	 */
-	public static byte[] createDataPacket(MessageData message, int vehicleId, int platoonId) {
+	public static byte[] createDataPacket(VehicleData message, int vehicleId, int platoonId) {
 		ByteBuffer bytes = createHeader(vehicleId, platoonId);
 		message.appendToBuffer(bytes);
 		updateLengthAndType(bytes, MessageType.Data);

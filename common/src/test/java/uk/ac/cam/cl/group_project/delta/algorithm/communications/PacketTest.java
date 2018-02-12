@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import org.junit.Test;
 
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
-import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageType;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Packet;
 
@@ -53,7 +53,7 @@ public class PacketTest {
 	@Test
 	public void parseDataPacketTest() {
 		int vehicle = 100, platoon = 500;
-		MessageData md = new MessageData(0.0, 1.0, 2.0, 3.0, 4.0, 5.0);
+		VehicleData md = new VehicleData(0.0, 1.0, 2.0, 3.0, 4.0, 5.0);
 		byte[] bytes = Packet.createDataPacket(md, vehicle, platoon);
 		
 		Packet p = new Packet(new MessageReceipt(bytes));

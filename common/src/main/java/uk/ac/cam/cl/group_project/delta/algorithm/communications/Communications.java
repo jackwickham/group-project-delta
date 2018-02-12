@@ -2,7 +2,7 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
 public class Communications implements CommsInterface {
 
@@ -10,7 +10,7 @@ public class Communications implements CommsInterface {
 	 * The layer which sits above the network layer which messages are
 	 * passed through
 	 */
-	private MessageReceiver messageLayer;
+	private ControlLayer messageLayer;
 	
 	/**
 	 * The mapping from relative positions in the platoon to the latest message
@@ -28,7 +28,7 @@ public class Communications implements CommsInterface {
 	 * @param messageLookup - the mapping from relative positions to their latest message
 	 */
 	public Communications(NetworkInterface network, 
-			MessageReceiver messageLayer, 
+			ControlLayer messageLayer, 
 			PlatoonLookup messageLookup) {
 		messageLookup = new PlatoonLookup();
 		this.messageLayer = messageLayer;
@@ -40,7 +40,7 @@ public class Communications implements CommsInterface {
 	 * @param message - the message to be sent
 	 */
 	@Override
-	public void sendMessage(MessageData message) {
+	public void sendMessage(VehicleData message) {
 		messageLayer.sendMessage(message);
 	}
 
@@ -50,7 +50,7 @@ public class Communications implements CommsInterface {
 	 * @return the latest message from the leader
 	 */
 	@Override
-	public MessageData getLeaderMessage() {
+	public VehicleData getLeaderMessage() {
 		messageLayer.updateMessages();
 		return messageLookup.getOrDefault(messageLayer.getCurrentPosition(), null);
 	}
@@ -63,7 +63,7 @@ public class Communications implements CommsInterface {
 	 * @return the latest message for the requested vehicle, null if there is no data
 	 */
 	@Override
-	public MessageData getPredecessorMessage(int inFront) {
+	public VehicleData getPredecessorMessage(int inFront) {
 		messageLayer.updateMessages();
 		if(inFront <= 0) {
 			throw new IllegalArgumentException("Tried to get the message from vehicles behind.");

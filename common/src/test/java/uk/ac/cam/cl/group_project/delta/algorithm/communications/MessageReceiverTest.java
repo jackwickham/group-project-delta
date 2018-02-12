@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageReceiver;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public class MessageReceiverTest {
 
@@ -25,10 +25,10 @@ public class MessageReceiverTest {
 	public void sendBlankMergingMessageTest() {
 		ByteBuffer b = ByteBuffer.allocate(4);
 		b.putInt(101);
-		assertEquals(MessageReceiver.getFirstInt(b.array()), 101);
+		assertEquals(ControlLayer.getFirstInt(b.array()), 101);
 		
 		// Throws Exception
-		MessageReceiver.getFirstInt(new byte[0]);
+		ControlLayer.getFirstInt(new byte[0]);
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class MessageReceiverTest {
 		testMap.put(9764, 2);
 		
 		List<Map.Entry<Integer, Integer>> sortedPairs = 
-				MessageReceiver.sortMapByValues(testMap);
+				ControlLayer.sortMapByValues(testMap);
 		
 		assertEquals(sortedPairs.get(0).getKey().intValue(), 8765);
 		assertEquals(sortedPairs.get(1).getKey().intValue(), 9764);

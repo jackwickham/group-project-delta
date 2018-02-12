@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 import org.junit.Test;
 
-import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
 public class MessageDataTest {
 	
@@ -15,7 +15,7 @@ public class MessageDataTest {
 		double speed = 1.0, acceleration = 2.0, turnRate = 3.0, chosenSpeed = 4.0;
 		double chosenAcceleration = 5.0, chosenTurnRate = 6.0;
 		
-		MessageData md = new MessageData(
+		VehicleData md = new VehicleData(
 				speed, acceleration, turnRate, 
 				chosenSpeed, chosenAcceleration, chosenTurnRate);
 		ByteBuffer bytes = ByteBuffer.allocate(8*6+1);
@@ -43,7 +43,7 @@ public class MessageDataTest {
 		bytes.putDouble(chosenTurnRate);
 		bytes.rewind();
 		
-		MessageData md = MessageData.generateDataFromBytes(bytes);
+		VehicleData md = VehicleData.generateDataFromBytes(bytes);
 		
 		assertEquals(speed, md.getSpeed(), 0.0001);
 		assertEquals(acceleration, md.getAcceleration(), 0.0001);

@@ -29,7 +29,7 @@ public class BasicAlgorithm extends Algorithm {
 
             while (true) {
                 //read data from predecessor's message
-                MessageData recieveMessageData = commsInterface.getPredecessorMessage(1);
+                VehicleData recieveMessageData = commsInterface.getPredecessorMessage(1);
                 predecessorAcceleration = recieveMessageData.getAcceleration();
                 predecessorSpeed = recieveMessageData.getSpeed();
                 predecessorTurnRate = recieveMessageData.getTurnRate();
@@ -55,7 +55,7 @@ public class BasicAlgorithm extends Algorithm {
                 }
 
                 //create and send message to other cars
-                MessageData sendMessageData = new MessageData(speed, acceleration, turnRate, chosenSpeed, chosenAcceleration, chosenTurnRate);
+                VehicleData sendMessageData = new VehicleData(speed, acceleration, turnRate, chosenSpeed, chosenAcceleration, chosenTurnRate);
                 commsInterface.sendMessage(sendMessageData);
 
                 if(Thread.interrupted()) {

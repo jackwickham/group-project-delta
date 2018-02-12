@@ -12,7 +12,7 @@ import java.util.Random;
 
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
 /**
  * This class handles the passing of messages to the network interface
@@ -21,7 +21,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.MessageData;
  * @author Aaron Hutton
  *
  */
-public class MessageReceiver {
+public class ControlLayer {
 
 	/**
 	 * The current id of this vehicle.
@@ -74,8 +74,9 @@ public class MessageReceiver {
 	 * @param network - the network interface to be used
 	 * @param map - the position to message map to be used
 	 */
-	public MessageReceiver(NetworkInterface network, PlatoonLookup map) {
+	public ControlLayer(NetworkInterface network, PlatoonLookup map) {
 		messageLookup = map;
+		this.network = network;
 		Random r = new Random();
 		vehicleId = r.nextInt();
 		platoonId = r.nextInt();
@@ -93,7 +94,7 @@ public class MessageReceiver {
 	 * @param platoonId - the initial platoon id
 	 * @param platoonOrder - a list of the current platoon in terms of their ids
 	 */
-	public MessageReceiver(
+	public ControlLayer(
 			NetworkInterface network, PlatoonLookup map, int vehicleId, 
 			int platoonId, List<Integer> platoonOrder) {
 		this.vehicleId = vehicleId;
@@ -118,7 +119,7 @@ public class MessageReceiver {
 	 * 
 	 * @param message - the message to be sent
 	 */
-	public void sendMessage(MessageData message) {
+	public void sendMessage(VehicleData message) {
 		network.sendData(Packet.createDataPacket(message, vehicleId, platoonId));
 	}
 
