@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
-public class MessageDataTest {
+public class VehicleDataTest {
 	
 	@Test
 	public void appendToBufferTest() {

@@ -80,7 +80,9 @@ public class Merge {
 	 * This is the constructor used by leader of the merging platoon.
 	 * This generates the transaction id
 	 * 
-	 * @param platoon - the platoon id of the main platoon
+	 * @param mainPlatoon - the platoon id of the main platoon
+	 * @param currentPlatoon - the platoon id of the current platoon
+	 * @param platoonSize - the size of the merging platoon
 	 */
 	public Merge(int mainPlatoon, int currentPlatoon, int platoonSize) {
 		this.mainPlatoonId = mainPlatoon;

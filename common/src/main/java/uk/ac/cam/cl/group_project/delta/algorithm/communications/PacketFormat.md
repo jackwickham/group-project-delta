@@ -2,6 +2,9 @@
 All numbers are in bytes (the order is actually dependent on Java int byte
 order, I'm assuming big-endianess for this document):
 
+**Header:**
+
+
 1: The type of message being sent.  
 2-4: The length of the message, so theoretical max length 2^24 ~ 17 mil.  
 5-8: The platoon id.  

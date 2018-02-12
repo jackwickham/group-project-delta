@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
-public class MessageReceiverTest {
+public class ControlLayerTest {
 
 	
 	@Test

@@ -127,6 +127,9 @@ public class ControlLayer {
 		return position;
 	}
 
+	/**
+	 * Send an emergency packet to the network
+	 */
 	public void notifyEmergency() {
 		network.sendData(Packet.createPacket(
 				new byte[0], vehicleId, platoonId, MessageType.Emergency));
@@ -180,7 +183,7 @@ public class ControlLayer {
 			case Emergency:
 				// Already processed, fall through
 			default:
-				// Do nothing
+				// TODO: This indicates an Emergency which wasn't triggered or something
 				break;
 			}
 		}

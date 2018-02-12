@@ -17,7 +17,7 @@ public class Packet {
 	/**
 	 * The size in bytes of the header of the packet
 	 */
-	public static int SIZE_OF_HEADER = 12;
+	public final static int SIZE_OF_HEADER = 12;
 	
 	/**
 	 * These fields are generated from a packet received from the network.
@@ -109,8 +109,8 @@ public class Packet {
 	 * Update the length and type of the packet. This needs to be done after the data
 	 * has been added so the length is known.
 	 * 
-	 * @param bytes
-	 * @param type
+	 * @param bytes - the bytebuffer which needs to have length and type prepended
+	 * @param type - the type of the message
 	 */
 	private static void updateLengthAndType(ByteBuffer bytes, MessageType type) {
 		int length = bytes.position();
@@ -121,7 +121,7 @@ public class Packet {
 	/**
 	 * Tests whether the data passed in contains an emergency message
 	 * 
-	 * @param msg - the message to be tested
+	 * @param data - the data to be tested
 	 * @return whether the message is an emergency
 	 */
 	public static boolean isEmergencyMessage(byte[] data) {
