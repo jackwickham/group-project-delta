@@ -3,8 +3,10 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
+/** Uses the predecessors acceleration as in the first basic algorithm but
+ * additionally modifies the chosen acceleration by a linear function of the front proximity
+ */
 public class BasicAlgorithm2 {
-//Basic Algorithm with collision prevention
 
     public static void makeDecision(AlgorithmData algorithmData){
 		//decide on chosen acceleration, speed and turnRate

@@ -2,8 +2,10 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
-
-//Basic Algorithm with collision prevention using sensor and predicted predecessor distance
+/**
+ * As basic algorithm 3.
+ * Additionally, uses a PID to caculate the chosen acceleration
+ */
 public class BasicAlgorithmPID {
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time preriod,
@@ -18,7 +20,7 @@ public class BasicAlgorithmPID {
 		//set minimum and maximum acceleration
 		algorithmData.miniPID.setOutputLimits(-2,2);
 		//set target distance
-		algorithmData.miniPID.setSetpoint(2);
+		algorithmData.miniPID.setSetpoint(5);
 	}
 
 	public static void makeDecision(AlgorithmData algorithmData) {

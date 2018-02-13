@@ -2,7 +2,9 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
-
+/**
+ * Basic version of algorithm which sets acceleration and turn rate to that of its predecessors
+ */
 public class BasicAlgorithm {
 
     public static void readSensors(AlgorithmData algorithmData) {

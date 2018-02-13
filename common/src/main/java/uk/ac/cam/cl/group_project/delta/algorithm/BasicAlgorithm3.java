@@ -3,10 +3,14 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
+/**
+ * As basic algorithm 2: additionally modifies the chosen acceleration by a linear function of the front proximity
+ * Additionally, combine the front proximity predicted from the vehicle states at the beginning of the previous time preriod,
+ * and the sensor proximity data
+ */
+
 public class BasicAlgorithm3 {
 
-    /**combine the front proximity predicted from the vehicle states at the beginning of the previous time preriod,
-    and the sensor proximity data*/
     private static double weightFrontProximity(double predictedFrontProximity, double sensorFrontProximity) {
         return 0.5*predictedFrontProximity+0.5*sensorFrontProximity;
     }
