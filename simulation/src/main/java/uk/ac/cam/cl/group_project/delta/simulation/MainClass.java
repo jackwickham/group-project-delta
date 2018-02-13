@@ -11,11 +11,8 @@ class MainClass {
 		SimulatedNetwork network = new SimulatedNetwork();
 
 		for (int i = 0; i < 100; ++i) {
-			PhysicsCar car = new PhysicsCar(2.5);
+			SimulatedCar car = new SimulatedCar(2.5, world, network);
 			world.getBodies().add(car);
-			NetworkInterface netInterface = new SimulatedNetworkModule(car, network);
-			SensorInterface sensorInterface = new SimulatedSensorModule(car, world);
-			DriveInterface driveInterface = new SimulatedDriveModule(car);
 		}
 
 		long start = System.nanoTime();
