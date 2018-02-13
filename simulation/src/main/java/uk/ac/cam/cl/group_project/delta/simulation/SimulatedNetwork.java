@@ -5,7 +5,6 @@ import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Encapsulates modelling of simulated wireless (broadcast) network.
