@@ -16,6 +16,8 @@ import java.util.List;
  * 2.0 = 12-13cm
  * 3.0 = 13-14cm
  * ...
+ *
+ * @author Jack Wickham
  */
 public class BeaconTracker {
 	/**
@@ -59,50 +61,35 @@ public class BeaconTracker {
 
 	/**
 	 * Convert the arbitrary distance given by the IR sensor into some sort of meaningful distance. Note that this is
-	 * heavily dependent on the current lighting.
+	 * heavily (?) dependent on the current lighting.
+	 *
+	 * The value returned is the range of values that, under typical conditions, would give the sensor reading provided,
+	 * so ranges share common endpoints but don't overlap.
+	 *
 	 * @param sensorDistance The distance provided by the sensor
 	 * @return An approximate range in metres
 	 */
 	private DblRange convertDistanceToMetres(float sensorDistance) {
-		if (sensorDistance <= 1.0) {
-			// real distance < 12cm
-			return new DblRange(0.0,  0.12);
-		} else if (sensorDistance <= 2.0) {
-			// 12cm <= d <= 14cm
-			return new DblRange(0.12, 0.14);
-		} else if (sensorDistance <= 3.0) {
-			// 14cm <= d <= 15.5cm
-			return new DblRange(0.14, 0.155);
-		} else if (sensorDistance <= 4.0) {
-			// 15.5 <= d <= 17.5
-			return new DblRange(0.155, 0.175);
-		} else if (sensorDistance <= 5.0) {
-			// 17.5 <= d <= 20
-			return new DblRange(0.175, 0.2);
-		} else if (sensorDistance <= 6.0) {
-			// 20 <= d <= 22ish
-			return new DblRange(0.2, 0.22);
-		} else if (sensorDistance <= 7.0) {
-			// 22ish <= d <= 25.5ish
-			return new DblRange(0.22, 0.255);
-		} else if (sensorDistance <= 8.0) {
-			// 25.5 <= d <= 30
-			return new DblRange(0.255, 0.3);
-		} else if (sensorDistance <= 9.0) {
-			// 30 <= d <= 33
-			return new DblRange(0.3, 0.33);
-		} else if (sensorDistance <= 10.0) {
-			// 33 <= d <= 35
-			return new DblRange(0.33, 0.35);
-		} else if (sensorDistance <= 11.0) {
-			// 35 <= d <= 38
-			return new DblRange(0.35, 0.38);
-		} else {
-			// It was at this point that I got bored of measuring it, and discovered that the distances are dependent
-			// on how much shadow is being cast on the sensor. I also discovered that it has a maximum range of longer
-			// than my room, so I can't measure it fully
-			return new DblRange(0.38, Double.POSITIVE_INFINITY);
+		return new DblRange(sensorToDistanceBound(sensorDistance - 1), sensorToDistanceBound(sensorDistance));
+	}
+
+	/**
+	 * Convert an IR sensor distance value to an approximate upper bound on the distance that the beacon is from the
+	 * sensor.
+	 *
+	 * From the data collected, available in the drive, the best fit curve for the upper bound of the range is
+	 * ub = 10.1 + 1.57x + 0.0944x²
+	 *
+	 * @param sensorValue The value given by the IR sensor, which should be an integer between 0 and 127
+	 * @return The approximate distance in metres
+	 */
+	private double sensorToDistanceBound(double sensorValue) {
+		if (sensorValue == 0) {
+			// The sensor never actually returns 0, so it is only used when getting a lower bound. The closest that the
+			// beacon can be to the sensor is 0m, so that is the lower bound here.
+			return 0.0;
 		}
+		return 10.1 + 1.57 * sensorValue + 0.0944 * sensorValue * sensorValue;
 	}
 
 	/**
