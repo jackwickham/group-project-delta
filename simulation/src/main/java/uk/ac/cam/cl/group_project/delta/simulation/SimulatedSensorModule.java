@@ -86,8 +86,23 @@ public class SimulatedSensorModule implements SensorInterface {
 		List<Beacon> beacons = new ArrayList<>();
 		List<PhysicsBody> bodies = world.getBodies();
 
+		double heading = car.getHeading();
+		Vector2D vecHeading = new Vector2D(
+			-Math.sin(heading), Math.cos(heading)
+		);
+
 		for (PhysicsBody body : bodies) {
-			//beacons.add(new Beacon());
+
+			Vector2D relPos = body.getPosition().subtract(car.getPosition());
+			double relDistance = relPos.magnitude();
+			double angle = Math.acos(
+				relPos.dot(vecHeading) / relDistance
+			);
+
+			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
+				//beacons.add(new Beacon());
+			}
+
 		}
 
 		return beacons;
