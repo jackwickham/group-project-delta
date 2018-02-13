@@ -22,7 +22,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	private PhysicsCar car;
 
 	/**
-	 * Maximum angle from view normal that the sensor can detect beacons in.
+	 * Maximum angle from view normal that the sensor can detect, in degrees.
 	 */
 	public static final double VIEW_HALF_ANGLE = 25.0;
 
