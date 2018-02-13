@@ -14,7 +14,7 @@ class MainClass {
 			PhysicsCar car = new PhysicsCar(2.5);
 			world.getBodies().add(car);
 			NetworkInterface netInterface = new SimulatedNetworkModule(car, network);
-			SensorInterface sensorInterface = new SimulatedSensorModule(world, car);
+			SensorInterface sensorInterface = new SimulatedSensorModule(car, world);
 			DriveInterface driveInterface = new SimulatedDriveModule(car);
 		}
 

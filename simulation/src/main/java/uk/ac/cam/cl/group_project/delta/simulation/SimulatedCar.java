@@ -33,7 +33,7 @@ public class SimulatedCar extends PhysicsCar {
 	public SimulatedCar(double length, World world, SimulatedNetwork network) {
 		super(length);
 		networkInterface = new SimulatedNetworkModule(this, network);
-		sensorInterface = new SimulatedSensorModule(world, this);
+		sensorInterface = new SimulatedSensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
 	}
 

@@ -26,9 +26,9 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @param world    World to instrument.
 	 * @param car      Physical body to instrument about.
 	 */
-	public SimulatedSensorModule(World world, PhysicsCar car) {
-		this.world = world;
+	public SimulatedSensorModule(PhysicsCar car, World world) {
 		this.car = car;
+		this.world = world;
 	}
 
 	/**
