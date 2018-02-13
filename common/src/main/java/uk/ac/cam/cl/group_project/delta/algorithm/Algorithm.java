@@ -14,22 +14,22 @@ public class Algorithm {
     }
 
     //set these functions to call version of algorithm required
-    protected void initialise() {
+	private void initialise() {
 	}
 
-    protected void readSensors() {
+    private void readSensors() {
     	BasicAlgorithm.readSensors(algorithmData);
 	}
-    protected void makeDecision() {
+    private void makeDecision() {
     	BasicAlgorithm.makeDecision(algorithmData);
 	}
-    protected void sendMessage() {
+    private void sendMessage() {
     	BasicAlgorithm.sendMessage(algorithmData);
 	}
-    protected void emergencyStop() {
+    private void emergencyStop() {
     	BasicAlgorithm.emergencyStop(algorithmData);
 	}
-    protected void sendInstruction() {
+    private void sendInstruction() {
     	BasicAlgorithm.sendInstruction(algorithmData);
 	}
 
