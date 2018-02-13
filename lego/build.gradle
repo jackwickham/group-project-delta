@@ -8,6 +8,7 @@ mainClassName = 'uk.ac.cam.cl.group_project.delta.lego.MainClass'
 dependencies {
 	compile project(':common')
 	compileOnly group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
+	testCompile group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
 }
 
 // Define the connection to the mindstorms

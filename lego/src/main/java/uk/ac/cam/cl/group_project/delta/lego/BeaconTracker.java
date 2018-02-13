@@ -37,6 +37,14 @@ public class BeaconTracker {
 	}
 
 	/**
+	 * Create a new instance to use with the provided sensor
+	 * @param sensor The IR sensor to use
+	 */
+	public BeaconTracker(EV3IRSensor sensor) {
+		seekMode = sensor.getSeekMode();
+	}
+
+	/**
 	 * Get a list of `Beacon` instances for each of the beacons that can currently be detected by the IR sensor on the
 	 * front of the vehicle
 	 * @return A list containing a `Beacon` instance for each visible beacon
