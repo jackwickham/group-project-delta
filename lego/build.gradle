@@ -41,6 +41,9 @@ jar {
 	}
 }
 
+// Ensure that common has been compiled to a jar so that the most up to date files will be included in our jar
+jar.dependsOn(":common:jar")
+
 task deployUSB(dependsOn: [jar, 'setupUSBRemote']) {
 	doLast {
 		ssh.run {
