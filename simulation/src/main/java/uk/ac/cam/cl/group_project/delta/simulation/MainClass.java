@@ -1,9 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
-import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
-
 class MainClass {
     public static void main(String[] args) {
 
