@@ -22,6 +22,11 @@ public class SimulatedSensorModule implements SensorInterface {
 	private PhysicsCar car;
 
 	/**
+	 * Maximum angle from view normal that the sensor can detect beacons in.
+	 */
+	public static final double VIEW_HALF_ANGLE = 25.0;
+
+	/**
 	 * Constructs a sensor module for given car in provided world.
 	 * @param world    World to instrument.
 	 * @param car      Physical body to instrument about.
@@ -58,7 +63,7 @@ public class SimulatedSensorModule implements SensorInterface {
 				relPos.dot(vecHeading) / relDistance
 			);
 
-			if (Math.abs(angle) < 25.0) {
+			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
 				distance = Math.min(distance, relDistance);
 			}
 
