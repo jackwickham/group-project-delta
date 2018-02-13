@@ -33,11 +33,22 @@ public class BasicAlgorithm3 {
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 
 		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration ;
-		if(weightedFrontProximity < 5) {
-			algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity/5;
+		if (algorithmData.sensorFrontProximity < 5) {
+			if(algorithmData.chosenAcceleration >=0) {
+				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / 5.0;
+			}else{
+				//if braking then divide by value so deceleration decreases if gap too small
+				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / 5.0);
+			}
 		} else {
-			algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * (0.75+weightedFrontProximity/20.0);
+			if(algorithmData.chosenAcceleration >= 0) {
+				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * (0.75 + weightedFrontProximity / 20.0);
+			}else{
+				//if braking then divide by value so deceleration decreases if gap too small
+				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (0.75 + weightedFrontProximity / 20.0);
+			}
 		}
+
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 		algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 	}
