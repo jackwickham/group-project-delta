@@ -9,13 +9,13 @@ public class BasicAlgorithm {
 
     public static void readSensors(AlgorithmData algorithmData) {
 		//read data from predecessor's message
-		VehicleData recieveMessageData = algorithmData.commsInterface.getPredecessorMessage(1);
-		algorithmData.predecessorAcceleration = recieveMessageData.getAcceleration();
-		algorithmData.predecessorSpeed = recieveMessageData.getSpeed();
-		algorithmData.predecessorTurnRate = recieveMessageData.getTurnRate();
-		algorithmData.predecessorChosenAcceleration = recieveMessageData.getChosenAcceleration();
-		algorithmData.predecessorChosenSpeed = recieveMessageData.getChosenSpeed();
-		algorithmData.predecessorChosenTurnRate = recieveMessageData.getChosenTurnRate();
+		VehicleData receiveMessageData = algorithmData.commsInterface.getPredecessorMessage(1);
+		algorithmData.predecessorAcceleration = receiveMessageData.getAcceleration();
+		algorithmData.predecessorSpeed = receiveMessageData.getSpeed();
+		algorithmData.predecessorTurnRate = receiveMessageData.getTurnRate();
+		algorithmData.predecessorChosenAcceleration = receiveMessageData.getChosenAcceleration();
+		algorithmData.predecessorChosenSpeed = receiveMessageData.getChosenSpeed();
+		algorithmData.predecessorChosenTurnRate = receiveMessageData.getChosenTurnRate();
 
 		//TODO: values could be null if no data available
 		//read data from sensors
