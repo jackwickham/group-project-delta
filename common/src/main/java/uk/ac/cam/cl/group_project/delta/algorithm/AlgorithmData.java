@@ -10,6 +10,8 @@ public class AlgorithmData {
 	SensorInterface sensorInterface;
 	DriveInterface driveInterface;
 
+	VehicleData receiveMessageData;
+
 	//current vehicle state
 	double acceleration;
 	double speed;
