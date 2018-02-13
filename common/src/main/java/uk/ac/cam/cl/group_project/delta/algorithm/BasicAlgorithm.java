@@ -3,71 +3,51 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
-public class BasicAlgorithm extends Algorithm {
+public class BasicAlgorithm {
 
-    public BasicAlgorithm(CommsInterface commsInterface, DriveInterface driveInterface, SensorInterface sensorInterface) {
-        super(commsInterface, driveInterface, sensorInterface);
-    }
+    public static void readSensors(AlgorithmData algorithmData) {
+		//read data from predecessor's message
+		VehicleData recieveMessageData = algorithmData.commsInterface.getPredecessorMessage(1);
+		algorithmData.predecessorAcceleration = recieveMessageData.getAcceleration();
+		algorithmData.predecessorSpeed = recieveMessageData.getSpeed();
+		algorithmData.predecessorTurnRate = recieveMessageData.getTurnRate();
+		algorithmData.predecessorChosenAcceleration = recieveMessageData.getChosenAcceleration();
+		algorithmData.predecessorChosenSpeed = recieveMessageData.getChosenSpeed();
+		algorithmData.predecessorChosenTurnRate = recieveMessageData.getChosenTurnRate();
 
-    @Override
-    public void run() {
-        try {
-            double acceleration;
-            double speed;
-            double turnRate;
-            double chosenSpeed;
-            double chosenAcceleration;
-            double chosenTurnRate;
+		//read data from sensors
+		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
+		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
+		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
+		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
 
-            double predecessorAcceleration;
-            double predecessorSpeed;
-            double predecessorTurnRate;
-            double predecessorChosenAcceleration;
-            double predecessorChosenSpeed;
-            double predecessorChosenTurnRate;
+		//get initial distance reading from sensor
+		algorithmData.previousDistance = algorithmData.sensorInterface.getFrontProximity();
+		algorithmData.previousSpeed = algorithmData.sensorInterface.getSpeed();
+		algorithmData.previousAcceleration = algorithmData.sensorInterface.getAcceleration();
+	}
 
+	public static void makeDecision(AlgorithmData algorithmData) {
+		//decide on chosen acceleration, speed and turnRate
+		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
+		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+		algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+	}
 
-            while (true) {
-                //read data from predecessor's message
-                VehicleData recieveMessageData = commsInterface.getPredecessorMessage(1);
-                predecessorAcceleration = recieveMessageData.getAcceleration();
-                predecessorSpeed = recieveMessageData.getSpeed();
-                predecessorTurnRate = recieveMessageData.getTurnRate();
-                predecessorChosenAcceleration = recieveMessageData.getChosenAcceleration();
-                predecessorChosenSpeed = recieveMessageData.getChosenSpeed();
-                predecessorChosenTurnRate = recieveMessageData.getChosenTurnRate();
+	public static void sendMessage(AlgorithmData algorithmData) {
+		//create and send message to other cars
+		VehicleData sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration, algorithmData.turnRate,
+				algorithmData.chosenSpeed, algorithmData.chosenAcceleration, algorithmData.chosenTurnRate);
+		algorithmData.commsInterface.sendMessage(sendMessageData);
+	}
 
-                //read data from sensors
-                acceleration = sensorInterface.getAcceleration();
-                speed = sensorInterface.getSpeed();
-                turnRate = sensorInterface.getTurnRate();
+	public static void sendInstruction(AlgorithmData algorithmData) {
+		//send instructions to drive
+		algorithmData.driveInterface.setAcceleration(algorithmData.chosenAcceleration);
+		algorithmData.driveInterface.setTurnRate(algorithmData.chosenAcceleration);
+	}
 
-                if(Thread.interrupted()) {
-                        throw new InterruptedException();
-                }
-                //decide on chosen acceleration, speed and turnRate
-                chosenAcceleration = predecessorAcceleration;
-                chosenSpeed = predecessorChosenSpeed;
-                chosenTurnRate = predecessorTurnRate;
-
-                if(Thread.interrupted()) {
-                    throw new InterruptedException();
-                }
-
-                //create and send message to other cars
-                VehicleData sendMessageData = new VehicleData(speed, acceleration, turnRate, chosenSpeed, chosenAcceleration, chosenTurnRate);
-                commsInterface.sendMessage(sendMessageData);
-
-                if(Thread.interrupted()) {
-                    throw new InterruptedException();
-                }
-                //send instructions to drive
-                driveInterface.setAcceleration(chosenAcceleration);
-                driveInterface.setTurnRate(chosenAcceleration);
-            }
-        } catch(InterruptedException e){
-            driveInterface.stop();
-        }
-    }
-
+	public static void emergencyStop(AlgorithmData algorithmData) {
+    	algorithmData.driveInterface.stop();
+	}
 }
