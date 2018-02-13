@@ -32,7 +32,7 @@ public class Beacon {
 	 * @param beaconIdentifier The integer identifier for this beacon
 	 * @param distanceLowerBound An approximate lower bound on the distance (in metres) from the front of the vehicle
 	 *                              to this beacon
-	 * @param distanceUpperBound An approximage upper bound on the distance (in metres) from the front of the vehicle
+	 * @param distanceUpperBound An approximate upper bound on the distance (in metres) from the front of the vehicle
 	 *                              to this beacon. If the distance is known exactly, this should match
 	 *                              `distanceLowerBound`
 	 * @param angle The angle in radians between the front of this vehicle and the beacon
