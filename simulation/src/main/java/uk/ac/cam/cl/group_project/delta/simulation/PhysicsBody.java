@@ -4,7 +4,7 @@ package uk.ac.cam.cl.group_project.delta.simulation;
  * Represents an abstract simulated body with position, velocity and
  * acceleration.
  */
-public class PhysicsBody {
+public class PhysicsBody extends UniquelyIdentifiable {
 
 	/**
 	 * Absolute position in world space - in metres.
