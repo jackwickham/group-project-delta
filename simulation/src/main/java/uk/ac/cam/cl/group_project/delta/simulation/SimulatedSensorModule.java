@@ -100,7 +100,12 @@ public class SimulatedSensorModule implements SensorInterface {
 			);
 
 			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
-				//beacons.add(new Beacon());
+				beacons.add(new Beacon(
+					body.hashCode(),
+					relDistance,
+					relDistance,
+					angle
+				));
 			}
 
 		}
