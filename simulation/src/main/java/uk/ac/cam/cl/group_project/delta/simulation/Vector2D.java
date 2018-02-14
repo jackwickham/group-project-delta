@@ -101,7 +101,7 @@ public class Vector2D {
 	}
 
 	/**
-	 * Subratct from this vector another, returning a new vector as the result.
+	 * Subtract from this vector another, returning a new vector as the result.
 	 * @param other    Vector to subtract.
 	 * @return         Result vector.
 	 */
