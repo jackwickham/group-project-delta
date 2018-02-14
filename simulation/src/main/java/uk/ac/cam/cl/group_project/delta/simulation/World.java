@@ -1,7 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
-import uk.ac.cam.cl.group_project.delta.MessageReceipt;
-
 import java.util.ArrayList;
 import java.util.List;
 
