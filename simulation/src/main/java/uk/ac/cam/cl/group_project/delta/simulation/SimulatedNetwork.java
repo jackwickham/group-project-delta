@@ -14,7 +14,7 @@ public class SimulatedNetwork {
 	/**
 	 * List of nodes in the simulated network.
 	 */
-	private List<SimulatedNode> handlers;
+	private List<SimulatedNetworkModule> handlers;
 
 	/**
 	 * Construct network.
@@ -26,9 +26,9 @@ public class SimulatedNetwork {
 	/**
 	 * Register a message callback, which will be invoked every time a message
 	 * is sent.
-	 * @param handler    Concrete instance of {@link SimulatedNode}.
+	 * @param handler    Concrete instance of {@link SimulatedNetworkModule}.
 	 */
-	public synchronized void register(SimulatedNode handler) {
+	public synchronized void register(SimulatedNetworkModule handler) {
 		this.handlers.add(handler);
 	}
 
@@ -36,7 +36,7 @@ public class SimulatedNetwork {
 	 * Remove message callback.
 	 * @param handler    Handler to remove.
 	 */
-	public synchronized void deregister(SimulatedNode handler) {
+	public synchronized void deregister(SimulatedNetworkModule handler) {
 		this.handlers.remove(handler);
 	}
 
@@ -45,30 +45,11 @@ public class SimulatedNetwork {
 	 * @param sender     Node from which this message was sent.
 	 * @param message    Byte array to send as a message.
 	 */
-	public synchronized void broadcast(SimulatedNode sender, byte[] message) {
-		for (SimulatedNode handler : handlers) {
+	public synchronized void broadcast(SimulatedNetworkModule sender, byte[] message) {
+		for (SimulatedNetworkModule handler : handlers) {
 			// TODO: Perform quality degradation with distance
 			handler.handleMessage(Arrays.copyOf(message, message.length));
 		}
-	}
-
-	/**
-	 * Represents a network node in the simulated network.
-	 */
-	public interface SimulatedNode {
-
-		/**
-		 * Fetches the node's current position.
-		 * @return    The current position.
-		 */
-		Vector2D getPosition();
-
-		/**
-		 * Handle a received message.
-		 * @param message    The message received.
-		 */
-		void handleMessage(byte[] message);
-
 	}
 
 }

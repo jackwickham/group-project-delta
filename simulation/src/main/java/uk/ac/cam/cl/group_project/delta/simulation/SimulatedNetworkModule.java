@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * Implements the NetworkInterface for simulated vehicles.
  */
-public class SimulatedNetworkModule
-	implements NetworkInterface, SimulatedNetwork.SimulatedNode
+public class SimulatedNetworkModule implements NetworkInterface
 {
 
 	/**
@@ -66,7 +65,6 @@ public class SimulatedNetworkModule
 	 * Fetches the node's current position.
 	 * @return    The current position.
 	 */
-	@Override
 	public Vector2D getPosition() {
 		return this.car.getPosition();
 	}
@@ -75,7 +73,6 @@ public class SimulatedNetworkModule
 	 * Handle a received message.
 	 * @param message    The message received.
 	 */
-	@Override
 	public synchronized void handleMessage(byte[] message) {
 		this.messageBuffer.add(new MessageReceipt(message));
 	}
