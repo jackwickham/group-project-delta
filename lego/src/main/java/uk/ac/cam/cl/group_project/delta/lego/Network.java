@@ -86,6 +86,7 @@ public class Network implements NetworkInterface {
 			socket.send(packet);
 		} catch (IOException e) {
 			// This isn't good, but we want to try to keep going
+			Logger.warn(e);
 		}
 	}
 
@@ -125,7 +126,7 @@ public class Network implements NetworkInterface {
 					DatagramPacket receivedPacket = new DatagramPacket(data, data.length);
 					socket.receive(receivedPacket);
 					if (receivedPacket.getLength() > 200) {
-						Logger.getInstance().log("Received a packet that was too long (" +
+						Logger.warn("Received a packet that was too long (" +
 								Integer.toString(receivedPacket.getLength()) + "B)");
 
 						continue;
@@ -137,7 +138,7 @@ public class Network implements NetworkInterface {
 				}
 			} catch (IOException e) {
 				if (!socket.isClosed()) {
-					Logger.getInstance().log(e);
+					Logger.critical(e);
 				}
 			}
 		}
