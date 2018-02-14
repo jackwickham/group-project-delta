@@ -9,12 +9,12 @@ public abstract class UniquelyIdentifiable {
 	/**
 	 * Static tracker of next ID to assign.
 	 */
-	private static long next = 1;
+	private static int next = 1;
 
 	/**
 	 * Unique identifier for this object.
 	 */
-	private final long uuid;
+	private final int uuid;
 
 	/**
 	 * Initialise ID with next available identifier.
@@ -27,7 +27,7 @@ public abstract class UniquelyIdentifiable {
 	 * Fetch the ID of this object.
 	 * @return    Unique identifier.
 	 */
-	public long getUuid() {
+	public int getUuid() {
 		return uuid;
 	}
 
