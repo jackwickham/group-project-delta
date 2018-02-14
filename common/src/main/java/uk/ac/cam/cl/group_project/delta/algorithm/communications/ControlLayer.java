@@ -107,6 +107,7 @@ public class ControlLayer {
 		for(int i = 0; i < platoonOrder.size(); i++) {
 			if(vehicleId == platoonOrder.get(i)) {
 				this.position = i;
+				break;
 			}
 		}
 		
