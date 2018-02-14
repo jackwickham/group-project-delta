@@ -24,7 +24,7 @@ public class World {
 
 	/**
 	 * Update all objects with this environment.
-	 * @param dt                      Timestep in seconds.
+	 * @param dt    Timestep in seconds.
 	 */
 	public synchronized void update(double dt) {
 		for (PhysicsBody body : bodies) {
