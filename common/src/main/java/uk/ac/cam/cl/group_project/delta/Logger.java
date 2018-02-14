@@ -18,10 +18,19 @@ public class Logger {
 	 */
 	private static Class<? extends Logger> instantiationClass = Logger.class;
 
+	protected Logger() {
+		if (instance != null) {
+			throw new IllegalStateException("Can't construct a new Logger when one already exists");
+		}
+	}
+
 	/**
 	 * Get the singleton instance
 	 *
-	 * @return The Logger
+	 * If no instance currently exists, this will attempt to construct a new instance of {@link #instantiationClass},
+	 * and fall back to a standard Logger if that instantiation fails.
+	 *
+	 * @return The Logger instance
 	 */
 	public static Logger getInstance() {
 		if (instance == null) {
