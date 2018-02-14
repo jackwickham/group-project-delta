@@ -148,6 +148,11 @@ public class ControlLayer {
 		for(MessageReceipt msg : network.pollData()) {
 			Packet packet = new Packet(msg);
 			
+			if(packet.vehicleId == vehicleId) {
+				// Ignore packets sent by this vehicle
+				continue;
+			}
+			
 			switch(packet.type) {
 			case Data:
 				if(packet.platoonId == platoonId) {
