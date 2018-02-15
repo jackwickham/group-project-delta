@@ -25,8 +25,14 @@ public class SimulatedCar extends PhysicsCar {
 	private DriveInterface driveInterface;
 
 	/**
+	 * The default wheel base of created cars. Set to 15cm for compatibility
+	 * with the LEGO(R) vehicles.
+	 */
+	private static final double DEFAULT_WHEEL_BASE = 0.15;
+
+	/**
 	 * Constructs a car, but do not add it to the world.
-	 * @param length     Wheel base of this car.
+	 * @param length     Wheel base of the vehicle.
 	 * @param world      Simulated world in which this car exists.
 	 * @param network    Simulated network on which this car will communicate.
 	 */
@@ -35,6 +41,15 @@ public class SimulatedCar extends PhysicsCar {
 		networkInterface = new SimulatedNetworkModule(this, network);
 		sensorInterface = new SimulatedSensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
+	}
+
+	/**
+	 * Constructs a car, but do not add it to the world.
+	 * @param world      Simulated world in which this car exists.
+	 * @param network    Simulated network on which this car will communicate.
+	 */
+	public SimulatedCar(World world, SimulatedNetwork network) {
+		this(DEFAULT_WHEEL_BASE, world, network);
 	}
 
 	/**
