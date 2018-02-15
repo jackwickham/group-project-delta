@@ -24,9 +24,20 @@ public class BasicAlgorithmPID2 {
 	//constant headway time in s
 	public final static double HEAD_TIME = 0.1;
 
-	public static void makeDecision(AlgorithmData algorithmData) {
-		//decide on chosen acceleration, speed and turnRate
+	//distance bellow which emergency stop happens
+	public final static double EMER_DIST = 0.5;
 
+	public static void emergencyStop(AlgorithmData algorithmData) {
+		algorithmData.driveInterface.stop();
+		algorithmData.commsInterface.notifyEmergency();
+	}
+
+	public static void makeDecision(AlgorithmData algorithmData) {
+
+		//decide on chosen acceleration, speed and turnRate
+		if(algorithmData.sensorFrontProximity < EMER_DIST) {
+			emergencyStop(algorithmData);
+		}
 		//This multiplies the error by a constant term PID_P
 		double pTerm = PID_P*(algorithmData.sensorFrontProximity +
 				HEAD_TIME*(algorithmData.predecessorSpeed-algorithmData.speed) - BUFF_DIST);
