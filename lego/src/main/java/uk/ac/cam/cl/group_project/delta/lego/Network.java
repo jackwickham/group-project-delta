@@ -1,6 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
-import uk.ac.cam.cl.group_project.delta.Logger;
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 
@@ -86,7 +86,7 @@ public class Network implements NetworkInterface {
 			socket.send(packet);
 		} catch (IOException e) {
 			// This isn't good, but we want to try to keep going
-			Logger.warn(e);
+			Log.warn(e);
 		}
 	}
 
@@ -126,7 +126,7 @@ public class Network implements NetworkInterface {
 					DatagramPacket receivedPacket = new DatagramPacket(data, data.length);
 					socket.receive(receivedPacket);
 					if (receivedPacket.getLength() > 200) {
-						Logger.warn("Received a packet that was too long (" +
+						Log.warn("Received a packet that was too long (" +
 								Integer.toString(receivedPacket.getLength()) + "B)");
 
 						continue;
@@ -138,7 +138,7 @@ public class Network implements NetworkInterface {
 				}
 			} catch (IOException e) {
 				if (!socket.isClosed()) {
-					Logger.critical(e);
+					Log.critical(e);
 				}
 			}
 		}

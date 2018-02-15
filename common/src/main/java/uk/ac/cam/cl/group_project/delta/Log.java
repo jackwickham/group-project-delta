@@ -1,45 +1,42 @@
 package uk.ac.cam.cl.group_project.delta;
 
+import uk.ac.cam.cl.group_project.delta.log.LoggerInterface;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Base log class, shared between LEGO and simulation code. Either may extend it, but it will function as it is.
- *
- * A singleton
+ * Base singleton log class, shared between LEGO and simulation code. Classes extending LoggerInterface are required
+ * for this class to function
  *
  * @author Jack Wickham
  */
-public class Logger {
+public final class Log {
 	/**
 	 * The stored singleton instance of this class
 	 */
-	private static Logger instance = null;
+	private static Log instance = null;
 
 	/**
-	 * The class to use when constructing a new instance of Logger
+	 * The class to use when constructing a new instance of Log
 	 */
-	private static Class<? extends Logger> instantiationClass = Logger.class;
+	private List<LoggerInterface> loggers = new ArrayList<>();
 
-	protected Logger() {
-		if (instance != null) {
-			throw new IllegalStateException("Can't construct a new Logger when one already exists");
-		}
-	}
+	/**
+	 * Don't allow this class to be instantiated or extended
+	 */
+	private Log () { }
 
 	/**
 	 * Get the singleton instance
 	 *
-	 * If no instance currently exists, this will attempt to construct a new instance of {@link #instantiationClass},
-	 * and fall back to a standard Logger if that instantiation fails.
+	 * If no instance currently exists, this will construct a new one
 	 *
-	 * @return The Logger instance
+	 * @return The Log instance
 	 */
-	public static Logger getInstance() {
+	public static Log getInstance() {
 		if (instance == null) {
-			try {
-				instance = instantiationClass.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				instance = new Logger();
-				instance.log(Severity.ERROR, e);
-			}
+			instance = new Log();
 		}
 
 		return instance;
@@ -52,7 +49,9 @@ public class Logger {
 	 * @param message The message
 	 */
 	public void log(Severity severity, String message) {
-		System.err.printf("%s: %s", severity.name, message);
+		for (LoggerInterface logger : loggers) {
+			logger.log(severity, message);
+		}
 	}
 
 	/**
@@ -62,8 +61,9 @@ public class Logger {
 	 * @param err The exception
 	 */
 	public void log(Severity severity, Throwable err) {
-		System.err.printf("%s: ", severity.name);
-		err.printStackTrace();
+		for (LoggerInterface logger : loggers) {
+			logger.log(severity, err);
+		}
 	}
 
 
@@ -137,14 +137,11 @@ public class Logger {
 	/**
 	 * Set the class to be used for logging
 	 *
-	 * @param c The class that extends Logger to use
+	 * @param c The class that extends Log to use
 	 */
-	protected static void setLoggerClass(Class<? extends Logger> c) {
-		if (instance != null) {
-			// Too late
-			throw new RuntimeException("Can't change log class after a Logger instance has already been created");
-		}
-		instantiationClass = c;
+	public void registerLogger(LoggerInterface c) {
+		loggers.add(c);
+
 	}
 
 	/**
