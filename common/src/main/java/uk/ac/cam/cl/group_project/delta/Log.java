@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta;
 
 import uk.ac.cam.cl.group_project.delta.log.LoggerInterface;
+import uk.ac.cam.cl.group_project.delta.log.StderrLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +21,15 @@ public final class Log {
 	/**
 	 * The class to use when constructing a new instance of Log
 	 */
-	private List<LoggerInterface> loggers = new ArrayList<>();
+	private List<LoggerInterface> loggers;
 
 	/**
 	 * Don't allow this class to be instantiated or extended
 	 */
-	private Log () { }
+	private Log () {
+		loggers = new ArrayList<>();
+		loggers.add(new StderrLogger());
+	}
 
 	/**
 	 * Get the singleton instance

@@ -5,6 +5,8 @@ import uk.ac.cam.cl.group_project.delta.Log;
 /**
  * A logger which writes the error to the standard error output
  *
+ * This logger is included by default, and shouldn't be manually registered
+ *
  * @author Jack Wickham
  */
 public class StderrLogger implements LoggerInterface {
@@ -28,16 +30,4 @@ public class StderrLogger implements LoggerInterface {
 		System.err.printf("%s: ", severity.name);
 		err.printStackTrace();
 	}
-
-	/**
-	 * Register a StderrLogger to receive log messages
-	 */
-	public static void register() {
-		Log.getInstance().registerLogger(new StderrLogger());
-	}
-
-	/**
-	 * Prevent people from constructing an instance of this - the register method should be used instead
-	 */
-	private StderrLogger() { }
 }
