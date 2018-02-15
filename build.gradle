@@ -41,6 +41,6 @@ subprojects {
 
 	checkstyle {
 		configFile = rootProject.file('config/checkstyle/checkstyle.xml')
-		configProperties = [ 'checkstyle.config.dir' : rootProject.file('config/checkstyle') ]
+		configDir = rootProject.file('config/checkstyle')
 	}
 }
