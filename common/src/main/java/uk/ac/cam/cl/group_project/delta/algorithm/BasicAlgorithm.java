@@ -16,6 +16,7 @@ public class BasicAlgorithm {
 		algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
 		algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
 		algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
+		algorithmData.receiveMessageData.getStartTime();
 
 		//TODO: values could be null if no data available
 		//read data from sensors
