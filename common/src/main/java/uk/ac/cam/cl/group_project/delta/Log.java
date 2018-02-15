@@ -25,6 +25,8 @@ public final class Log {
 
 	/**
 	 * Don't allow this class to be instantiated or extended
+	 *
+	 * Create with an StderrLogger by default
 	 */
 	private Log () {
 		loggers = new ArrayList<>();
