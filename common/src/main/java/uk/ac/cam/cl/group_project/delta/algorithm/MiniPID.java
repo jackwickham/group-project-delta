@@ -106,10 +106,10 @@ public class MiniPID{
 		}
 		I=i;
 		checkSigns();
-		 // Implementation note:
-		 // This Scales the accumulated error to avoid output errors.
-		 // As an example doubling the I term cuts the accumulated error in half, which results in the
-		 // output change due to the I term constant during the transition.
+		// Implementation note:
+		// This Scales the accumulated error to avoid output errors.
+		// As an example doubling the I term cuts the accumulated error in half, which results in the
+		// output change due to the I term constant during the transition.
 	}
 
 	/**

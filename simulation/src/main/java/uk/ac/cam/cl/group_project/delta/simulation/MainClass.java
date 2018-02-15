@@ -1,7 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 class MainClass {
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
 		World world = new World();
 		SimulatedNetwork network = new SimulatedNetwork();
@@ -19,5 +19,5 @@ class MainClass {
 			time = tmp;
 		}
 
-    }
+	}
 }
