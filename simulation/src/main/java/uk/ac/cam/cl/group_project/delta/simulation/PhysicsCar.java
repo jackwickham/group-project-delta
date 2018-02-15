@@ -57,7 +57,7 @@ public class PhysicsCar extends KinematicBody {
 		   wheelBase / sin(wheelAngle) and the angular velocity is
 		   speed / radius. */
 		double radius = wheelBase / Math.sin(wheelAngle);
-		this.setHeading(getHeading() + speed / radius);
+		this.setHeading(getHeading() + (speed / radius) * dt);
 
 		super.update(dt);
 
