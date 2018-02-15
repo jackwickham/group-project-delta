@@ -1,7 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
 /**
  * As basic algorithm 3.
  * Additionally, uses a PID to caculate the chosen acceleration
@@ -29,7 +27,7 @@ public class BasicAlgorithmPID {
 		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * algorithmData.timePeriod +
 				0.5*algorithmData.predecessorAcceleration*algorithmData.predecessorAcceleration;
 		algorithmData.predictedMovement = algorithmData.previousSpeed * algorithmData.timePeriod +
-				0.5*algorithmData.previousAcceleration*algorithmData.previousAcceleration;
+				0.5*algorithmData.previousAcceleration*algorithmData.timePeriod*algorithmData.timePeriod;
 		algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 				- algorithmData.predictedMovement + algorithmData.previousDistance;
 
