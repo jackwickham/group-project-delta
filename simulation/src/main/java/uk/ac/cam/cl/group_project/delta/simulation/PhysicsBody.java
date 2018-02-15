@@ -9,7 +9,7 @@ public class PhysicsBody extends UniquelyIdentifiable {
 	/**
 	 * Absolute position in world space - in metres.
 	 */
-	private Vector2D position;
+	private Vector2D position = new Vector2D(0.0, 0.0);
 
 	/**
 	 * Update this object.
