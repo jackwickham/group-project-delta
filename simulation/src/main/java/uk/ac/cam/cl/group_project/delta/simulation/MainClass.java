@@ -10,8 +10,14 @@ import java.util.Date;
 
 class MainClass {
 
+	/**
+	 * Number of vehicles to create.
+	 */
 	private static final int NUMBER_OF_VEHICLES = 1;
 
+	/**
+	 * Target time interval between CSV logs of the world state, in nanoseconds.
+	 */
 	private static final long POSITION_LOG_INTERVAL = 100000000; // 0.1 sec
 
 	public static void main(String[] args) {
