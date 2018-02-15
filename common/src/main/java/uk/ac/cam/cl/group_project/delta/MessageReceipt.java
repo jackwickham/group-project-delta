@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta;
 
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.Packet;
+
 public class MessageReceipt {
 
 	private final byte[] data;
@@ -29,4 +31,13 @@ public class MessageReceipt {
 		return time;
 	}
 
+	/**
+	 * Tests whether the data passed in contains an emergency message
+	 * 
+	 * @param msg - the message to be tested
+	 * @return whether the message is an emergency
+	 */
+	public static boolean isEmergencyMessage(byte[] data) {
+		return Packet.isEmergencyMessage(data);
+	}
 }
