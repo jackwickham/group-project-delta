@@ -3,6 +3,7 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 
 /**
  * Encapsulation of simulated car object and its associated interface modules.
@@ -23,6 +24,11 @@ public class SimulatedCar extends PhysicsCar {
 	 * Drive interface for this car.
 	 */
 	private DriveInterface driveInterface;
+
+	/**
+	 * The algorithm that is controlling this car.
+	 */
+	private Thread controller;
 
 	/**
 	 * The default wheel base of created cars. Set to 15cm for compatibility
@@ -74,6 +80,51 @@ public class SimulatedCar extends PhysicsCar {
 	 */
 	public DriveInterface getDriveInterface() {
 		return driveInterface;
+	}
+
+	/**
+	 * Set the current algorithm controller for this car.
+	 * @param algorithm    Algorithm that will make decisions for this vehicle.
+	 */
+	public void setController(Algorithm algorithm) {
+		if (controller != null) {
+			controller.interrupt();
+		}
+		controller = new AlgorithmThread(algorithm);
+	}
+
+	/**
+	 * Run the controller algorithm.
+	 */
+	public void start() {
+		controller.start();
+	}
+
+	public void stop() {
+		try {
+			controller.interrupt();
+			controller.join(100);
+		}
+		catch (InterruptedException e) {
+			// TODO: Something here?
+		}
+	}
+
+	private static class AlgorithmThread extends Thread {
+
+		private Algorithm algorithm;
+
+		public AlgorithmThread(Algorithm algorithm) {
+			this.algorithm = algorithm;
+		}
+
+		@Override
+		public void run() {
+			if (algorithm != null) {
+				algorithm.run();
+			}
+		}
+
 	}
 
 }
