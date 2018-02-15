@@ -46,7 +46,15 @@ public class BasicAlgorithmPID2 {
 		double dTerm = PID_D*(algorithmData.predecessorSpeed -
 				algorithmData.speed+HEAD_TIME*(algorithmData.predecessorChosenAcceleration-algorithmData.acceleration));
 
-		algorithmData.chosenAcceleration = pTerm + dTerm;
+		//clamp chosen acceleration within range min and max acceleration
+		double chosenAcceleration = pTerm + dTerm;
+		if(chosenAcceleration > MAX_ACC) {
+			chosenAcceleration = MAX_ACC;
+		} else if(chosenAcceleration < MIN_ACC) {
+			chosenAcceleration = MIN_ACC;
+		}
+
+		algorithmData.chosenAcceleration = chosenAcceleration;
 
 		//TODO: This is not calculated
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
