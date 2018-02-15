@@ -107,6 +107,7 @@ public class ControlLayer {
 		for(int i = 0; i < platoonOrder.size(); i++) {
 			if(vehicleId == platoonOrder.get(i)) {
 				this.position = i;
+				break;
 			}
 		}
 		
@@ -146,6 +147,11 @@ public class ControlLayer {
 	public void updateMessages() {
 		for(MessageReceipt msg : network.pollData()) {
 			Packet packet = new Packet(msg);
+			
+			if(packet.vehicleId == vehicleId) {
+				// Ignore packets sent by this vehicle
+				continue;
+			}
 			
 			switch(packet.type) {
 			case Data:

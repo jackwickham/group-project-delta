@@ -4,60 +4,87 @@ import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class Algorithm {
-    private AlgorithmData algorithmData;
+	
+	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	
+	private AlgorithmData algorithmData;
 
-    public Algorithm(CommsInterface commsInterface, DriveInterface driveInterface, SensorInterface sensorInterface) {
-        algorithmData = new AlgorithmData();
-        algorithmData.commsInterface = commsInterface;
-        algorithmData.driveInterface = driveInterface;
-        algorithmData.sensorInterface = sensorInterface;
-    }
+	public Algorithm(CommsInterface commsInterface, DriveInterface driveInterface, SensorInterface sensorInterface) {
+		algorithmData = new AlgorithmData();
+		algorithmData.commsInterface = commsInterface;
+		algorithmData.driveInterface = driveInterface;
+		algorithmData.sensorInterface = sensorInterface;
+	}
 
-    //set these functions to call version of algorithm required
+	// set these functions to call version of algorithm required
 	private void initialise() {
 	}
 
-    private void readSensors() {
-    	BasicAlgorithm.readSensors(algorithmData);
+	private void readSensors() {
+		BasicAlgorithm.readSensors(algorithmData);
 	}
-    private void makeDecision() {
-    	BasicAlgorithm.makeDecision(algorithmData);
+
+	private void makeDecision() {
+		BasicAlgorithm.makeDecision(algorithmData);
 	}
-    private void sendMessage() {
-    	BasicAlgorithm.sendMessage(algorithmData);
+
+	private void sendMessage() {
+		BasicAlgorithm.sendMessage(algorithmData);
 	}
-    private void emergencyStop() {
-    	BasicAlgorithm.emergencyStop(algorithmData);
+
+	private void emergencyStop() {
+		BasicAlgorithm.emergencyStop(algorithmData);
 	}
-    private void sendInstruction() {
-    	BasicAlgorithm.sendInstruction(algorithmData);
+
+	private void sendInstruction() {
+		BasicAlgorithm.sendInstruction(algorithmData);
 	}
 
 	public void run() {
 		initialise();
+		long startTime = System.nanoTime();
 
-		while (true) {
-			//read data from sensors into data class
+		while (!algorithmData.emergencyOccurred) {
+			// read data from sensors into data class
 			readSensors();
 
-			if(Thread.interrupted()) {
+			if (Thread.interrupted()) {
 				emergencyStop();
+				break;
 			}
 
 			makeDecision();
 
-			if(Thread.interrupted()) {
+			if (Thread.interrupted()) {
 				emergencyStop();
+				break;
 			}
 
 			sendMessage();
 
-			//send instructions to drive
+			// send instructions to drive
 			sendInstruction();
 
-			if(Thread.interrupted()) {
+			if (Thread.interrupted()) {
 				emergencyStop();
+				break;
 			}
+			
+			try {
+				long nanosToSleep = System.nanoTime() - startTime - ALGORITHM_LOOP_DURATION;
+				if(nanosToSleep > 0) {
+					// Note: integer division desired
+					Thread.sleep(nanosToSleep/1000000);
+				} else {
+					// TODO: Log this as the LOOP_DURATION is too low, the algo can't keep up
+				}
+			} catch (InterruptedException e) {
+				emergencyStop();
+				break;
+			}
+			startTime = System.nanoTime();
 		}
+		
+		// TODO: Log algorithm complete
 	}
 }
