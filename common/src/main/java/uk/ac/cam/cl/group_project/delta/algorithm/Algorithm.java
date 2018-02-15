@@ -29,15 +29,21 @@ public class Algorithm {
 	}
 
 	private void sendMessage() {
-		BasicAlgorithm.sendMessage(algorithmData);
+		// create and send message to other cars
+		VehicleData sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration,
+				algorithmData.turnRate, algorithmData.chosenSpeed, algorithmData.chosenAcceleration,
+				algorithmData.chosenTurnRate);
+		algorithmData.commsInterface.sendMessage(sendMessageData);
 	}
 
 	private void emergencyStop() {
-		BasicAlgorithm.emergencyStop(algorithmData);
+		algorithmData.driveInterface.stop();
 	}
 
 	private void sendInstruction() {
-		BasicAlgorithm.sendInstruction(algorithmData);
+		// send instructions to drive
+		algorithmData.driveInterface.setAcceleration(algorithmData.chosenAcceleration);
+		algorithmData.driveInterface.setTurnRate(algorithmData.chosenAcceleration);
 	}
 
 	public void run() {
