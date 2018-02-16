@@ -1,11 +1,15 @@
 
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.NetworkInterface;
+import uk.ac.cam.cl.group_project.delta.SensorInterface;
+
 /**
  *Uses the formula found in the research paper
  */
 
-public class BasicAlgorithmPID2 {
+public class BasicAlgorithmPID2 extends Algorithm {
 
 	//ID parameters
 	//increases response time
@@ -27,16 +31,21 @@ public class BasicAlgorithmPID2 {
 	//distance bellow which emergency stop happens
 	public final static double EMER_DIST = 0.5;
 
-	public static void emergencyStop(AlgorithmData algorithmData) {
-		algorithmData.driveInterface.stop();
-		algorithmData.commsInterface.notifyEmergency();
+	public BasicAlgorithmPID2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+		super(driveInterface, sensorInterface, networkInterface);
 	}
 
-	public static void makeDecision(AlgorithmData algorithmData) {
+	@Override
+	protected void initialise() {
+
+	}
+
+	@Override
+	public void makeDecision() {
 
 		//decide on chosen acceleration, speed and turnRate
 		if(algorithmData.sensorFrontProximity < EMER_DIST) {
-			emergencyStop(algorithmData);
+			emergencyStop();
 		}
 		//This multiplies the error by a constant term PID_P
 		double pTerm = PID_P*(algorithmData.sensorFrontProximity +

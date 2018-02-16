@@ -1,10 +1,14 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.NetworkInterface;
+import uk.ac.cam.cl.group_project.delta.SensorInterface;
+
 /**
  * As basic algorithm 3.
- * Additionally, uses a PID to caculate the chosen acceleration
+ * Additionally, uses a PID to calculate the chosen acceleration
  */
-public class BasicAlgorithmPID {
+public class BasicAlgorithmPID extends Algorithm{
 
 	//ID parameters
 	public final static double PID_P = 0.5;
@@ -20,17 +24,23 @@ public class BasicAlgorithmPID {
 	//constant headway time in s
 	public final static double HEAD_TIME = 2;
 
+	public BasicAlgorithmPID(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+		super(driveInterface, sensorInterface, networkInterface);
+	}
+
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time preriod,
 	//and the sensor proximity data
 	private static double weightFrontProximity(double predictedFrontProximity, double sensorFrontProximity) {
 		return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
 	}
 
-	public static void initialise(AlgorithmData algorithmData) {
+	public void initialise() {
+		algorithmData.miniPID = new MiniPID(PID_P, PID_I, PID_D);
+		algorithmData.miniPID.setOutputLimits(MIN_ACC, MAX_ACC);
 
 	}
 
-	public static void makeDecision(AlgorithmData algorithmData) {
+	public void makeDecision() {
 		//decide on chosen acceleration, speed and turnRate
 
 		//calculate time since message received
