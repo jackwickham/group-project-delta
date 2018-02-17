@@ -5,6 +5,11 @@ import java.util.List;
 public interface NetworkInterface {
 
 	/**
+	 * The maximum size in bytes of packet which can be sent across the network.
+	 */
+	public static final int MAXIMUM_PACKET_SIZE = 200;
+	
+	/**
 	 * Broadcasts raw data to all of the other vehicles on the network.
 	 * @param message in bytes to be sent
 	 */
