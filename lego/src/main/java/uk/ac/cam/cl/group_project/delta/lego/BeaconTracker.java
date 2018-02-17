@@ -53,7 +53,13 @@ public class BeaconTracker {
 
 	/**
 	 * Get a list of `Beacon` instances for each of the beacons that can currently be detected by the IR sensor on the
-	 * front of the vehicle
+	 * front of the vehicle.
+	 *
+	 * The distances passed to Beacon correspond to the approximate range which gives those values.
+	 *
+	 * The angle passed to Beacon is fairly precise, but it can be inaccurate when there are lots of reflections. This
+	 * only tends to happen at large angles, which shouldn't occur during normal use.
+	 *
 	 * @return A list containing a `Beacon` instance for each visible beacon
 	 */
 	public List<Beacon> getBeaconData() {
@@ -76,7 +82,7 @@ public class BeaconTracker {
 
 	/**
 	 * Convert the arbitrary distance given by the IR sensor into some sort of meaningful distance. Note that this is
-	 * heavily (?) dependent on the current lighting.
+	 * slightly dependent on the current lighting, but it shouldn't have a significant impact.
 	 *
 	 * The value returned is the range of values that, under typical conditions, would give the sensor reading provided,
 	 * so ranges share common endpoints but don't overlap.
