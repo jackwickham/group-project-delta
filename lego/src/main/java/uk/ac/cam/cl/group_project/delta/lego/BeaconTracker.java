@@ -32,7 +32,7 @@ public class BeaconTracker {
 	 *
 	 * From my measurements, 45°=15 arbitrary turn units, which gives this conversion for radians
 	 */
-	private final double radiansPerAngleUnit = 0.052359878;
+	private final double RADIANS_PER_ANGLE_UNIT = 0.052359878;
 
 	/**
 	 * Create a new instance for the provided robot
@@ -72,7 +72,7 @@ public class BeaconTracker {
 			if (samples[i+1] != Float.POSITIVE_INFINITY) {
 				int beaconId = i / 2 + 1;
 				DblRange distanceMetres = convertDistanceToMetres(samples[i+1]);
-				double angleRadians = samples[i] * radiansPerAngleUnit;
+				double angleRadians = samples[i] * RADIANS_PER_ANGLE_UNIT;
 				beacons.add(new Beacon(beaconId, distanceMetres.lb, distanceMetres.ub, angleRadians));
 			}
 		}
@@ -98,8 +98,13 @@ public class BeaconTracker {
 	 * Convert an IR sensor distance value to an approximate upper bound on the distance that the beacon is from the
 	 * sensor.
 	 *
-	 * From the data collected, available in the drive, the best fit curve for the upper bound of the range is
+	 * From the data collected, available on Google Drive, the best fit curve for the upper bound of the range is
 	 * ub = 0.0683 + 0.0267x + 0.000259x²
+	 *
+	 * This deviates from the true value significantly at larger distances (it's a close fit up to at least 50cm, and
+	 * reasonable up to at least 1.25m), but it is at close ranges that the accuracy is most important.
+	 *
+	 * @link https://docs.google.com/spreadsheets/d/1hF7plzTBc2R7OEZt-vqXWmzJdrEJ7yt7ZvV19WYMIvs/edit#gid=0
 	 *
 	 * @param sensorValue The value given by the IR sensor, which should be an integer between 0 and 127
 	 * @return The approximate distance in metres
