@@ -28,6 +28,13 @@ public class BeaconTracker {
 	private SensorMode seekMode;
 
 	/**
+	 * The number of radians represented by a value of 1 in the angle field of the beacon
+	 *
+	 * From my measurements, 45°=15 arbitrary turn units, which gives this conversion for radians
+	 */
+	private final double radiansPerAngleUnit = 0.052359878;
+
+	/**
 	 * Create a new instance for the provided robot
 	 * @param ev3 The EV3 device to use, with an IR sensor connected to port 4
 	 */
@@ -59,7 +66,7 @@ public class BeaconTracker {
 			if (samples[i+1] != Float.POSITIVE_INFINITY) {
 				int beaconId = i / 2 + 1;
 				DblRange distanceMetres = convertDistanceToMetres(samples[i+1]);
-				double angleRadians = samples[i] * 0.0174533; // 1 deg = 0.0174533 rad
+				double angleRadians = samples[i] * radiansPerAngleUnit;
 				beacons.add(new Beacon(beaconId, distanceMetres.lb, distanceMetres.ub, angleRadians));
 			}
 		}
@@ -86,7 +93,7 @@ public class BeaconTracker {
 	 * sensor.
 	 *
 	 * From the data collected, available in the drive, the best fit curve for the upper bound of the range is
-	 * ub = 10.1 + 1.57x + 0.0944x²
+	 * ub = 0.0683 + 0.0267x + 0.000259x²
 	 *
 	 * @param sensorValue The value given by the IR sensor, which should be an integer between 0 and 127
 	 * @return The approximate distance in metres
@@ -97,7 +104,7 @@ public class BeaconTracker {
 			// beacon can be to the sensor is 0m, so that is the lower bound here.
 			return 0.0;
 		}
-		return 10.1 + 1.57 * sensorValue + 0.0944 * sensorValue * sensorValue;
+		return 0.0683 + 0.0267 * sensorValue + 0.000259 * sensorValue * sensorValue;
 	}
 
 	/**

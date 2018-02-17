@@ -37,11 +37,12 @@ public class BeaconTrackerTest {
 		float[] sample = {0, 1};
 		mockSensorMode.setMockSample(sample);
 
+		// Should give a range of 0-12cm (with some tolerance)
 		List<Beacon> result = classUnderTest.getBeaconData();
 		assertEquals("Wrong number of beacon results returned", 1, result.size());
 		assertEquals("Wrong beacon identifier for the beacon on channel 1", 1, result.get(0).getBeaconIdentifier());
 		assertEquals("Lower bound of sensor value 1 was not 0", 0.0, result.get(0).getDistanceLowerBound(), 0.0);
-		assertEquals("Upper bound of sensor value 1 was out of range", 12.0, result.get(0).getDistanceUpperBound(), 2.0);
+		assertEquals("Upper bound of sensor value 1 should have been 12±2.5 cm", 0.12, result.get(0).getDistanceUpperBound(), 0.025);
 	}
 
 	@Test
@@ -71,7 +72,7 @@ public class BeaconTrackerTest {
 		assertEquals("Lower bound of first sample was incorrect", 0.0, result.get(0).getDistanceLowerBound(), 0.0);
 
 		assertEquals("Wrong beacon identifier for the beacon on channel 2", 2, result.get(1).getBeaconIdentifier());
-		assertEquals("Lower bound of second sample was incorrect", 12.0, result.get(1).getDistanceLowerBound(), 2.0);
+		assertEquals("Lower bound of second sample was incorrect", 0.120, result.get(1).getDistanceLowerBound(), 0.025);
 	}
 
 	@Test
@@ -93,7 +94,7 @@ public class BeaconTrackerTest {
 		assertEquals("Lower bound of first sample was incorrect", 0.0, result.get(0).getDistanceLowerBound(), 0.0);
 
 		assertEquals("Wrong beacon identifier for the beacon on channel 3", 3, result.get(1).getBeaconIdentifier());
-		assertEquals("Lower bound of second sample was incorrect", 12.0, result.get(1).getDistanceLowerBound(), 2.0);
+		assertEquals("Lower bound of second sample was incorrect", 0.120, result.get(1).getDistanceLowerBound(), 0.025);
 	}
 
 	@Test
@@ -107,12 +108,12 @@ public class BeaconTrackerTest {
 
 	@Test
 	public void testAngle15deg() {
-		// 15 deg = pi/12 rad
+		// 15 arbitrary units = π/4 rad
 		float[] sample = {15.0f, 1};
 		mockSensorMode.setMockSample(sample);
 
 		List<Beacon> result = classUnderTest.getBeaconData();
-		assertEquals("Wrong angle returned", Math.PI / 12, result.get(0).getAngle(), 0.02);
+		assertEquals("Wrong angle returned", Math.PI / 4, result.get(0).getAngle(), 0.02);
 	}
 
 	@Test
@@ -121,7 +122,7 @@ public class BeaconTrackerTest {
 		mockSensorMode.setMockSample(sample);
 
 		List<Beacon> result = classUnderTest.getBeaconData();
-		assertEquals("Wrong angle returned", -Math.PI / 12, result.get(0).getAngle(), 0.02);
+		assertEquals("Wrong angle returned", -Math.PI / 4, result.get(0).getAngle(), 0.03);
 	}
 
 
