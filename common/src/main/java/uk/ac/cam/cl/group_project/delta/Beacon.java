@@ -24,6 +24,9 @@ public class Beacon {
 
 	/**
 	 * The angle in radians to the beacon
+	 *
+	 * The angle is measured from straight ahead relative to this vehicle, with a positive value representing a
+	 * deviation to the right and a negative value representing a deviation to the left.
 	 */
 	private final double angle;
 
@@ -69,7 +72,9 @@ public class Beacon {
 	}
 
 	/**
-	 * Get the angle between the front of the vehicle and the beacon
+	 * Get the angle between the front of the vehicle and the beacon. If the value is positive, the vehicle would need
+	 * to turn right to normalise it, while if the value is negative it would need to turn left to normalise it.
+	 *
 	 * @return The angle between the front of the vehicle and the beacon, in radians
 	 */
 	public double getAngle () {
