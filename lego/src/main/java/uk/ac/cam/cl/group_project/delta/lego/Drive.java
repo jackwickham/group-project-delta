@@ -12,6 +12,8 @@ public class Drive implements DriveInterface {
 	private EV3LargeRegulatedMotor R;
 	private EV3MediumRegulatedMotor steer;
 	private static final int DEGREES_PER_METRE = 2640;
+	private static final int STRAIGHT_AHEAD = -35;
+	private static final double GEAR_RATIO = 20.0/12.0;
 	private final int MAX_SPEED;
 
 	public Drive(EV3 ev3) {
@@ -22,27 +24,7 @@ public class Drive implements DriveInterface {
 		R = new EV3LargeRegulatedMotor(portR);
 		steer = new EV3MediumRegulatedMotor(portSteer);
 		MAX_SPEED = (int) (Math.min(L.getMaxSpeed(), R.getMaxSpeed()));
-	}
-
-	public void testDrive() {
-		L.setSpeed(0.1f * DEGREES_PER_METRE);
-		R.setSpeed(0.1f * DEGREES_PER_METRE);
-		L.backward();
-		R.backward();
-		//setAcceleration(0.1);
-		setTurnRate(Math.PI / 4);
-		setTurnRate(- Math.PI / 4);
-		setTurnRate(Math.PI / 4);
-		setTurnRate(- Math.PI / 4);
-	}
-
-	public int testDrive2() {
-		L.setSpeed(0);
-		R.setSpeed(0);
-		L.backward();
-		R.backward();
-		setAcceleration(0.1);
-		return L.getSpeed();
+		rotateTo(0);
 	}
 
 	/**
@@ -55,8 +37,8 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void setAcceleration(double acceleration) {
-		int accelerationDegrees = (int) Math.round(acceleration * DEGREES_PER_METRE);
 		// metres/second/second -> degrees/second/second
+		int accelerationDegrees = (int) Math.round(acceleration * DEGREES_PER_METRE);
 		L.setAcceleration(accelerationDegrees);
 		R.setAcceleration(accelerationDegrees);
 		int targetSpeed = acceleration > 0 ? MAX_SPEED : 0;
@@ -77,12 +59,13 @@ public class Drive implements DriveInterface {
 	@Override
 	public void setTurnRate(double turnRate) {
 		// This will become inaccurate when the vehicle changes speed.
-		double speedDegrees = Math.max(Math.min(L.getSpeed(), MAX_SPEED), MAX_SPEED);
+		double speedDegrees = Math.max(Math.min(-L.getRotationSpeed(), MAX_SPEED), -MAX_SPEED);
 		double speedMetres = (speedDegrees) / ((double) DEGREES_PER_METRE);
 		double sine = turnRate * 0.15 / speedMetres;
 		sine = Math.max(Math.min(sine, 1), -1);
 		double angle = Math.toDegrees(Math.asin(sine));
-		steer.rotateTo(Math.max(Math.min((int) Math.round(angle), 45), -45));
+		double clamped = Math.max(Math.min((int) Math.round(angle), 45), -45);
+		rotateTo(clamped);
 	}
 
 	/**
@@ -90,10 +73,12 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void stop() {
-		L.stop();
-		R.stop();
+		L.stop(true);
+		R.stop(true);
+	}
+
+	private void rotateTo(double angle) {
+		steer.rotateTo((int) ((STRAIGHT_AHEAD - angle) * GEAR_RATIO));
 	}
 
 }
-//TODO: negative acceleration
-//TODO: synchronise L and R
