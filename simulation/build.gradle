@@ -1,7 +1,16 @@
 apply plugin: 'application'
 
-mainClassName = 'uk.ac.cam.cl.group_project.delta.simulation.MainClass'
+mainClassName = 'uk.ac.cam.cl.group_project.delta.simulation.gui.Gui'
 
 dependencies {
 	compile project(':common')
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["src/main/resource"]
+			includes = ["**/*.fxml"]
+		}
+	}
 }
