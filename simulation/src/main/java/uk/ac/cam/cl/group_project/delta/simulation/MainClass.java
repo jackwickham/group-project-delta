@@ -176,6 +176,7 @@ class MainClass {
 		public void run() {
 			try {
 				while (true) {
+					readSensors();
 					sendMessage();
 					Thread.sleep(100);
 				}

@@ -21,7 +21,7 @@ public class Algorithm {
 		sendMessage();
 	}
 
-	private void readSensors() {
+	protected void readSensors() {
 		BasicAlgorithm.readSensors(algorithmData);
 	}
 
