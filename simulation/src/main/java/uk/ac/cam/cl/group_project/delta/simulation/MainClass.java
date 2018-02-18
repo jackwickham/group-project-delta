@@ -46,11 +46,11 @@ class MainClass {
 			PlatoonLookup lookup = new PlatoonLookup();
 			CommsInterface comms = new Communications(
 				new ControlLayer(
-					car.getNetworkInterface(),    // Network interface
-					lookup,                        // Message lookup
-					i,                            // This car's ID
-					1,                            // Platoon ID
-					platoonOrder                // Platoon order [1-N]
+					car.getNetworkInterface(),    	// Network interface
+					lookup,                       	// Message lookup
+					i,                            	// This car's ID
+					1,                            	// Platoon ID
+					platoonOrder                	// Platoon order [1-N]
 				),
 				lookup
 			);
