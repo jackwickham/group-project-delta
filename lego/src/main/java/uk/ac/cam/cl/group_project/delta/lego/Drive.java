@@ -25,7 +25,7 @@ public class Drive implements DriveInterface {
 	private static final int STRAIGHT_AHEAD = -35;
 
 	/**
-	 * The ratio of angle rotation, from wheels to motor.
+	 * The ratio from wheel angle to steering motor angle.
 	 * The motor is connected to a small cog with 12 teeth,
 	 * which is connected to a large cog with 20 teeth,
 	 * which is in turn connected to the wheels.
@@ -35,7 +35,7 @@ public class Drive implements DriveInterface {
 	/**
 	 * The maximum possible speed of the vehicle.
 	 */
-	private final int MAX_SPEED;
+	private final int maxSpeed;
 
 	/**
 	 * Port bindings for the vehicle motors.
@@ -51,7 +51,7 @@ public class Drive implements DriveInterface {
 		L = new EV3LargeRegulatedMotor(portL);
 		R = new EV3LargeRegulatedMotor(portR);
 		steer = new EV3MediumRegulatedMotor(portSteer);
-		MAX_SPEED = (int) (Math.min(L.getMaxSpeed(), R.getMaxSpeed()));
+		maxSpeed = (int) (Math.min(L.getMaxSpeed(), R.getMaxSpeed()));
 		rotateTo(0);
 	}
 
@@ -68,7 +68,7 @@ public class Drive implements DriveInterface {
 		int accelerationDegrees = (int) Math.round(acceleration * DEGREES_PER_METRE);
 		L.setAcceleration(accelerationDegrees);
 		R.setAcceleration(accelerationDegrees);
-		int targetSpeed = acceleration > 0 ? MAX_SPEED : 0;
+		int targetSpeed = acceleration > 0 ? maxSpeed : 0;
 		L.setSpeed(targetSpeed);
 		R.setSpeed(targetSpeed);
 		L.backward();
