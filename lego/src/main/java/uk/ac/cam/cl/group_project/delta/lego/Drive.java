@@ -78,6 +78,12 @@ public class Drive implements DriveInterface {
 		R.stop(true);
 	}
 
+	/**
+	 * Rotate the front wheels to a given angle, where a negative value
+	 * indicates a left turn and a positive value indicates a right turn.
+	 *
+	 * @param angle in rad
+	 */
 	private void rotateTo(double angle) {
 		steer.rotateTo((int) ((STRAIGHT_AHEAD - angle) * GEAR_RATIO));
 	}
