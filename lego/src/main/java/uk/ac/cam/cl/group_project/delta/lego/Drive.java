@@ -11,9 +11,30 @@ public class Drive implements DriveInterface {
 	private EV3LargeRegulatedMotor L;
 	private EV3LargeRegulatedMotor R;
 	private EV3MediumRegulatedMotor steer;
+
+	/**
+	 * The number of degrees turned by the wheels over a metre.
+	 * Measured by experimentation and calculation.
+	 */
 	private static final int DEGREES_PER_METRE = 2640;
+
+	/**
+	 * The number of degrees to rotate the steering motor to move
+	 * the wheels from as far left as possible to directly forward.
+	 */
 	private static final int STRAIGHT_AHEAD = -35;
+
+	/**
+	 * The ratio of angle rotation, from wheels to motor.
+	 * The motor is connected to a small cog with 12 teeth,
+	 * which is connected to a large cog with 20 teeth,
+	 * which is in turn connected to the wheels.
+	 */
 	private static final double GEAR_RATIO = 20.0/12.0;
+
+	/**
+	 * The maximum possible speed of the vehicle.
+	 */
 	private final int MAX_SPEED;
 
 	public Drive(EV3 ev3) {
@@ -54,11 +75,12 @@ public class Drive implements DriveInterface {
 	 * indicates a right turn. The vehicle will, as quickly as possible,
 	 * try to attain as close to the given turn rate as it is able.
 	 *
+	 * If the vehicle changes speed, its turn rate will become inaccurate.
+	 *
 	 * @param turnRate in rad/s
 	 */
 	@Override
 	public void setTurnRate(double turnRate) {
-		// This will become inaccurate when the vehicle changes speed.
 		double speedMetres = -L.getRotationSpeed() / ((double) DEGREES_PER_METRE);
 		double sine = turnRate * 0.15 / speedMetres;
 		sine = Math.max(Math.min(sine, 1), -1);
