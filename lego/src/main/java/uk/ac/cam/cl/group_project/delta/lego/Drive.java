@@ -83,6 +83,8 @@ public class Drive implements DriveInterface {
 	 *
 	 * If the vehicle changes speed, its turn rate will become inaccurate.
 	 *
+	 * Using the formula: sin(wheelAngle) = turnRate * vehicleLength / speed
+	 *
 	 * @param turnRate in rad/s
 	 */
 	@Override
