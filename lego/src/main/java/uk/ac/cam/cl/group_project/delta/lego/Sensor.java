@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
+import lejos.hardware.ev3.EV3;
 import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
@@ -8,9 +9,11 @@ import java.util.List;
 public class Sensor implements SensorInterface {
 
 	private Drive drive;
+	private Ultrasound ultrasound;
 
-	public Sensor(Drive d) {
-		drive = d;
+	public Sensor(EV3 ev3, Drive drive) {
+		this.drive = drive;
+		this.ultrasound = new Ultrasound(ev3);
 	}
 
 	/**
@@ -23,7 +26,7 @@ public class Sensor implements SensorInterface {
 	 */
 	@Override
 	public Double getFrontProximity() {
-		return null;
+		return ultrasound.getProximity();
 	}
 
 	/**
