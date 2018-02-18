@@ -15,6 +15,7 @@ public class Drive implements DriveInterface {
 	private static final int STRAIGHT_AHEAD = -35;
 	private static final double GEAR_RATIO = 20.0/12.0;
 	private final int MAX_SPEED;
+	private double acceleration = 0;
 
 	public Drive(EV3 ev3) {
 		Port portL = ev3.getPort("B");
@@ -25,6 +26,10 @@ public class Drive implements DriveInterface {
 		steer = new EV3MediumRegulatedMotor(portSteer);
 		MAX_SPEED = (int) (Math.min(L.getMaxSpeed(), R.getMaxSpeed()));
 		rotateTo(0);
+		L.setSpeed(180);  //DELETE THIS
+		R.setSpeed(180);
+		L.backward();
+		R.backward();
 	}
 
 	/**
@@ -37,6 +42,7 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void setAcceleration(double acceleration) {
+		this.acceleration = acceleration;
 		// metres/second/second -> degrees/second/second
 		int accelerationDegrees = (int) Math.round(acceleration * DEGREES_PER_METRE);
 		L.setAcceleration(accelerationDegrees);
@@ -59,12 +65,10 @@ public class Drive implements DriveInterface {
 	@Override
 	public void setTurnRate(double turnRate) {
 		// This will become inaccurate when the vehicle changes speed.
-		double speedDegrees = Math.max(Math.min(-L.getRotationSpeed(), MAX_SPEED), -MAX_SPEED);
-		double speedMetres = (speedDegrees) / ((double) DEGREES_PER_METRE);
-		double sine = turnRate * 0.15 / speedMetres;
+		double sine = turnRate * 0.15 / getSpeed();
 		sine = Math.max(Math.min(sine, 1), -1);
 		double angle = Math.toDegrees(Math.asin(sine));
-		double clamped = Math.max(Math.min((int) Math.round(angle), 45), -45);
+		double clamped = Math.max(Math.min(angle, 45), -45);
 		rotateTo(clamped);
 	}
 
@@ -73,12 +77,27 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void stop() {
+		acceleration = 0;
+		L.setAcceleration(6000);
+		R.setAcceleration(6000);
 		L.stop(true);
 		R.stop(true);
 	}
 
 	private void rotateTo(double angle) {
 		steer.rotateTo((int) ((STRAIGHT_AHEAD - angle) * GEAR_RATIO));
+	}
+
+	public double getAcceleration() {
+		return this.acceleration;
+	}
+
+	public double getSpeed() {
+		return -L.getRotationSpeed()/(double)DEGREES_PER_METRE;
+	}
+
+	public double getTurnRate() {
+		return Math.sin(Math.toRadians(STRAIGHT_AHEAD - (steer.getPosition() / GEAR_RATIO))) * getSpeed() / 0.15;
 	}
 
 }
