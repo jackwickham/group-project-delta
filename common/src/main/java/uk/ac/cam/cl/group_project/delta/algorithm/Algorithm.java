@@ -29,7 +29,7 @@ public class Algorithm {
 		BasicAlgorithm.makeDecision(algorithmData);
 	}
 
-	private void sendMessage() {
+	protected void sendMessage() {
 		// create and send message to other cars
 		VehicleData sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration,
 				algorithmData.turnRate, algorithmData.chosenSpeed, algorithmData.chosenAcceleration,

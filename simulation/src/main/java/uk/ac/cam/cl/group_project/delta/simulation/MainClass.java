@@ -1,6 +1,9 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
+import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
+import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.PlatoonLookup;
@@ -38,29 +41,41 @@ class MainClass {
 		for (int i = 0; i < NUMBER_OF_VEHICLES; ++i) {
 			SimulatedCar car = new SimulatedCar(world, network);
 			world.getBodies().add(car);
+
+			// Initialise Algorithm subsystems
 			PlatoonLookup lookup = new PlatoonLookup();
-			car.setController(
-				new Algorithm(
-					new Communications(
-						new ControlLayer(
-							car.getNetworkInterface(),	// Network interface
-							lookup,						// Message lookup
-							i,							// This car's ID
-							1,							// Platoon ID
-							platoonOrder				// Platoon order [1-N]
-						),
-						lookup
-					),
+			CommsInterface comms = new Communications(
+				new ControlLayer(
+					car.getNetworkInterface(),    // Network interface
+					lookup,                        // Message lookup
+					i,                            // This car's ID
+					1,                            // Platoon ID
+					platoonOrder                // Platoon order [1-N]
+				),
+				lookup
+			);
+
+			if (i == 0) { // Leader behaviour
+				car.setController(new LeaderAlgorithm(
+					comms,
 					car.getDriveInterface(),
 					car.getSensorInterface()
-				)
-			);
+				));
+				car.setEnginePower(0.05);
+			}
+			else { // Follower behaviour
+				car.setController(
+					new Algorithm(
+						comms,
+						car.getDriveInterface(),
+						car.getSensorInterface()
+					)
+				);
+			}
+
 			car.setPosition(new Vector2D(
 				i * 10, 0
 			));
-
-			car.setEnginePower(0.05);
-			car.setWheelAngle(0.1);
 		}
 
 		long start = System.nanoTime();
@@ -135,4 +150,40 @@ class MainClass {
 		}
 
 	}
+
+	/**
+	 * A nasty hack which attempts to fool the leader vehicle to continually
+	 * broadcast its location and not execute `BasicAlgorithm` logic.
+	 */
+	private static class LeaderAlgorithm extends Algorithm {
+
+		/**
+		 * Initialise algorithm with given interfaces to the vehicle it
+		 * controls.
+		 * @param commsInterface     Network I/O.
+		 * @param driveInterface     Motor and other actionable output.
+		 * @param sensorInterface    Sensory input.
+		 */
+		public LeaderAlgorithm(CommsInterface commsInterface, DriveInterface driveInterface, SensorInterface sensorInterface) {
+			super(commsInterface, driveInterface, sensorInterface);
+		}
+
+		/**
+		 * Broadcast our position every 0.1 secs, until this thread is
+		 * interrupted.
+		 */
+		@Override
+		public void run() {
+			try {
+				while (true) {
+					sendMessage();
+					Thread.sleep(100);
+				}
+			}
+			catch (InterruptedException e) {
+				// Expected, when we terminate the simulation
+			}
+		}
+	}
+
 }
