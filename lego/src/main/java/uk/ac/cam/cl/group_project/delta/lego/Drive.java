@@ -37,10 +37,17 @@ public class Drive implements DriveInterface {
 	 */
 	private final int MAX_SPEED;
 
+	/**
+	 * Port bindings for the vehicle motors.
+	 */
+	private static final String LEFT_MOTOR_PORT = "B";
+	private static final String RIGHT_MOTOR_PORT = "C";
+	private static final String STEERING_MOTOR_PORT = "D";
+
 	public Drive(EV3 ev3) {
-		Port portL = ev3.getPort("B");
-		Port portR = ev3.getPort("C");
-		Port portSteer = ev3.getPort("D");
+		Port portL = ev3.getPort(LEFT_MOTOR_PORT);
+		Port portR = ev3.getPort(RIGHT_MOTOR_PORT);
+		Port portSteer = ev3.getPort(STEERING_MOTOR_PORT);
 		L = new EV3LargeRegulatedMotor(portL);
 		R = new EV3LargeRegulatedMotor(portR);
 		steer = new EV3MediumRegulatedMotor(portSteer);
@@ -58,7 +65,6 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void setAcceleration(double acceleration) {
-		// metres/second/second -> degrees/second/second
 		int accelerationDegrees = (int) Math.round(acceleration * DEGREES_PER_METRE);
 		L.setAcceleration(accelerationDegrees);
 		R.setAcceleration(accelerationDegrees);
