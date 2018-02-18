@@ -113,6 +113,7 @@ public class Drive implements DriveInterface {
 		R.setAcceleration(6000);
 		L.stop(true);
 		R.stop(true);
+		acceleration = 6000;
 	}
 
 	/**
