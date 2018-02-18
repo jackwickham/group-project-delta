@@ -13,7 +13,7 @@ class MainClass {
 	/**
 	 * Number of vehicles to create.
 	 */
-	private static final int NUMBER_OF_VEHICLES = 1;
+	private static final int NUMBER_OF_VEHICLES = 10;
 
 	/**
 	 * Target time interval between CSV logs of the world state, in nanoseconds.
@@ -92,7 +92,7 @@ class MainClass {
 					// behind - we're not worried about missing them
 					long since = (time - start) % POSITION_LOG_INTERVAL;
 					lastLog = time - since;
-					
+
 					// Log the position of all objects
 					for (PhysicsBody body : world.getBodies()) {
 						Vector2D pos = body.getPosition();
