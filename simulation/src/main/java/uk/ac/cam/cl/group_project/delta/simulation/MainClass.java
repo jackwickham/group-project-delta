@@ -4,6 +4,7 @@ import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.PlatoonLookup;
@@ -158,6 +159,12 @@ class MainClass {
 	private static class LeaderAlgorithm extends Algorithm {
 
 		/**
+		 * Private references to communications and sensors interfaces.
+		 */
+		private CommsInterface comms;
+		private SensorInterface sensors;
+
+		/**
 		 * Initialise algorithm with given interfaces to the vehicle it
 		 * controls.
 		 * @param commsInterface     Network I/O.
@@ -166,6 +173,8 @@ class MainClass {
 		 */
 		public LeaderAlgorithm(CommsInterface commsInterface, DriveInterface driveInterface, SensorInterface sensorInterface) {
 			super(commsInterface, driveInterface, sensorInterface);
+			comms = commsInterface;
+			sensors = sensorInterface;
 		}
 
 		/**
@@ -176,8 +185,15 @@ class MainClass {
 		public void run() {
 			try {
 				while (true) {
-					readSensors();
-					sendMessage();
+					VehicleData sendMessageData = new VehicleData(
+						sensors.getSpeed(),
+						sensors.getAcceleration(),
+						sensors.getTurnRate(),
+						sensors.getSpeed(),
+						sensors.getAcceleration(),
+						sensors.getTurnRate()
+					);
+					comms.sendMessage(sendMessageData);
 					Thread.sleep(100);
 				}
 			}
@@ -185,6 +201,7 @@ class MainClass {
 				// Expected, when we terminate the simulation
 			}
 		}
+
 	}
 
 }

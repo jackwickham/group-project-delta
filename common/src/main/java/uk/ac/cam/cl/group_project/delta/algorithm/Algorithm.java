@@ -21,7 +21,7 @@ public class Algorithm {
 		sendMessage();
 	}
 
-	protected void readSensors() {
+	private void readSensors() {
 		BasicAlgorithm.readSensors(algorithmData);
 	}
 
@@ -29,7 +29,7 @@ public class Algorithm {
 		BasicAlgorithm.makeDecision(algorithmData);
 	}
 
-	protected void sendMessage() {
+	private void sendMessage() {
 		// create and send message to other cars
 		VehicleData sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration,
 				algorithmData.turnRate, algorithmData.chosenSpeed, algorithmData.chosenAcceleration,
