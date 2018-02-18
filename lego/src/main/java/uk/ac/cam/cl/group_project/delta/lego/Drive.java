@@ -59,12 +59,11 @@ public class Drive implements DriveInterface {
 	@Override
 	public void setTurnRate(double turnRate) {
 		// This will become inaccurate when the vehicle changes speed.
-		double speedDegrees = Math.max(Math.min(-L.getRotationSpeed(), MAX_SPEED), -MAX_SPEED);
-		double speedMetres = (speedDegrees) / ((double) DEGREES_PER_METRE);
+		double speedMetres = -L.getRotationSpeed() / ((double) DEGREES_PER_METRE);
 		double sine = turnRate * 0.15 / speedMetres;
 		sine = Math.max(Math.min(sine, 1), -1);
 		double angle = Math.toDegrees(Math.asin(sine));
-		double clamped = Math.max(Math.min((int) Math.round(angle), 45), -45);
+		double clamped = Math.max(Math.min(angle, -STRAIGHT_AHEAD), STRAIGHT_AHEAD);
 		rotateTo(clamped);
 	}
 
@@ -73,6 +72,8 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void stop() {
+		L.setAcceleration(6000);
+		R.setAcceleration(6000);
 		L.stop(true);
 		R.stop(true);
 	}
