@@ -13,7 +13,8 @@ public class Drive implements DriveInterface {
 	private EV3MediumRegulatedMotor steer;
 
 	/**
-	 * The current acceleration of the vehicle, set to 6000 by default.
+	 * The current acceleration of the vehicle in m/s^2.
+	 * Set to 6000 by default, i.e. instant speed changes.
 	 */
 	private double acceleration = 6000;
 
