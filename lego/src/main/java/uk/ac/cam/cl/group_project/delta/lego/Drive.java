@@ -59,10 +59,6 @@ public class Drive implements DriveInterface {
 		steer = new EV3MediumRegulatedMotor(portSteer);
 		maxSpeed = (int) (Math.min(L.getMaxSpeed(), R.getMaxSpeed()));
 		rotateTo(0);
-		L.setSpeed(180);  //DELETE THIS
-		R.setSpeed(180);
-		L.backward();
-		R.backward();
 	}
 
 	/**
