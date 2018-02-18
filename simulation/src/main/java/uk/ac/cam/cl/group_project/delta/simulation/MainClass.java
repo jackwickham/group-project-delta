@@ -90,7 +90,8 @@ class MainClass {
 
 					// Set last log to most recent log-point, so we don't get
 					// behind - we're not worried about missing them
-					lastLog = start + (time - start) / POSITION_LOG_INTERVAL;
+					long since = (start - time) % POSITION_LOG_INTERVAL;
+					lastLog = time - (POSITION_LOG_INTERVAL - since);
 
 					// Log the position of all objects
 					for (PhysicsBody body : world.getBodies()) {
