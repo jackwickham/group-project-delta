@@ -11,7 +11,11 @@ public class Drive implements DriveInterface {
 	private EV3LargeRegulatedMotor L;
 	private EV3LargeRegulatedMotor R;
 	private EV3MediumRegulatedMotor steer;
-	private double acceleration = 0;
+
+	/**
+	 * The current acceleration of the vehicle, set to 6000 by default.
+	 */
+	private double acceleration = 6000;
 
 	/**
 	 * The number of degrees turned by the wheels over a metre.
@@ -104,10 +108,10 @@ public class Drive implements DriveInterface {
 
 	/**
 	 * Brings the vehicle to a stop as quickly as possible. Suitable for emergency use.
+	 * Sets the acceleration to the default (6000) for an instantaneous stop.
 	 */
 	@Override
 	public void stop() {
-		acceleration = 0;
 		L.setAcceleration(6000);
 		R.setAcceleration(6000);
 		L.stop(true);
