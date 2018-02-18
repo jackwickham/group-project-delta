@@ -28,7 +28,7 @@ class MainClass {
 
 		// Create cars
 		for (int i = 0; i < NUMBER_OF_VEHICLES; ++i) {
-			SimulatedCar car = new SimulatedCar(2.5, world, network);
+			SimulatedCar car = new SimulatedCar(world, network);
 			world.getBodies().add(car);
 			PlatoonLookup lookup = new PlatoonLookup();
 			car.setController(
