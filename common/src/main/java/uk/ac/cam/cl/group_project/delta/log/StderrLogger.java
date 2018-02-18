@@ -17,7 +17,7 @@ public class StderrLogger implements LoggerInterface {
 	 * @param message The message
 	 */
 	public void log(Log.Severity severity, String message) {
-		System.err.printf("%s: %s", severity.name, message);
+		System.err.printf("%s: %s\n", severity.name, message);
 	}
 
 	/**
