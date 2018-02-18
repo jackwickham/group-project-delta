@@ -6,7 +6,9 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.PlatoonLookup;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 class MainClass {
 
@@ -26,6 +28,12 @@ class MainClass {
 		World world = new World();
 		SimulatedNetwork network = new SimulatedNetwork();
 
+		// Create platoon for cars -- their IDs will be in the order of creation
+		List<Integer> platoonOrder = new ArrayList<>(NUMBER_OF_VEHICLES);
+		for (int i = 0; i < NUMBER_OF_VEHICLES; ++i) {
+			platoonOrder.add(i);
+		}
+
 		// Create cars
 		for (int i = 0; i < NUMBER_OF_VEHICLES; ++i) {
 			SimulatedCar car = new SimulatedCar(world, network);
@@ -35,8 +43,11 @@ class MainClass {
 				new Algorithm(
 					new Communications(
 						new ControlLayer(
-							car.getNetworkInterface(),
-							lookup
+							car.getNetworkInterface(),	// Network interface
+							lookup,						// Message lookup
+							i,							// This car's ID
+							1,							// Platoon ID
+							platoonOrder				// Platoon order [1-N]
 						),
 						lookup
 					),
@@ -47,6 +58,7 @@ class MainClass {
 			car.setPosition(new Vector2D(
 				i * 10, 0
 			));
+
 			car.setEnginePower(0.05);
 			car.setWheelAngle(0.1);
 		}

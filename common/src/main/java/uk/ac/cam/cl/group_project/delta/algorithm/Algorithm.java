@@ -4,9 +4,9 @@ import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class Algorithm {
-	
+
 	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
-	
+
 	private AlgorithmData algorithmData;
 
 	public Algorithm(CommsInterface commsInterface, DriveInterface driveInterface, SensorInterface sensorInterface) {
@@ -18,6 +18,7 @@ public class Algorithm {
 
 	// set these functions to call version of algorithm required
 	private void initialise() {
+		sendMessage();
 	}
 
 	private void readSensors() {
@@ -75,7 +76,7 @@ public class Algorithm {
 				emergencyStop();
 				break;
 			}
-			
+
 			try {
 				long nanosToSleep = System.nanoTime() - startTime - ALGORITHM_LOOP_DURATION;
 				if(nanosToSleep > 0) {
@@ -90,7 +91,7 @@ public class Algorithm {
 			}
 			startTime = System.nanoTime();
 		}
-		
+
 		// TODO: Log algorithm complete
 	}
 }
