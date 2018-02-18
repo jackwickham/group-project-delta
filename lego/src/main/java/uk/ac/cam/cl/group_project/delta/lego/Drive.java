@@ -13,6 +13,12 @@ public class Drive implements DriveInterface {
 	private EV3MediumRegulatedMotor steer;
 
 	/**
+	 * The current acceleration of the vehicle in m/s^2.
+	 * Set to 6000 by default, i.e. instant speed changes.
+	 */
+	private double acceleration = 6000;
+
+	/**
 	 * The number of degrees turned by the wheels over a metre.
 	 * Measured by experimentation and calculation.
 	 */
@@ -65,6 +71,7 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void setAcceleration(double acceleration) {
+		this.acceleration = acceleration;
 		int accelerationDegrees = (int) Math.round(acceleration * DEGREES_PER_METRE);
 		L.setAcceleration(accelerationDegrees);
 		R.setAcceleration(accelerationDegrees);
@@ -89,8 +96,7 @@ public class Drive implements DriveInterface {
 	 */
 	@Override
 	public void setTurnRate(double turnRate) {
-		double speedMetres = -L.getRotationSpeed() / ((double) DEGREES_PER_METRE);
-		double sine = turnRate * 0.15 / speedMetres;
+		double sine = turnRate * 0.15 / getSpeed();
 		sine = Math.max(Math.min(sine, 1), -1);
 		double angle = Math.toDegrees(Math.asin(sine));
 		double clamped = Math.max(Math.min(angle, -STRAIGHT_AHEAD), STRAIGHT_AHEAD);
@@ -99,6 +105,7 @@ public class Drive implements DriveInterface {
 
 	/**
 	 * Brings the vehicle to a stop as quickly as possible. Suitable for emergency use.
+	 * Sets the acceleration to the default (6000) for an instantaneous stop.
 	 */
 	@Override
 	public void stop() {
@@ -106,6 +113,7 @@ public class Drive implements DriveInterface {
 		R.setAcceleration(6000);
 		L.stop(true);
 		R.stop(true);
+		acceleration = 6000;
 	}
 
 	/**
@@ -116,6 +124,18 @@ public class Drive implements DriveInterface {
 	 */
 	private void rotateTo(double angle) {
 		steer.rotateTo((int) ((STRAIGHT_AHEAD - angle) * GEAR_RATIO));
+	}
+
+	public double getAcceleration() {
+		return this.acceleration;
+	}
+
+	public double getSpeed() {
+		return -L.getRotationSpeed()/(double)DEGREES_PER_METRE;
+	}
+
+	public double getTurnRate() {
+		return Math.sin(Math.toRadians(STRAIGHT_AHEAD - (steer.getPosition() / GEAR_RATIO))) * getSpeed() / 0.15;
 	}
 
 }
