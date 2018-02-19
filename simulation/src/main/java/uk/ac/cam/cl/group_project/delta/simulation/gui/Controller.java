@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
@@ -9,6 +10,8 @@ import javafx.scene.layout.Pane;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Controller {
@@ -17,6 +20,8 @@ public class Controller {
 	 * Thread running this application's simulation.
 	 */
 	private SimulationThread simulation;
+
+	private List<SimulatedBodyNode> simulatedNodes;
 
 	@FXML
 	private Pane viewPane;
@@ -29,6 +34,7 @@ public class Controller {
 	 */
 	public Controller() {
 		simulation = new SimulationThread();
+		simulatedNodes = new ArrayList<>();
 	}
 
 	/**
@@ -37,6 +43,18 @@ public class Controller {
 	@FXML
 	public void initialize() {
 		simulation.start();
+
+	}
+
+	/**
+	 * Update positions of all displayed nodes.
+	 */
+	public void update() {
+		Platform.runLater(() -> {
+			for (SimulatedBodyNode node : simulatedNodes) {
+				node.update();
+			}
+		});
 	}
 
 	private void showProperties(Treeable obj) {
@@ -65,6 +83,7 @@ public class Controller {
 		);
 
 		SimulatedBodyNode node = new SimulatedBodyNode(car);
+		simulatedNodes.add(node);
 		node.addEventFilter(
 			MouseEvent.MOUSE_CLICKED,
 			e -> {
