@@ -3,10 +3,17 @@
 
 <module name="Checker">
 	<module name="TreeWalker">
+		<!-- Lines are indented using tabs only -->
 		<module name="RegexpSinglelineJava">
 			<property name="format" value="^\t* "/>
 			<property name="message" value="Indent must use tab characters"/>
 			<property name="ignoreComments" value="true"/>
+		</module>
+
+		<!-- No trailing whitespace -->
+		<module name="RegexpSinglelineJava">
+			<property name="format" value="[ \t]+$"/>
+			<property name="message" value="Trailing whitespace"/>
 		</module>
 	</module>
 </module>
