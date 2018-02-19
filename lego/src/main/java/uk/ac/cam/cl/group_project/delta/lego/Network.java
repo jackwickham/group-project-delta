@@ -3,6 +3,7 @@ package uk.ac.cam.cl.group_project.delta.lego;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author Jack Wickham
  */
-public class Network implements NetworkInterface {
+public class Network implements NetworkInterface, Closeable {
 	/**
 	 * The socket used to communicate with other robots
 	 */
@@ -45,20 +46,20 @@ public class Network implements NetworkInterface {
 	 * an emergency message is received.
 	 */
 	private final Thread algorithmThread;
-	
+
 	/**
 	 * Construct a new network instance, the algorithm thread is passed as an argument
 	 * so that the thread which creates the interfaces isn't then tied to running the
 	 * algorithm.
 	 *
 	 * @param algorithmThread - the thread the algorithm will run on
-	 * 
+	 *
 	 * @throws IOException if no suitable broadcast address can be found
 	 * @throws IOException if it is unable to bind to udp:0.0.0.0:5187
 	 */
 	public Network (Thread algorithmThread) throws IOException {
 		this.algorithmThread = algorithmThread;
-		
+
 		// Find the broadcast IP
 		java.net.NetworkInterface iface = java.net.NetworkInterface.getByName("wlan0");
 		List<InterfaceAddress> interfaceAddresses = iface.getInterfaceAddresses();
@@ -120,6 +121,7 @@ public class Network implements NetworkInterface {
 	/**
 	 * Shut down the connection
 	 */
+	@Override
 	public void close () {
 		socket.close();
 	}
@@ -140,7 +142,7 @@ public class Network implements NetworkInterface {
 						continue;
 					}
 					byte[] receivedData = Arrays.copyOf(receivedPacket.getData(), receivedPacket.getLength());
-					
+
 					if(MessageReceipt.isEmergencyMessage(receivedData)) {
 						algorithmThread.interrupt();
 						// Can continue, but shouldn't be necessary
