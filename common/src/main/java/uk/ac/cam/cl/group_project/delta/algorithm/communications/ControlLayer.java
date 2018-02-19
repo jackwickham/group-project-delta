@@ -17,7 +17,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 /**
  * This class handles the passing of messages to the network interface and
  * provides the control layer of the platoons.
- * 
+ *
  * @author Aaron Hutton
  *
  */
@@ -70,7 +70,7 @@ public class ControlLayer {
 
 	/**
 	 * Create a new platoon instance by making a new MessageReceiver Object
-	 * 
+	 *
 	 * @param network
 	 *            - the network interface to be used
 	 * @param map
@@ -89,7 +89,7 @@ public class ControlLayer {
 
 	/**
 	 * Create a new platoon instance initialised with the specific platoon given
-	 * 
+	 *
 	 * @param network
 	 *            - the network interface to be used
 	 * @param map
@@ -124,7 +124,7 @@ public class ControlLayer {
 
 	/**
 	 * Send the specific message across the network
-	 * 
+	 *
 	 * @param message
 	 *            - the message to be sent
 	 */
@@ -201,7 +201,7 @@ public class ControlLayer {
 
 	/**
 	 * Begin the merge protocol by sending a RequestToMerge to the other platoon
-	 * 
+	 *
 	 * @param packet
 	 *            - the data in Packet format
 	 */
@@ -219,7 +219,7 @@ public class ControlLayer {
 	/**
 	 * Handle a RequestToMerge packet by creating a new Merge Object and replying if
 	 * necessary
-	 * 
+	 *
 	 * @param packet
 	 *            - the data in Packet format
 	 */
@@ -245,7 +245,7 @@ public class ControlLayer {
 	/**
 	 * Handle an AcceptToMerge packet by updating the current Merge Object and send
 	 * a confirmation if accepted
-	 * 
+	 *
 	 * @param packet
 	 *            - the data in Packet format
 	 */
@@ -267,7 +267,7 @@ public class ControlLayer {
 	 * Handle a ConfirmMerge packet by updating the current Merge Object and
 	 * committing the merge by sending a MergeComplete message to both platoons, if
 	 * everyone has agreed.
-	 * 
+	 *
 	 * @param packet
 	 *            - the data in Packet format
 	 */
@@ -289,7 +289,7 @@ public class ControlLayer {
 
 	/**
 	 * Used to generate the payload for a RequestToMerge packet
-	 * 
+	 *
 	 * @param transactionId
 	 *            - The Id of the transaction this packet belongs to
 	 * @return the RTM payload
@@ -311,7 +311,7 @@ public class ControlLayer {
 	/**
 	 * Used to generate the payload for an AcceptToMerge packet and also the new id
 	 * mappings
-	 * 
+	 *
 	 * @param transactionId
 	 *            - The Id of the transaction this packet belongs to
 	 * @param allowMerge
@@ -355,7 +355,7 @@ public class ControlLayer {
 	/**
 	 * Sends a message which contains only the transaction id which is of the
 	 * specified type
-	 * 
+	 *
 	 * @param transactionId
 	 *            - The id of the merging transaction
 	 * @param platoonId
@@ -441,7 +441,7 @@ public class ControlLayer {
 	/**
 	 * Return the first 4 bytes of the argument interpreting them as a big-endian
 	 * integer
-	 * 
+	 *
 	 * @param bytes
 	 *            - the byte source to be read
 	 * @return the first 4 bytes as an int
@@ -456,7 +456,7 @@ public class ControlLayer {
 	/**
 	 * Return a list of <Key, values> pairs for the given list which is sorted by
 	 * the value of the item in the list
-	 * 
+	 *
 	 * @param unsorted - the unsorted map structure
 	 * @return a list of sorted pairs
 	 */
