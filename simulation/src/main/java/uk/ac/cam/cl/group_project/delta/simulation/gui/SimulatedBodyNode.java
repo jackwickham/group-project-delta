@@ -19,24 +19,15 @@ public class SimulatedBodyNode extends Group implements Treeable {
 		c.setStroke(Color.BLACK);
 		getChildren().add(c);
 
-		/*this.translateXProperty().bind(new DoubleBinding() {
-			@Override
-			protected double computeValue() {
-				return body.getPosition().getX();
-			}
-		});
-
-		this.translateYProperty().bind(new DoubleBinding() {
-			@Override
-			protected double computeValue() {
-				return body.getPosition().getY();
-			}
-		});*/
-
 	}
 
 	public PhysicsBody getBody() {
 		return body;
+	}
+
+	public void update() {
+		this.setTranslateX(body.getPosition().getX());
+		this.setTranslateY(body.getPosition().getY());
 	}
 
 	public TreeItem<String> toTree() {
