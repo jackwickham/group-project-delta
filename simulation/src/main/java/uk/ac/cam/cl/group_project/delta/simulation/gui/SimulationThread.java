@@ -32,6 +32,7 @@ public class SimulationThread extends Thread {
 		this.world = new World();
 		this.network = new SimulatedNetwork();
 		running = false;
+		this.setDaemon(true);
 	}
 
 	/**
@@ -44,15 +45,17 @@ public class SimulationThread extends Thread {
 		long start = System.nanoTime();
 		long time = start;
 
-		running = true;
+		synchronized (this) {
+			running = true;
+		}
 
-		while (true) {
+		// For thread safety
+		boolean localRunning = true;
+
+		while (localRunning) {
 			synchronized (this) {
 
-				// To prevent concurrency issues, this is in here
-				if (running) {
-					break;
-				}
+				localRunning = running;
 
 				// Update world
 				long tmp = System.nanoTime();

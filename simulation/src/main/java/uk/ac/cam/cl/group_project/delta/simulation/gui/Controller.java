@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -7,6 +9,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
@@ -29,32 +32,38 @@ public class Controller {
 	@FXML
 	private TreeView<String> propertiesView;
 
+	Timeline timeline;
+
 	/**
 	 * Construct the application's simulation thread.
 	 */
 	public Controller() {
 		simulation = new SimulationThread();
 		simulatedNodes = new ArrayList<>();
+		timeline = new Timeline();
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.getKeyFrames().add(new KeyFrame(
+			Duration.millis(1),
+			e -> this.update()
+		));
 	}
 
 	/**
-	 * Start the simulation.
+	 * Start the simulation and update Timeline.
 	 */
 	@FXML
 	public void initialize() {
 		simulation.start();
-
+		timeline.play();
 	}
 
 	/**
 	 * Update positions of all displayed nodes.
 	 */
 	public void update() {
-		Platform.runLater(() -> {
-			for (SimulatedBodyNode node : simulatedNodes) {
-				node.update();
-			}
-		});
+		for (SimulatedBodyNode node : simulatedNodes) {
+			node.update();
+		}
 	}
 
 	private void showProperties(Treeable obj) {
@@ -64,21 +73,22 @@ public class Controller {
 	}
 
 	@FXML
-	public void createNewSimulationObject(Event event) {
+	public void onViewPaneMouseClick(MouseEvent event) {
 
 		SimulatedCar car = simulation.createCar(0.15);
 
-		Random random = new Random();
 		car.setPosition(
 			new Vector2D(
-				random.nextDouble() * 1000,
-				random.nextDouble() * 1000
+				event.getX(),
+				event.getY()
 			)
 		);
+
+		Random random = new Random();
 		car.setVelocity(
 			new Vector2D(
-				random.nextDouble() * 1000,
-				random.nextDouble() * 1000
+				random.nextDouble() * 10 - 5,
+				random.nextDouble() * 10 - 5
 			)
 		);
 
