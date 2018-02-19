@@ -10,31 +10,31 @@ public class Communications implements CommsInterface {
 	 * passed through
 	 */
 	private ControlLayer messageLayer;
-	
+
 	/**
 	 * The mapping from relative positions in the platoon to the latest message
 	 * this vehicle has received from them. Where get(0) indicates the current vehicle
 	 * and get(1) indicates the vehicle in front.
 	 */
 	private PlatoonLookup messageLookup;
-	
+
 	/**
 	 * The implementation of the top layer of the communications stack.
 	 * Passes messages down to the MessageReceiver as gets messages through the PlatoonLookup
-	 * 
+	 *
 	 * @param messageLayer - the layer through which messages are passed
 	 * @param messageLookup - the mapping from relative positions to their latest message
 	 */
 	public Communications(
-			ControlLayer messageLayer, 
+			ControlLayer messageLayer,
 			PlatoonLookup messageLookup) {
 		this.messageLookup = messageLookup;
 		this.messageLayer = messageLayer;
 	}
-	
+
 	/**
 	 * Send a message by passing it to the lower layer
-	 * 
+	 *
 	 * @param message - the message to be sent
 	 */
 	@Override
@@ -44,13 +44,13 @@ public class Communications implements CommsInterface {
 
 	/**
 	 * Return the message last received by the leader
-	 * 
+	 *
 	 * @return the latest message from the leader
 	 */
 	@Override
 	public VehicleData getLeaderMessage() {
 		messageLayer.updateMessages();
-		
+
 		if(messageLookup.containsKey(messageLayer.getCurrentPosition())) {
 			return messageLookup.get(messageLayer.getCurrentPosition());
 		} else {
@@ -60,7 +60,7 @@ public class Communications implements CommsInterface {
 
 	/**
 	 * Return the latest message from the vehicle which is inFront ahead
-	 * 
+	 *
 	 * @param inFront - the relative position ahead to return
 	 * @throws IllegalArgumentException - if the inFront argument is negative or 0
 	 * @return the latest message for the requested vehicle, null if there is no data

@@ -25,7 +25,7 @@ public enum MessageType {
 
 	/**
 	 * Lookup which MessageType a particular value corresponds to.
-	 * 
+	 *
 	 * @param value
 	 *            - the value of the MessageType to be returned
 	 * @return the associated MessageType
