@@ -10,7 +10,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
  * This class handles the parsing and creating of the packets from their bytes.
  * Any changes to the packet structure should only need to be reflected here.
  * An instance of this class represents a received packet.
- * 
+ *
  * @author Aaron Hutton
  */
 public class Packet {
@@ -18,7 +18,7 @@ public class Packet {
 	 * The size in bytes of the header of the packet
 	 */
 	public final static int SIZE_OF_HEADER = 12;
-	
+
 	/**
 	 * These fields are generated from a packet received from the network.
 	 * So the vehicleId is the vehicle which sent the packet, the type is the
@@ -28,14 +28,14 @@ public class Packet {
 	public final int platoonId;
 	public final int length;
 	public final MessageType type;
-	
+
 	public final VehicleData message;
 	public final byte[] payload;
-	
+
 	/**
 	 * This constructor parses a packet and updates the fields appropriately.
 	 * Only one of message and payload will be defined, depending on the type.
-	 * 
+	 *
 	 * @param receipt - the packet receipt to be parsed
 	 */
 	public Packet(MessageReceipt receipt) {
@@ -43,10 +43,10 @@ public class Packet {
 		int packedInt = bytes.getInt();							// Contains the type and length
 		type = MessageType.valueOf((packedInt >> 24) & 0x000000FF);
 		length = packedInt & 0x00FFFFFF;
-		
+
 		platoonId = bytes.getInt();
 		vehicleId = bytes.getInt();
-		
+
 		if(type.equals(MessageType.Data)) {
 			message = VehicleData.generateDataFromBytes(bytes);
 			message.setStartTime(receipt.getTime());
@@ -54,14 +54,14 @@ public class Packet {
 		} else {
 			payload = new byte[length - SIZE_OF_HEADER];
 			bytes.get(payload, 0, length - SIZE_OF_HEADER);
-			
+
 			message = null;
 		}
 	}
-	
+
 	/**
 	 * Creates a new data packet which contains the MessageData which is passed to it
-	 * 
+	 *
 	 * @param message - the data to be sent
 	 * @param vehicleId - the current vehicle id
 	 * @param platoonId - the current platoon id
@@ -73,11 +73,11 @@ public class Packet {
 		updateLengthAndType(bytes, MessageType.Data);
 		return bytes.array();
 	}
-	
+
 	/**
 	 * Creates a new packet which contains the data passed to is as a payload
 	 * and has a type of the type MessageType
-	 * 
+	 *
 	 * @param data - the data which makes up the payload
 	 * @param vehicleId - the current vehicle id
 	 * @param platoonId - the current platoon id
@@ -89,10 +89,10 @@ public class Packet {
 		updateLengthAndType(bytes, type);
 		return bytes.array();
 	}
-	
+
 	/**
 	 * Create the byte buffer and add the header
-	 * 
+	 *
 	 * @param vehicleId
 	 * @param platoonId
 	 * @return the byte buffer used to create the packet
@@ -104,11 +104,11 @@ public class Packet {
 		bytes.putInt(vehicleId);
 		return bytes;
 	}
-	
+
 	/**
 	 * Update the length and type of the packet. This needs to be done after the data
 	 * has been added so the length is known.
-	 * 
+	 *
 	 * @param bytes - the bytebuffer which needs to have length and type prepended
 	 * @param type - the type of the message
 	 */
@@ -117,10 +117,10 @@ public class Packet {
 		bytes.rewind();					// Go back to start and put in the type and length
 		bytes.putInt((type.getValue() << 24) | (0x00FFFFFF & length));
 	}
-	
+
 	/**
 	 * Tests whether the data passed in contains an emergency message
-	 * 
+	 *
 	 * @param data - the data to be tested
 	 * @return whether the message is an emergency
 	 */
