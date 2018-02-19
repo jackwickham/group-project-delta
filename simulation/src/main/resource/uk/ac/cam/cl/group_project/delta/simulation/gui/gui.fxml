@@ -19,7 +19,7 @@
                            <content>
                               <AnchorPane>
                                  <children>
-                                    <TreeView prefHeight="367.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <TreeView fx:id="propertiesView" prefHeight="367.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                            </content>
