@@ -2,8 +2,6 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -17,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * JavaFX GUI controller.
+ */
 public class Controller {
 
 	/**
@@ -24,15 +25,28 @@ public class Controller {
 	 */
 	private SimulationThread simulation;
 
+	/**
+	 * List of nodes representing objects in the simulated world.
+	 */
 	private List<SimulatedBodyNode> simulatedNodes;
 
+	/**
+	 * GUI element containing the current scene.
+	 */
 	@FXML
 	private Pane viewPane;
 
+	/**
+	 * GUI element containing the hierarchical information for a selected
+	 * object.
+	 */
 	@FXML
 	private TreeView<String> propertiesView;
 
-	Timeline timeline;
+	/**
+	 * The JavaFX GUI updater - an "animation".
+	 */
+	private Timeline timeline;
 
 	/**
 	 * Construct the application's simulation thread.
@@ -66,12 +80,20 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Display the object in the information pane.
+	 * @param obj    The object to display.
+	 */
 	private void showProperties(Treeable obj) {
 		TreeItem<String> root = obj.toTree();
 		root.setExpanded(true);
 		propertiesView.setRoot(root);
 	}
 
+	/**
+	 * Handle mouse click in the main simulation view area.
+	 * @param event     Mouse click event.
+	 */
 	@FXML
 	public void onViewPaneMouseClick(MouseEvent event) {
 
