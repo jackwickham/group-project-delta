@@ -2,8 +2,17 @@ apply plugin: 'application'
 
 mainClassName = 'uk.ac.cam.cl.group_project.delta.simulation.gui.Gui'
 
+// Use Java 8
+sourceCompatibility = 8
+targetCompatibility = 8
+
 dependencies {
 	compile project(':common')
+}
+
+compileJava {
+	// Reset to Java 8 compilation
+	options.bootstrapClasspath = null
 }
 
 sourceSets {
