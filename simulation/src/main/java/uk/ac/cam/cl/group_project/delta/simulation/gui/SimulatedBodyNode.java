@@ -26,9 +26,9 @@ public class SimulatedBodyNode extends Group implements Treeable {
 		this.body = body;
 
 		Circle c = new Circle(
-			10.0,
 			body.getPosition().getX(),
-			body.getPosition().getY()
+			body.getPosition().getY(),
+			10.0
 		);
 		c.setFill(Color.TRANSPARENT);
 		c.setStroke(Color.BLACK);
