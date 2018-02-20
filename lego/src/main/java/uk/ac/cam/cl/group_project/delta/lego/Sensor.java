@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
+import lejos.hardware.ev3.EV3;
 import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
@@ -9,8 +10,11 @@ public class Sensor implements SensorInterface {
 
 	private Drive drive;
 
-	public Sensor(Drive d) {
+	private BeaconTracker beaconTracker;
+
+	public Sensor(Drive d, EV3 ev3) {
 		drive = d;
+		beaconTracker = new BeaconTracker(ev3);
 	}
 
 	/**
@@ -36,7 +40,7 @@ public class Sensor implements SensorInterface {
 	 */
 	@Override
 	public List<Beacon> getBeacons() {
-		return null;
+		return beaconTracker.getBeaconData();
 	}
 
 	/**
