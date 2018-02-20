@@ -30,7 +30,11 @@
             </AnchorPane>
             <AnchorPane prefHeight="400.0" prefWidth="298.0">
                <children>
-                  <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" prefHeight="398.0" prefWidth="415.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Pane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" prefHeight="398.0" prefWidth="415.0" />
+                     </children>
+                  </Pane>
                </children>
             </AnchorPane>
          </items>
