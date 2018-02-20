@@ -57,7 +57,7 @@ public class Controller {
 		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(new KeyFrame(
-			Duration.millis(1),
+			Duration.seconds(1.0 / 40.0),
 			e -> this.update()
 		));
 	}
