@@ -6,7 +6,7 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class Algorithm {
 
-	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	public final static int ALGORITHM_LOOP_DURATION = 30000000; // 30ms
 
 	private AlgorithmData algorithmData;
 
@@ -83,7 +83,7 @@ public class Algorithm {
 					// Note: integer division desired
 					Thread.sleep(nanosToSleep/1000000);
 				} else {
-					Log.warn("LOOP_DURATION is too low, algorithm can't keep up");
+					Log.warn(String.format("LOOP_DURATION is too low, algorithm can't keep up (%dms too slow)", -nanosToSleep/1000000));
 				}
 			} catch (InterruptedException e) {
 				emergencyStop();
