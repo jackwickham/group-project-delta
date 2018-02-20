@@ -66,9 +66,9 @@ public class Controller {
 			e -> this.update()
 		));
 
-		sceneContextMenu = new ContextMenu();
 		MenuItem item = new MenuItem("Add object");
 		item.setOnAction(this::addObject);
+		sceneContextMenu = new ContextMenu(item);
 
 	}
 
