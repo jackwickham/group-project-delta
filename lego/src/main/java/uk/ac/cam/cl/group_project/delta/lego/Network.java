@@ -3,6 +3,7 @@ package uk.ac.cam.cl.group_project.delta.lego;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author Jack Wickham
  */
-public class Network implements NetworkInterface {
+public class Network implements NetworkInterface, Closeable {
 	/**
 	 * The socket used to communicate with other robots
 	 */
@@ -120,6 +121,7 @@ public class Network implements NetworkInterface {
 	/**
 	 * Shut down the connection
 	 */
+	@Override
 	public void close () {
 		socket.close();
 	}
@@ -132,10 +134,10 @@ public class Network implements NetworkInterface {
 		public void run () {
 			try {
 				while (true) {
-					byte[] data = new byte[200];
+					byte[] data = new byte[NetworkInterface.MAXIMUM_PACKET_SIZE];
 					DatagramPacket receivedPacket = new DatagramPacket(data, data.length);
 					socket.receive(receivedPacket);
-					if (receivedPacket.getLength() > 200) {
+					if (receivedPacket.getLength() > NetworkInterface.MAXIMUM_PACKET_SIZE) {
 						// TODO: log error - packet too large
 						continue;
 					}
