@@ -6,7 +6,7 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class Algorithm {
 
-	public final static int ALGORITHM_LOOP_DURATION = 30000000; // 30ms
+	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
 
 	private AlgorithmData algorithmData;
 
@@ -79,7 +79,7 @@ public class Algorithm {
 			}
 
 			try {
-				long nanosToSleep = System.nanoTime() - startTime - ALGORITHM_LOOP_DURATION;
+				long nanosToSleep = ALGORITHM_LOOP_DURATION - (System.nanoTime() - startTime);
 				if(nanosToSleep > 0) {
 					// Note: integer division desired
 					Thread.sleep(nanosToSleep/1000000);
