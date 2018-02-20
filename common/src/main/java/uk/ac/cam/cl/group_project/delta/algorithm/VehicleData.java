@@ -11,11 +11,11 @@ public class VehicleData {
 	private final double chosenAcceleration;
 	private final double chosenTurnRate;
 	private long startTime;
-	
+
 	/**
 	 * Create an immutable MessageData object to be passed to the algorithm
 	 * or to be broadcast over the network
-	 * 
+	 *
 	 * @param speed
 	 * @param acceleration
 	 * @param turnRate
@@ -36,7 +36,7 @@ public class VehicleData {
 	/**
 	 * Recreate the message from the bytebuffer, the bytebuffer should be
 	 * positioned at the start of the data, not at the start of the packet
-	 * 
+	 *
 	 * @param rawBytes the bytes to be converted
 	 * @return a new data packet with the specific data
 	 */
@@ -50,12 +50,12 @@ public class VehicleData {
 				bytes.getDouble()								// chosenTurnRate
 				);
 	}
-	
+
 	/**
 	 * Append the data in this object to the bytebuffer, the bytebuffer
 	 * should be positioned at the start of the data section or information
 	 * will be overwritten
-	 * 
+	 *
 	 * @return a byte representation of the data
 	 */
 	public ByteBuffer appendToBuffer(ByteBuffer bytes) {

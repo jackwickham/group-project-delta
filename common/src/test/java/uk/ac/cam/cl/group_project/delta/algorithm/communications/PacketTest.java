@@ -24,7 +24,7 @@ public class PacketTest {
 	public void createPacketTest() {
 		int vehicle = 100, platoon = 500;
 		byte[] bytes = Packet.createPacket(new byte[0], vehicle, platoon, MessageType.RequestToMerge);
-		
+
 		ByteBuffer buffer = ByteBuffer.wrap(bytes);
 		int initial = buffer.getInt();
 		assertEquals(MessageType.valueOf(initial >>> 24), MessageType.RequestToMerge);
@@ -38,9 +38,9 @@ public class PacketTest {
 		int vehicle = 100, platoon = 500;
 		MessageType mt = MessageType.RequestToMerge;
 		byte[] bytes = Packet.createPacket(new byte[0], vehicle, platoon, mt);
-		
+
 		Packet p = new Packet(new MessageReceipt(bytes));
-		
+
 		assertEquals(p.length, Packet.SIZE_OF_HEADER);
 		assertEquals(p.platoonId, platoon);
 		assertEquals(p.vehicleId, vehicle);
@@ -55,9 +55,9 @@ public class PacketTest {
 		int vehicle = 100, platoon = 500;
 		VehicleData md = new VehicleData(0.0, 1.0, 2.0, 3.0, 4.0, 5.0);
 		byte[] bytes = Packet.createDataPacket(md, vehicle, platoon);
-		
+
 		Packet p = new Packet(new MessageReceipt(bytes));
-		
+
 		assertEquals(p.platoonId, platoon);
 		assertEquals(p.vehicleId, vehicle);
 		assertEquals(p.type, MessageType.Data);

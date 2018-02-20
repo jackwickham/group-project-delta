@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class Algorithm {
@@ -18,7 +19,6 @@ public class Algorithm {
 
 	// set these functions to call version of algorithm required
 	private void initialise() {
-		sendMessage();
 	}
 
 	private void readSensors() {
@@ -83,7 +83,7 @@ public class Algorithm {
 					// Note: integer division desired
 					Thread.sleep(nanosToSleep/1000000);
 				} else {
-					// TODO: Log this as the LOOP_DURATION is too low, the algo can't keep up
+					Log.warn("LOOP_DURATION is too low, algorithm can't keep up");
 				}
 			} catch (InterruptedException e) {
 				emergencyStop();
@@ -92,6 +92,6 @@ public class Algorithm {
 			startTime = System.nanoTime();
 		}
 
-		// TODO: Log algorithm complete
+		Log.debug("Algorithm has finished running");
 	}
 }
