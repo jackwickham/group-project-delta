@@ -2,6 +2,7 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -55,9 +56,18 @@ public class ConstructorDialog<T> extends Stage {
 			root.getChildren().add(box);
 		}
 
-		this.setScene(new Scene(root));
+		Button cancel = new Button("Cancel");
+		Button confirm = new Button("Confirm");
+		HBox box = new HBox(cancel, confirm);
+		root.getChildren().add(box);
 
-		this.setOnCloseRequest(e -> this.value = this.construct());
+		cancel.setOnMouseClicked(e -> this.close());
+		confirm.setOnMouseClicked(e -> {
+			this.value = this.construct();
+			this.close();
+		});
+
+		this.setScene(new Scene(root));
 
 	}
 
