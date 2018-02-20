@@ -9,9 +9,7 @@ public class MergeCompleteMessage extends MergeMessage {
 	}
 
 	@Override
-	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
-		return super.appendToBuffer(bytes);
+	public MessageType getType() {
+		return MessageType.MergeComplete;
 	}
-
-	
 }

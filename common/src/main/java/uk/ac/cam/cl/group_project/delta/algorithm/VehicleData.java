@@ -3,6 +3,7 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import java.nio.ByteBuffer;
 
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Message;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageType;
 
 public class VehicleData extends Message {
 
@@ -67,6 +68,11 @@ public class VehicleData extends Message {
 		bytes.putDouble(chosenAcceleration);
 		bytes.putDouble(chosenTurnRate);
 		return bytes;
+	}
+
+	@Override
+	public MessageType getType() {
+		return MessageType.Data;
 	}
 
 	public double getSpeed() {

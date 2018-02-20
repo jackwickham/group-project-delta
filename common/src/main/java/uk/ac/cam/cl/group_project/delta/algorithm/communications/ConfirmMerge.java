@@ -8,4 +8,9 @@ public class ConfirmMerge extends MergeMessage {
 		super(bytes);
 	}
 
+	@Override
+	public MessageType getType() {
+		return MessageType.ConfirmMerge;
+	}
+
 }
