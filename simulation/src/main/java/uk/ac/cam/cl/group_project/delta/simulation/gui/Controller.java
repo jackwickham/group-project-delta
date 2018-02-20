@@ -2,18 +2,19 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
+import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * JavaFX GUI controller.
@@ -48,10 +49,14 @@ public class Controller {
 	 */
 	private Timeline timeline;
 
+
+	private ContextMenu sceneContextMenu;
+
 	/**
 	 * Construct the application's simulation thread.
 	 */
 	public Controller() {
+
 		simulation = new SimulationThread();
 		simulatedNodes = new ArrayList<>();
 		timeline = new Timeline();
@@ -60,6 +65,11 @@ public class Controller {
 			Duration.seconds(1.0 / 40.0),
 			e -> this.update()
 		));
+
+		sceneContextMenu = new ContextMenu();
+		MenuItem item = new MenuItem("Add object");
+		item.setOnAction(this::addObject);
+
 	}
 
 	/**
@@ -98,11 +108,25 @@ public class Controller {
 	public void onViewPaneMouseClick(MouseEvent event) {
 
 		if (event.getButton().equals(MouseButton.SECONDARY)) {
-			System.out.println("Hey");
-			ContextMenu menu = new ContextMenu(
-				new MenuItem("Add object")
+			sceneContextMenu.show(viewPane, event.getScreenX(), event.getScreenY());
+		}
+
+	}
+
+	private void addObject(ActionEvent event) {
+
+		try {
+			ConstructorDialog<SimulatedCarWrapper> dialog = new ConstructorDialog<SimulatedCarWrapper>(
+				SimulatedCarWrapper.class.getConstructor(Double.class)
 			);
-			menu.show(viewPane, event.getScreenX(), event.getScreenY());
+			dialog.setOnCloseRequest(e -> {
+				System.out.println("Yay");
+			});
+			dialog.show();
+		}
+		catch (NoSuchMethodException e) {
+			// Something has gone really wrong...
+			e.printStackTrace();
 		}
 
 		/*SimulatedCar car = simulation.createCar(0.15);
@@ -133,7 +157,13 @@ public class Controller {
 		);
 
 		viewPane.getChildren().add(node);*/
+	}
 
+	private class SimulatedCarWrapper {
+		SimulatedCar car;
+		SimulatedCarWrapper(double s) {
+			car = simulation.createCar(s);
+		}
 	}
 
 }
