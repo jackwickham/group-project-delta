@@ -37,11 +37,17 @@ public abstract class FormDialog extends Stage {
 		cancel.setCancelButton(true);
 		confirm.setDefaultButton(true);
 
+		this.setOnCloseRequest(e -> cancel.fire());
+
 		cancel.setOnMouseClicked(e -> {
 			this.cancelled = true;
+			this.cancel();
 			this.close();
 		});
-		confirm.setOnMouseClicked(e -> this.close());
+		confirm.setOnMouseClicked(e -> {
+			this.confirm();
+			this.close();
+		});
 
 	}
 
@@ -61,4 +67,20 @@ public abstract class FormDialog extends Stage {
 	public boolean wasCancelled() {
 		return cancelled;
 	}
+
+	/**
+	 * Called when cancel button is used to exit the dialog or the dialog was
+	 * forcefully quit.
+	 */
+	protected void cancel() {
+		// No default behaviour
+	}
+
+	/**
+	 * Called when the confirmation button is used to exit the dialog.
+	 */
+	protected void confirm() {
+		// No default behaviour
+	}
+
 }
