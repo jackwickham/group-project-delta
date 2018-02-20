@@ -11,7 +11,7 @@ public class AlgorithmData {
 	DriveInterface driveInterface;
 
 	VehicleData receiveMessageData;
-	
+
 	// True when an emergency has occurred
 	boolean emergencyOccurred = false;
 
@@ -44,4 +44,7 @@ public class AlgorithmData {
 	double previousAcceleration;
 
 	MiniPID miniPID;
+
+	long time;
+	boolean usingUpdate;
 }

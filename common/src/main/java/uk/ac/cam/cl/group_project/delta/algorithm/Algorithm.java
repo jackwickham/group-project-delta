@@ -6,14 +6,9 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
-import java.util.ArrayList;
-
 public abstract class Algorithm {
 
 	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
-
-	/*private final static ArrayList<Class<? extends Algorithm>> algorithmList =
-			Arrays.asList(BasicAlgorithm.class, BasicAlgorithm2.class, BasicAlgorithm3.class, BasicAlgorithmPID.class, BasicAlgorithmPID2.class); */
 
 	protected AlgorithmData algorithmData;
 
@@ -23,15 +18,22 @@ public abstract class Algorithm {
 		algorithmData.sensorInterface = sensorInterface;
 	}
 
-	public Algorithm createAlgorithm(int algorithmNum, DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		switch (algorithmNum) {
-			case 0: return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface);
-			case 1: return new BasicAlgorithm2(driveInterface,sensorInterface,networkInterface);
-			case 2: return new BasicAlgorithm3(driveInterface,sensorInterface,networkInterface);
-			case 3: return new BasicAlgorithmPID(driveInterface,sensorInterface,networkInterface);
-			case 4: return new BasicAlgorithmPID2(driveInterface,sensorInterface,networkInterface);
+	/**
+	 *Builds and returns algorithm of type specified by AlgorithmEnum input
+	 */
+	public Algorithm createAlgorithm(AlgorithmEnum algorithmEnum, DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+		switch (algorithmEnum) {
+			case BasicAlgorithm: return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface);
+			case BasicAlgorithm2: return new BasicAlgorithm2(driveInterface,sensorInterface,networkInterface);
+			case BasicAlgorithm3: return new BasicAlgorithm3(driveInterface,sensorInterface,networkInterface);
+			case BasicAlgorithmPID: return new BasicAlgorithmPID(driveInterface,sensorInterface,networkInterface);
+			case BasicAlgorithmPID2: return new BasicAlgorithmPID2(driveInterface,sensorInterface,networkInterface);
 		}
 		return null;
+	}
+
+	public AlgorithmEnum[] getAlgorithmList() {
+		return AlgorithmEnum.values();
 	}
 
 	protected abstract void initialise();
@@ -80,7 +82,43 @@ public abstract class Algorithm {
 		algorithmData.driveInterface.setTurnRate(algorithmData.chosenAcceleration);
 	}
 
+	protected long getTime() {
+		if(algorithmData.usingUpdate) {
+			return algorithmData.time;
+		} else return System.nanoTime();
+	}
+	/**
+	 * Runs one loop of algorithm
+	 * @param time -time in nanoseconds, algorithm assumes this is the current time
+	 */
+	public void update(long time) {
+		algorithmData.usingUpdate = true;
+		algorithmData.time = time;
+		// read data from sensors into data class
+		readSensors();
+
+		if (Thread.interrupted()) {
+			emergencyStop();
+		}
+
+		makeDecision();
+
+		if (Thread.interrupted()) {
+			emergencyStop();
+		}
+
+		sendMessage();
+
+		// send instructions to drive
+		sendInstruction();
+
+		if (Thread.interrupted()) {
+			emergencyStop();
+		}
+	}
+
 	public void run() {
+		algorithmData.usingUpdate = false;
 		initialise();
 		long startTime = System.nanoTime();
 
