@@ -1,8 +1,10 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,7 +21,7 @@ import java.util.List;
  *
  * @author Jack Wickham
  */
-public class Network implements NetworkInterface {
+public class Network implements NetworkInterface, Closeable {
 	/**
 	 * The socket used to communicate with other robots
 	 */
@@ -97,6 +99,7 @@ public class Network implements NetworkInterface {
 			socket.send(packet);
 		} catch (IOException e) {
 			// This isn't good, but we want to try to keep going
+			Log.warn(e);
 		}
 	}
 
@@ -120,6 +123,7 @@ public class Network implements NetworkInterface {
 	/**
 	 * Shut down the connection
 	 */
+	@Override
 	public void close () {
 		socket.close();
 	}
@@ -132,11 +136,13 @@ public class Network implements NetworkInterface {
 		public void run () {
 			try {
 				while (true) {
-					byte[] data = new byte[200];
+					byte[] data = new byte[NetworkInterface.MAXIMUM_PACKET_SIZE];
 					DatagramPacket receivedPacket = new DatagramPacket(data, data.length);
 					socket.receive(receivedPacket);
-					if (receivedPacket.getLength() > 200) {
-						// TODO: log error - packet too large
+					if (receivedPacket.getLength() > NetworkInterface.MAXIMUM_PACKET_SIZE) {
+						Log.warn("Received a packet that was too long (" +
+								Integer.toString(receivedPacket.getLength()) + "B)");
+
 						continue;
 					}
 					byte[] receivedData = Arrays.copyOf(receivedPacket.getData(), receivedPacket.getLength());
@@ -152,7 +158,7 @@ public class Network implements NetworkInterface {
 				}
 			} catch (IOException e) {
 				if (!socket.isClosed()) {
-					// TODO: Log error
+					Log.critical(e);
 				}
 			}
 		}

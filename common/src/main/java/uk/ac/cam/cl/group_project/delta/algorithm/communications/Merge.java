@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
+import uk.ac.cam.cl.group_project.delta.Log;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,14 +135,14 @@ public class Merge {
 		int transactionId = bytes.getInt();
 
 		if(transactionId != this.transactionId) {
-			// TODO: Log the multiple concurrent merges
+			Log.warn("Multiple concurrent merges occurring");
 			state = MergeState.Cancelled;
 			return;
 		}
 		switch(type) {
 		case AcceptToMerge:
 			if(!state.equals(MergeState.Requested)) {
-				// TODO: Log the out of order merge protocol
+				Log.warn("Out or order merge messages received: AcceptToMerge received when not in Requested");
 				state = MergeState.Cancelled;
 				return;
 			} else {
@@ -149,7 +151,7 @@ public class Merge {
 			break;
 		case ConfirmMerge:
 			if(!state.equals(MergeState.Accepted)) {
-				// TODO: Log the out of order merge protocol
+				Log.warn("Out or order merge messages received: Accepted received when not in ConfirmMerge");
 				state = MergeState.Cancelled;
 				return;
 			} else {

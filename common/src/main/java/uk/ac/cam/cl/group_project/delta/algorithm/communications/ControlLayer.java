@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
@@ -193,7 +194,8 @@ public class ControlLayer {
 			case Emergency:
 				// Already processed, fall through
 			default:
-				// TODO: This indicates an Emergency which wasn't triggered or something
+				// This indicates an Emergency which wasn't triggered or something
+				Log.error("Unexpected message received by ControlLayer");
 				break;
 			}
 		}
