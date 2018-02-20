@@ -3,17 +3,17 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
-import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * JavaFX GUI controller.
@@ -97,7 +97,15 @@ public class Controller {
 	@FXML
 	public void onViewPaneMouseClick(MouseEvent event) {
 
-		SimulatedCar car = simulation.createCar(0.15);
+		if (event.getButton().equals(MouseButton.SECONDARY)) {
+			System.out.println("Hey");
+			ContextMenu menu = new ContextMenu(
+				new MenuItem("Add object")
+			);
+			menu.show(viewPane, event.getScreenX(), event.getScreenY());
+		}
+
+		/*SimulatedCar car = simulation.createCar(0.15);
 
 		car.setPosition(
 			new Vector2D(
@@ -124,7 +132,7 @@ public class Controller {
 			}
 		);
 
-		viewPane.getChildren().add(node);
+		viewPane.getChildren().add(node);*/
 
 	}
 
