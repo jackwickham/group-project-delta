@@ -2,7 +2,9 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 
 import java.nio.ByteBuffer;
 
-public class VehicleData {
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.Message;
+
+public class VehicleData extends Message {
 
 	private final double speed;
 	private final double acceleration;
@@ -40,15 +42,13 @@ public class VehicleData {
 	 * @param rawBytes the bytes to be converted
 	 * @return a new data packet with the specific data
 	 */
-	public static VehicleData generateDataFromBytes(ByteBuffer bytes) {
-		return new VehicleData(
-				bytes.getDouble(),								// speed
-				bytes.getDouble(),								// acceleration
-				bytes.getDouble(),								// turnRate
-				bytes.getDouble(),								// chosenSpeed
-				bytes.getDouble(),								// chosenAcceleration
-				bytes.getDouble()								// chosenTurnRate
-				);
+	public VehicleData(ByteBuffer bytes) {
+		this.speed = bytes.getDouble();
+		this.acceleration = bytes.getDouble();
+		this.turnRate = bytes.getDouble();
+		this.chosenSpeed = bytes.getDouble();
+		this.chosenAcceleration = bytes.getDouble();
+		this.chosenTurnRate = bytes.getDouble();
 	}
 	
 	/**
@@ -58,6 +58,7 @@ public class VehicleData {
 	 * 
 	 * @return a byte representation of the data
 	 */
+	@Override
 	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
 		bytes.putDouble(speed);
 		bytes.putDouble(acceleration);

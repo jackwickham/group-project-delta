@@ -48,7 +48,7 @@ public class Packet {
 		vehicleId = bytes.getInt();
 		
 		if(type.equals(MessageType.Data)) {
-			message = VehicleData.generateDataFromBytes(bytes);
+			message = new VehicleData(bytes);
 			message.setStartTime(receipt.getTime());
 			payload = null;
 		} else {
