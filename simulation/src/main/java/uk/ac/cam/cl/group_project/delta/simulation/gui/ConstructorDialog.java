@@ -2,10 +2,7 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -96,8 +93,15 @@ public class ConstructorDialog<T> extends Stage {
 	 * @return        Control for input of this class.
 	 */
 	private Control getInputField(Class<?> clss) {
-		if (clss.equals(Integer.class)) {
-			Spinner<Integer> spinner = new Spinner<>();
+		if (clss.equals(Integer.class) || clss.equals(Integer.TYPE)) {
+			Spinner<Integer> spinner = new Spinner<>(Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 5);
+			spinner.setEditable(true);
+			values.add(spinner.valueProperty());
+			return spinner;
+		}
+		else if (clss.equals(Double.class) || clss.equals(Double.TYPE)) {
+			Spinner<Double> spinner  = new Spinner<>(-Double.MAX_VALUE, Double.MAX_EXPONENT, 0.0, 0.5);
+			spinner.setEditable(true);
 			values.add(spinner.valueProperty());
 			return spinner;
 		}
@@ -108,4 +112,11 @@ public class ConstructorDialog<T> extends Stage {
 		}
 	}
 
+	/**
+	 * Gets the constructed value.
+	 * @return
+	 */
+	public T getValue() {
+		return value;
+	}
 }
