@@ -10,7 +10,7 @@ import java.util.List;
  * @author Aaron
  *
  */
-public class RequstToMergeMessage extends MergeMessage {
+public class RequestToMergeMessage extends MergeMessage {
 
 	private int mergingPlatoonId;
 	private List<Integer> newPlatoon;
@@ -20,7 +20,7 @@ public class RequstToMergeMessage extends MergeMessage {
 	 * which represents the payload of a packet.
 	 * @param bytes - the location of the data
 	 */
-	public RequstToMergeMessage(ByteBuffer bytes) {
+	public RequestToMergeMessage(ByteBuffer bytes) {
 		super(bytes);
 		mergingPlatoonId = bytes.getInt();
 		int length = 0x00FFFFFF & bytes.getInt();

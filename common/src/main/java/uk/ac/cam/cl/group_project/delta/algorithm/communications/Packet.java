@@ -29,8 +29,7 @@ public class Packet {
 	public final int length;
 	public final MessageType type;
 	
-	public final VehicleData message;
-	public final byte[] payload;
+	public final Message message;
 	
 	/**
 	 * This constructor parses a packet and updates the fields appropriately.
@@ -67,26 +66,10 @@ public class Packet {
 	 * @param platoonId - the current platoon id
 	 * @return the packet to be sent
 	 */
-	public static byte[] createDataPacket(VehicleData message, int vehicleId, int platoonId) {
+	public static byte[] createPacket(Message message, int vehicleId, int platoonId) {
 		ByteBuffer bytes = createHeader(vehicleId, platoonId);
 		message.appendToBuffer(bytes);
-		updateLengthAndType(bytes, MessageType.Data);
-		return bytes.array();
-	}
-	
-	/**
-	 * Creates a new packet which contains the data passed to is as a payload
-	 * and has a type of the type MessageType
-	 * 
-	 * @param data - the data which makes up the payload
-	 * @param vehicleId - the current vehicle id
-	 * @param platoonId - the current platoon id
-	 * @return the packet to be sent
-	 */
-	public static byte[] createPacket(byte[] data, int vehicleId, int platoonId, MessageType type) {
-		ByteBuffer bytes = createHeader(vehicleId, platoonId);
-		bytes.put(data);
-		updateLengthAndType(bytes, type);
+		updateLengthAndType(bytes,message.getType());
 		return bytes.array();
 	}
 	

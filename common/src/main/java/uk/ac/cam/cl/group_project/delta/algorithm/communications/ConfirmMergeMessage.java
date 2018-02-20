@@ -2,9 +2,9 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import java.nio.ByteBuffer;
 
-public class ConfirmMerge extends MergeMessage {
+public class ConfirmMergeMessage extends MergeMessage {
 
-	public ConfirmMerge(ByteBuffer bytes) {
+	public ConfirmMergeMessage(ByteBuffer bytes) {
 		super(bytes);
 	}
 
