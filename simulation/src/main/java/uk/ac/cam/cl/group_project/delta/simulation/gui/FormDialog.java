@@ -6,6 +6,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Abstract base class for pop-up dialogs that request user input for a set of
+ * fields, giving the option to confirm their input or cancel the form.
+ */
 public abstract class FormDialog extends Stage {
 
 	/**
