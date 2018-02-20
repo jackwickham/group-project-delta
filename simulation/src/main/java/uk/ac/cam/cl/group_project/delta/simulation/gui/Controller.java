@@ -10,11 +10,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
-import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * JavaFX GUI controller.
@@ -116,13 +114,16 @@ public class Controller {
 	private void addObject(ActionEvent event) {
 
 		try {
-			ConstructorDialog<SimulatedCarWrapper> dialog = new ConstructorDialog<SimulatedCarWrapper>(
-				SimulatedCarWrapper.class.getConstructor(Double.class)
+			ConstructorDialog<Double> dialog = new ConstructorDialog<>(
+				Double.class.getConstructor(Double.TYPE)
 			);
-			dialog.setOnCloseRequest(e -> {
-				System.out.println("Yay");
-			});
-			dialog.show();
+			dialog.showAndWait();
+			Double wheelBase = dialog.getValue();
+			if (wheelBase != null) {
+				SimulatedCar car = simulation.createCar(wheelBase);
+				car.getPosition().setX(10);
+				car.getPosition().setY(-20);
+			}
 		}
 		catch (NoSuchMethodException e) {
 			// Something has gone really wrong...
@@ -157,13 +158,6 @@ public class Controller {
 		);
 
 		viewPane.getChildren().add(node);*/
-	}
-
-	private class SimulatedCarWrapper {
-		SimulatedCar car;
-		SimulatedCarWrapper(double s) {
-			car = simulation.createCar(s);
-		}
 	}
 
 }
