@@ -75,8 +75,14 @@ public class Controller {
 	 */
 	@FXML
 	public void initialize() {
+
+		// Setup transform
+		viewPane.setScaleY(-1);
+
+		// Start background tasks
 		simulation.start();
 		timeline.play();
+
 	}
 
 	/**
