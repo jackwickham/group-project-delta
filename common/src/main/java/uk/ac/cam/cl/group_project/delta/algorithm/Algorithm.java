@@ -19,6 +19,7 @@ public class Algorithm {
 
 	// set these functions to call version of algorithm required
 	private void initialise() {
+		sendMessage();
 	}
 
 	private void readSensors() {
