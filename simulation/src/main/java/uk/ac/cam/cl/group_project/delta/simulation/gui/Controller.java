@@ -119,22 +119,24 @@ public class Controller {
 
 	private void addObject(ActionEvent event) {
 
-		try {
-			ConstructorDialog<Double> dialog = new ConstructorDialog<>(
-				Double.class.getConstructor(Double.TYPE)
-			);
-			dialog.showAndWait();
-			Double wheelBase = dialog.getValue();
-			if (wheelBase != null) {
+		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
+			(wheelBase, posX, posY) -> {
 				SimulatedCar car = simulation.createCar(wheelBase);
-				car.getPosition().setX(10);
-				car.getPosition().setY(-20);
+				car.getPosition().setX(posX);
+				car.getPosition().setY(posY);
+				SimulatedBodyNode node = new SimulatedBodyNode(car);
+				node.addEventFilter(
+					MouseEvent.MOUSE_CLICKED,
+					e -> {
+						showProperties(node);
+						e.consume();
+					}
+				);
+				simulatedNodes.add(node);
+				viewPane.getChildren().add(node);
 			}
-		}
-		catch (NoSuchMethodException e) {
-			// Something has gone really wrong...
-			e.printStackTrace();
-		}
+		);
+		dialog.show();
 
 		/*SimulatedCar car = simulation.createCar(0.15);
 
