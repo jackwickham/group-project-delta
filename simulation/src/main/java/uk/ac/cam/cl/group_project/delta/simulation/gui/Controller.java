@@ -121,6 +121,9 @@ public class Controller {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
 			(wheelBase, posX, posY) -> {
+				System.out.println(wheelBase);
+				System.out.println(posX);
+				System.out.println(posY);
 				SimulatedCar car = simulation.createCar(wheelBase);
 				car.getPosition().setX(posX);
 				car.getPosition().setY(posY);

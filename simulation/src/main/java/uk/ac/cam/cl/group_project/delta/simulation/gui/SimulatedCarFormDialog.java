@@ -44,15 +44,20 @@ public class SimulatedCarFormDialog extends FormDialog {
 		super();
 		this.callback = callback;
 
+		// TODO: validation of spinner input (avoid ParseException)
+
 		Spinner<Double> wheelBaseSpinner = new Spinner<>(0.0, 10.0, 2.5, 0.5);
+		wheelBaseSpinner.setEditable(true);
 		this.wheelBaseInput = wheelBaseSpinner.valueProperty();
 		this.getForm().getChildren().add(wheelBaseSpinner);
 
 		Spinner<Double> posXSpinner = new Spinner<>(-100.0, 100.0, 0.0, 1.0);
+		posXSpinner.setEditable(true);
 		this.positionX = posXSpinner.valueProperty();
 		this.getForm().getChildren().add(posXSpinner);
 
 		Spinner<Double> posYSpinner = new Spinner<>(-100.0, 100.0, 0.0, 1.0);
+		posYSpinner.setEditable(true);
 		this.positionY = posYSpinner.valueProperty();
 		this.getForm().getChildren().add(posYSpinner);
 
