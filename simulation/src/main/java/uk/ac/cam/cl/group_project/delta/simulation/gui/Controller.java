@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
@@ -21,6 +22,12 @@ import java.util.List;
  */
 public class Controller {
 
+	/**
+	 * Scaling factor to convert from mouse scroll units (number of pixels to
+	 * scroll) to a zoom factor, where the actual scaling is given by raising 2
+	 * to the power of the zoom factor.
+	 */
+	public static final double MOUSE_SCROLL_SENSITIVITY = 0.0001;
 	/**
 	 * Thread running this application's simulation.
 	 */
@@ -166,6 +173,13 @@ public class Controller {
 
 		onGenericMouseEvent(event.getX(), event.getY());
 
+	}
+
+	@FXML
+	public void onViewPaneScroll(ScrollEvent event) {
+		double scaling = Math.pow(2, event.getDeltaY() * MOUSE_SCROLL_SENSITIVITY);
+		scene.setScaleX(scene.getScaleX() * scaling);
+		scene.setScaleY(scene.getScaleY() * scaling);
 	}
 
 	/**
