@@ -27,7 +27,7 @@ public class Controller {
 	 * scroll) to a zoom factor, where the actual scaling is given by raising 2
 	 * to the power of the zoom factor.
 	 */
-	public static final double MOUSE_SCROLL_SENSITIVITY = 0.0001;
+	public static final double MOUSE_SCROLL_SENSITIVITY = 0.0005;
 	/**
 	 * Thread running this application's simulation.
 	 */
@@ -177,9 +177,17 @@ public class Controller {
 
 	@FXML
 	public void onViewPaneScroll(ScrollEvent event) {
+
+		double mouseWorldX = (event.getX() - scene.getTranslateX()) / scene.getScaleX();
+		double mouseWorldY = (event.getY() - scene.getTranslateY()) / scene.getScaleY();
+
 		double scaling = Math.pow(2, event.getDeltaY() * MOUSE_SCROLL_SENSITIVITY);
 		scene.setScaleX(scene.getScaleX() * scaling);
 		scene.setScaleY(scene.getScaleY() * scaling);
+
+		scene.setTranslateX(event.getX() - mouseWorldX * scene.getScaleX());
+		scene.setTranslateY(event.getY() - mouseWorldY * scene.getScaleY());
+
 	}
 
 	/**
@@ -190,6 +198,7 @@ public class Controller {
 	private void addObject(ActionEvent event) {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
+			// TODO: compensate for scaling
 			cursorPosition.getX() - scene.getTranslateX(),
 			cursorPosition.getY() - scene.getTranslateY(),
 			(wheelBase, posX, posY) -> {
