@@ -53,12 +53,12 @@ public class SimulatedCarFormDialog extends FormDialog {
 		this.wheelBaseInput = wheelBaseSpinner.valueProperty();
 		this.getForm().getChildren().add(wheelBaseSpinner);
 
-		Spinner<Double> posXSpinner = new Spinner<>(-100.0, 100.0, x, 1.0);
+		Spinner<Double> posXSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, x, 1.0);
 		posXSpinner.setEditable(true);
 		this.positionX = posXSpinner.valueProperty();
 		this.getForm().getChildren().add(posXSpinner);
 
-		Spinner<Double> posYSpinner = new Spinner<>(-100.0, 100.0, y, 1.0);
+		Spinner<Double> posYSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, y, 1.0);
 		posYSpinner.setEditable(true);
 		this.positionY = posYSpinner.valueProperty();
 		this.getForm().getChildren().add(posYSpinner);
