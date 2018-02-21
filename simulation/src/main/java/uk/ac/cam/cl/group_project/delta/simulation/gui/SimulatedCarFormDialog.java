@@ -37,9 +37,11 @@ public class SimulatedCarFormDialog extends FormDialog {
 	/**
 	 * Construct a dialog for inputting the values required to construct a
 	 * {@link SimulatedCar}: wheel-base and position.
+	 * @param x           Initial x-position (typically where the user clicked)
+	 * @param y           Initial y-position (typically where the user clicked)
 	 * @param callback    Function to call on confirmation of input.
 	 */
-	public SimulatedCarFormDialog(Callback callback) {
+	public SimulatedCarFormDialog(double x, double y, Callback callback) {
 
 		super();
 		this.callback = callback;
@@ -51,12 +53,12 @@ public class SimulatedCarFormDialog extends FormDialog {
 		this.wheelBaseInput = wheelBaseSpinner.valueProperty();
 		this.getForm().getChildren().add(wheelBaseSpinner);
 
-		Spinner<Double> posXSpinner = new Spinner<>(-100.0, 100.0, 0.0, 1.0);
+		Spinner<Double> posXSpinner = new Spinner<>(-100.0, 100.0, x, 1.0);
 		posXSpinner.setEditable(true);
 		this.positionX = posXSpinner.valueProperty();
 		this.getForm().getChildren().add(posXSpinner);
 
-		Spinner<Double> posYSpinner = new Spinner<>(-100.0, 100.0, 0.0, 1.0);
+		Spinner<Double> posYSpinner = new Spinner<>(-100.0, 100.0, y, 1.0);
 		posYSpinner.setEditable(true);
 		this.positionY = posYSpinner.valueProperty();
 		this.getForm().getChildren().add(posYSpinner);
