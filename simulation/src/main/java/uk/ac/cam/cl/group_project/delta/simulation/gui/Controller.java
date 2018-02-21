@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -32,7 +31,7 @@ public class Controller {
 	/**
 	 * Number of GUI units per simulation metre.
 	 */
-	public static final double UNITS_PER_METRE = 100.0;
+	public static final double UNITS_PER_METRE = 30.0;
 
 	/**
 	 * Thread running this application's simulation.

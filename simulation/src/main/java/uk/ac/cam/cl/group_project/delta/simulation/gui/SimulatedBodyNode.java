@@ -16,7 +16,7 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	private final PhysicsBody body;
 
 	/**
-	 * Construct circle as representation of the given body.
+	 * Construct representation of the given body.
 	 * @param body    The body that this represents.
 	 */
 	public SimulatedBodyNode(PhysicsBody body) {
