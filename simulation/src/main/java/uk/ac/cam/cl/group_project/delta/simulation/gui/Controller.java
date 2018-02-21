@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -119,6 +118,11 @@ public class Controller {
 		propertiesView.setRoot(root);
 	}
 
+	/**
+	 * Update the stored cursor position.
+	 * @param x    X-position of cursor.
+	 * @param y    Y-position of cursor.
+	 */
 	public void onGenericMouseEvent(double x, double y) {
 		sceneContextMenu.hide();
 		cursorPosition.setX(x);
@@ -138,11 +142,21 @@ public class Controller {
 
 	}
 
+	/**
+	 * Handle mouse button down. This is the first event fired so we record the
+	 * cursor position for later use, i.e. in the context menu handler and when
+	 * calculating the relative drag vector.
+	 * @param event    Mouse down event.
+	 */
 	@FXML
 	public void onViewPaneMousePressed(MouseEvent event) {
 		onGenericMouseEvent(event.getX(), event.getY());
 	}
 
+	/**
+	 * Handle dragging of the mouse.
+	 * @param event    Mouse drag event.
+	 */
 	@FXML
 	public void onViewPaneMouseDragged(MouseEvent event) {
 
@@ -154,6 +168,11 @@ public class Controller {
 
 	}
 
+	/**
+	 * Handle the user directive to add an object at the cursor - given via the
+	 * scene's main context menu.
+	 * @param event    Context menu event.
+	 */
 	private void addObject(ActionEvent event) {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
