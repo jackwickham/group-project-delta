@@ -66,9 +66,16 @@ public abstract class Algorithm {
 
 	private void sendMessage() {
 		// create and send message to other cars
-		VehicleData sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration,
-				algorithmData.turnRate, algorithmData.chosenSpeed, algorithmData.chosenAcceleration,
-				algorithmData.chosenTurnRate);
+		VehicleData sendMessageData;
+		if(algorithmData.commsInterface.isLeader()) {
+			sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration,
+					algorithmData.turnRate, algorithmData.speed, algorithmData.acceleration,
+					algorithmData.turnRate);
+		} else {
+			sendMessageData = new VehicleData(algorithmData.speed, algorithmData.acceleration,
+					algorithmData.turnRate, algorithmData.chosenSpeed, algorithmData.chosenAcceleration,
+					algorithmData.chosenTurnRate);
+		}
 		algorithmData.commsInterface.sendMessage(sendMessageData);
 	}
 
@@ -102,7 +109,9 @@ public abstract class Algorithm {
 			emergencyStop();
 		}
 
-		makeDecision();
+		if(!algorithmData.commsInterface.isLeader()) {
+			makeDecision();
+		}
 
 		if (Thread.interrupted()) {
 			emergencyStop();
@@ -132,7 +141,9 @@ public abstract class Algorithm {
 				break;
 			}
 
-			makeDecision();
+			if(!algorithmData.commsInterface.isLeader()) {
+				makeDecision();
+			}
 
 			if (Thread.interrupted()) {
 				emergencyStop();
