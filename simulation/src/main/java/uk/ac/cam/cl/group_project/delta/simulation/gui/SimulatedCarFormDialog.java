@@ -43,7 +43,7 @@ public class SimulatedCarFormDialog extends FormDialog {
 	 */
 	public SimulatedCarFormDialog(double x, double y, Callback callback) {
 
-		super();
+		super("Create object - Car");
 		this.callback = callback;
 
 		// TODO: validation of spinner input (avoid ParseException)

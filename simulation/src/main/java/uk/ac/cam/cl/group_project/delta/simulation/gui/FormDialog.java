@@ -25,7 +25,9 @@ public abstract class FormDialog extends Stage {
 	/**
 	 * Construct empty form with cancel and confirm buttons.
 	 */
-	public FormDialog() {
+	public FormDialog(String title) {
+
+		this.setTitle(title);
 
 		form = new VBox();
 		Button cancel = new Button("Cancel");
