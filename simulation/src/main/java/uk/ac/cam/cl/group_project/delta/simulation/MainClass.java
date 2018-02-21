@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
@@ -141,7 +142,8 @@ class MainClass {
 
 		}
 		catch (IOException e) {
-			// Pass.
+			// Log error and continue
+			Log.critical(e);
 		}
 
 		for (PhysicsBody body : world.getBodies()) {

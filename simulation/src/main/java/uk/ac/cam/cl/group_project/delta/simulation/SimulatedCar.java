@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
@@ -88,7 +89,8 @@ public class SimulatedCar extends PhysicsCar {
 	 */
 	public void setController(Algorithm algorithm) {
 		if (controller != null) {
-			controller.interrupt();
+			// Make sure the existing controller relinquishes control of the vehicle
+			stop();
 		}
 		controller = new AlgorithmThread(algorithm);
 	}
@@ -104,9 +106,13 @@ public class SimulatedCar extends PhysicsCar {
 		try {
 			controller.interrupt();
 			controller.join(100);
+			if (controller.isAlive()) {
+				// It was supposed to have died
+				Log.critical("Controller didn't release control of vehicle within 100ms");
+			}
 		}
 		catch (InterruptedException e) {
-			// TODO: Something here?
+			Log.error("Unexpected interruption while stopping algorithm thread");
 		}
 	}
 
