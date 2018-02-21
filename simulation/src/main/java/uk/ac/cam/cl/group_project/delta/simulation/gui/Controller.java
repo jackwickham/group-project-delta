@@ -121,6 +121,7 @@ public class Controller {
 	@FXML
 	public void onViewPaneMouseClick(MouseEvent event) {
 
+		sceneContextMenu.hide();
 		cursorPosition.setX(event.getX());
 		cursorPosition.setY(event.getY());
 
