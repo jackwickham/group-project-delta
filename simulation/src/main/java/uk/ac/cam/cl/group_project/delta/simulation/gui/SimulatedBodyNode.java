@@ -25,15 +25,14 @@ public class SimulatedBodyNode extends Group implements Treeable {
 
 		this.body = body;
 
-		synchronized (body) {
-			Circle c = new Circle(
-				body.getPosition().getX(),
-				body.getPosition().getY(),
-				10.0
-			);
-			c.setFill(Color.TRANSPARENT);
-			c.setStroke(Color.BLACK);
-			getChildren().add(c);
+		Circle c = new Circle(10.0);
+		c.setFill(Color.TRANSPARENT);
+		c.setStroke(Color.BLACK);
+		getChildren().add(c);
+
+		synchronized (this.body) {
+			this.setTranslateX(body.getPosition().getX());
+			this.setTranslateY(body.getPosition().getY());
 		}
 
 	}
