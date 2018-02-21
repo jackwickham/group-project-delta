@@ -3,8 +3,6 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 import javafx.scene.Group;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
 
 /**
@@ -22,19 +20,8 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	 * @param body    The body that this represents.
 	 */
 	public SimulatedBodyNode(PhysicsBody body) {
-
 		this.body = body;
-
-		Circle c = new Circle(10.0);
-		c.setFill(Color.TRANSPARENT);
-		c.setStroke(Color.BLACK);
-		getChildren().add(c);
-
-		synchronized (this.body) {
-			this.setTranslateX(body.getPosition().getX());
-			this.setTranslateY(body.getPosition().getY());
-		}
-
+		this.setVisible(false);
 	}
 
 	/**
@@ -50,6 +37,7 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	 * simulation.
 	 */
 	public void update() {
+		this.setVisible(true);
 		synchronized (body) {
 			this.setTranslateX(body.getPosition().getX() * Controller.UNITS_PER_METRE);
 			this.setTranslateY(body.getPosition().getY() * Controller.UNITS_PER_METRE);
