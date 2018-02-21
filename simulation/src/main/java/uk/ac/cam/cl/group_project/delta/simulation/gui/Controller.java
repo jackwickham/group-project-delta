@@ -149,13 +149,11 @@ public class Controller {
 	@FXML
 	public void onViewPaneMouseDragged(MouseEvent event) {
 
-		if (!event.isDragDetect()) {
-			// Calculate relative drag
-			scene.setTranslateX(scene.getTranslateX() + event.getX() - cursorPosition.getX());
-			scene.setTranslateY(scene.getTranslateY() + event.getY() - cursorPosition.getY());
+		// Calculate relative drag
+		scene.setTranslateX(scene.getTranslateX() + event.getX() - cursorPosition.getX());
+		scene.setTranslateY(scene.getTranslateY() + event.getY() - cursorPosition.getY());
 
-			onGenericMouseEvent(event.getX(), event.getY());
-		}
+		onGenericMouseEvent(event.getX(), event.getY());
 
 	}
 
