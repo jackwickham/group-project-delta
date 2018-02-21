@@ -157,8 +157,8 @@ public class Controller {
 	private void addObject(ActionEvent event) {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
-			cursorPosition.getX(),
-			cursorPosition.getY(),
+			cursorPosition.getX() - scene.getTranslateX(),
+			cursorPosition.getY() - scene.getTranslateY(),
 			(wheelBase, posX, posY) -> {
 				SimulatedCar car = simulation.createCar(wheelBase);
 				synchronized (car) {
