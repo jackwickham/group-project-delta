@@ -126,6 +126,46 @@ public class Controller {
 	}
 
 	/**
+	 * Translate an x-coordinate from relative to the bottom-right
+	 * of the view-pane in pixels to relative to the displayed world origin.
+	 * @param x    X-coordinate, in view-pane space.
+	 * @return     X-coordinate, in world space.
+	 */
+	private double fromViewPaneToWorldSpaceX(double x) {
+		return (x - scene.getTranslateX()) / scene.getScaleX();
+	}
+
+	/**
+	 * Translate a y-coordinate from relative to the bottom-right
+	 * of the view-pane in pixels to relative to the displayed world origin.
+	 * @param y    Y-coordinate, in view-pane space.
+	 * @return     Y-coordinate, in world space.
+	 */
+	private double fromViewPaneToWorldSpaceY(double y) {
+		return (y - scene.getTranslateY()) / scene.getScaleY();
+	}
+
+	/**
+	 * Translate an x-coordinate from relative to the displayed world origin to
+	 * relative to the bottom-right of the view-pane in pixels.
+	 * @param x    X-coordinate, in world space.
+	 * @return     X-coordinate, in view-pane space.
+	 */
+	private double fromWorldToViewPaneSpaceX(double x) {
+		return x * scene.getScaleX() + scene.getTranslateX();
+	}
+
+	/**
+	 * Translate a y-coordinate from relative to the displayed world origin to
+	 * relative to the bottom-right of the view-pane in pixels.
+	 * @param y    Y-coordinate, in world space.
+	 * @return     Y-coordinate, in view-pane space.
+	 */
+	private double fromWorldToViewPaneSpaceY(double y) {
+		return y * scene.getScaleY() + scene.getTranslateY();
+	}
+
+	/**
 	 * Update the stored cursor position.
 	 * @param x    X-position of cursor.
 	 * @param y    Y-position of cursor.
@@ -175,11 +215,16 @@ public class Controller {
 
 	}
 
+	/**
+	 * Handle scrolling in the view pane, which is translated into scaling of
+	 * the scene.
+	 * @param event    Mouse scroll event.
+	 */
 	@FXML
 	public void onViewPaneScroll(ScrollEvent event) {
 
-		double mouseWorldX = (event.getX() - scene.getTranslateX()) / scene.getScaleX();
-		double mouseWorldY = (event.getY() - scene.getTranslateY()) / scene.getScaleY();
+		double mouseWorldX = fromViewPaneToWorldSpaceX(event.getX());
+		double mouseWorldY = fromViewPaneToWorldSpaceY(event.getY());
 
 		double scaling = Math.pow(2, event.getDeltaY() * MOUSE_SCROLL_SENSITIVITY);
 		scene.setScaleX(scene.getScaleX() * scaling);
@@ -199,8 +244,8 @@ public class Controller {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
 			// TODO: compensate for scaling
-			cursorPosition.getX() - scene.getTranslateX(),
-			cursorPosition.getY() - scene.getTranslateY(),
+			fromViewPaneToWorldSpaceX(cursorPosition.getX()),
+			fromViewPaneToWorldSpaceY(cursorPosition.getY()),
 			(wheelBase, posX, posY) -> {
 				SimulatedCar car = simulation.createCar(wheelBase);
 				synchronized (car) {
