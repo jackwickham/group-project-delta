@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
+import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +48,15 @@ public class Controller {
 	 */
 	private Timeline timeline;
 
-
+	/**
+	 * Context menu displayed when the user right-clicks the main view pane.
+	 */
 	private ContextMenu sceneContextMenu;
+
+	/**
+	 * The last recorded mouse position, in simulation world space.
+	 */
+	private Vector2D cursorPosition;
 
 	/**
 	 * Construct the application's simulation thread.
@@ -57,6 +65,8 @@ public class Controller {
 
 		simulation = new SimulationThread();
 		simulatedNodes = new ArrayList<>();
+		cursorPosition = new Vector2D();
+
 		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(new KeyFrame(
@@ -111,6 +121,9 @@ public class Controller {
 	@FXML
 	public void onViewPaneMouseClick(MouseEvent event) {
 
+		cursorPosition.setX(event.getX());
+		cursorPosition.setY(event.getY());
+
 		if (event.getButton().equals(MouseButton.SECONDARY)) {
 			sceneContextMenu.show(viewPane, event.getScreenX(), event.getScreenY());
 		}
@@ -120,6 +133,8 @@ public class Controller {
 	private void addObject(ActionEvent event) {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
+			cursorPosition.getX(),
+			cursorPosition.getY(),
 			(wheelBase, posX, posY) -> {
 				System.out.println(wheelBase);
 				System.out.println(posX);
