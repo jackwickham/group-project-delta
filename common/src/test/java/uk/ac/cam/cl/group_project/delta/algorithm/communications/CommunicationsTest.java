@@ -16,7 +16,7 @@ public class CommunicationsTest {
 	public void getLeaderMessageTest() {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		
+
 		PlatoonLookup lookup = new PlatoonLookup();
 		
 		when(controlLayer.getPlatoonLookup()).thenReturn(lookup);
@@ -33,7 +33,7 @@ public class CommunicationsTest {
 	public void getPredecessorMessageValidTest() {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		
+
 		PlatoonLookup lookup = new PlatoonLookup();
 		
 		when(controlLayer.getPlatoonLookup()).thenReturn(lookup);

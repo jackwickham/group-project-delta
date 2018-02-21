@@ -8,6 +8,7 @@ mainClassName = 'uk.ac.cam.cl.group_project.delta.lego.MainClass'
 dependencies {
 	compile project(':common')
 	compileOnly group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
+	testCompile group: 'com.github.bdeneuter', name: 'lejos-ev3-api', version: '0.9.1-beta'
 }
 
 // Define the connection to the mindstorms
@@ -40,6 +41,9 @@ jar {
 		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 }
+
+// Ensure that common has been compiled to a jar so that the most up to date files will be included in our jar
+jar.dependsOn(":common:jar")
 
 task deployUSB(dependsOn: [jar, 'setupUSBRemote']) {
 	doLast {

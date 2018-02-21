@@ -11,6 +11,9 @@ class MainClass {
 		TextLCD lcd = ev3.getTextLCD();
 		Keys keys = ev3.getKeys();
 
+		Drive drive = new Drive(ev3);
+		Sensor sensor = new Sensor(drive, ev3);
+
 		lcd.drawString("This is " + ev3.getName(), 0, 4);
 		keys.waitForAnyPress();
 	}
