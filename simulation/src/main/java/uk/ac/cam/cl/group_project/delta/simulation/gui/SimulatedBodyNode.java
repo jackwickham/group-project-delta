@@ -25,14 +25,16 @@ public class SimulatedBodyNode extends Group implements Treeable {
 
 		this.body = body;
 
-		Circle c = new Circle(
-			body.getPosition().getX(),
-			body.getPosition().getY(),
-			10.0
-		);
-		c.setFill(Color.TRANSPARENT);
-		c.setStroke(Color.BLACK);
-		getChildren().add(c);
+		synchronized (body) {
+			Circle c = new Circle(
+				body.getPosition().getX(),
+				body.getPosition().getY(),
+				10.0
+			);
+			c.setFill(Color.TRANSPARENT);
+			c.setStroke(Color.BLACK);
+			getChildren().add(c);
+		}
 
 	}
 
@@ -49,8 +51,10 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	 * simulation.
 	 */
 	public void update() {
-		this.setTranslateX(body.getPosition().getX());
-		this.setTranslateY(body.getPosition().getY());
+		synchronized (body) {
+			this.setTranslateX(body.getPosition().getX());
+			this.setTranslateY(body.getPosition().getY());
+		}
 	}
 
 	/**
@@ -59,19 +63,20 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	 * @return    Hierarchical representation of this object.
 	 */
 	public TreeItem<String> toTree() {
+		synchronized (body) {
+			TreeItem<String> root = new TreeItem<>("Body #" + body.getUuid());
 
-		TreeItem<String> root = new TreeItem<>("Body #" + body.getUuid());
+			TreeItem<String> position = new TreeItem<>("position");
+			root.getChildren().add(position);
+			position.getChildren().add(
+				new TreeItem<>("x = " + body.getPosition().getX())
+			);
+			position.getChildren().add(
+				new TreeItem<>("y = " + body.getPosition().getY())
+			);
 
-		TreeItem<String> position = new TreeItem<>("position");
-		root.getChildren().add(position);
-		position.getChildren().add(
-			new TreeItem<>("x = " + body.getPosition().getX())
-		);
-		position.getChildren().add(
-			new TreeItem<>("y = " + body.getPosition().getY())
-		);
-
-		return root;
+			return root;
+		}
 	}
 
 }

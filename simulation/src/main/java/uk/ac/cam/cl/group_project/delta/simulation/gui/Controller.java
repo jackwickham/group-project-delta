@@ -137,12 +137,11 @@ public class Controller {
 			cursorPosition.getX(),
 			cursorPosition.getY(),
 			(wheelBase, posX, posY) -> {
-				System.out.println(wheelBase);
-				System.out.println(posX);
-				System.out.println(posY);
 				SimulatedCar car = simulation.createCar(wheelBase);
-				car.getPosition().setX(posX);
-				car.getPosition().setY(posY);
+				synchronized (car) {
+					car.getPosition().setX(posX);
+					car.getPosition().setY(posY);
+				}
 				SimulatedBodyNode node = new SimulatedBodyNode(car);
 				node.addEventFilter(
 					MouseEvent.MOUSE_CLICKED,
@@ -151,8 +150,8 @@ public class Controller {
 						e.consume();
 					}
 				);
-				simulatedNodes.add(node);
 				viewPane.getChildren().add(node);
+				simulatedNodes.add(node);
 			}
 		);
 		dialog.show();

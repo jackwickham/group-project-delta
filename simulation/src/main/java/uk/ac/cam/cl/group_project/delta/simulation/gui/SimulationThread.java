@@ -5,6 +5,8 @@ import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork;
 import uk.ac.cam.cl.group_project.delta.simulation.World;
 
+import java.util.List;
+
 /**
  * Encapsulates simulation running in separate thread.
  */
@@ -13,12 +15,12 @@ public class SimulationThread extends Thread {
 	/**
 	 * Simulated world.
 	 */
-	private World world;
+	private final World world;
 
 	/**
 	 * Simulated network.
 	 */
-	private SimulatedNetwork network;
+	private final SimulatedNetwork network;
 
 	/**
 	 * Whether this thread should be running.
@@ -54,15 +56,26 @@ public class SimulationThread extends Thread {
 
 		while (localRunning) {
 			synchronized (this) {
-
 				localRunning = running;
-
-				// Update world
-				long tmp = System.nanoTime();
-				world.update((tmp - time) / 1e9);
-				time = tmp;
-
 			}
+
+			long tmp = System.nanoTime();
+
+			// Fetch bodies from world
+			List<PhysicsBody> bodies;
+			synchronized (world) {
+				bodies = world.getBodies();
+			}
+
+			// Update world
+			for (PhysicsBody body : bodies) {
+				synchronized (body) {
+					body.update((tmp - time) / 1e9);
+				}
+			}
+
+			time = tmp;
+
 		}
 
 	}
@@ -71,8 +84,10 @@ public class SimulationThread extends Thread {
 	 * Add a physics body to the simulated world.
 	 * @param body    Body to add.
 	 */
-	public synchronized void add(PhysicsBody body) {
-		world.getBodies().add(body);
+	public void add(PhysicsBody body) {
+		synchronized (world) {
+			world.getBodies().add(body);
+		}
 	}
 
 	/**
@@ -81,7 +96,10 @@ public class SimulationThread extends Thread {
 	 * @return             The car created.
 	 */
 	public SimulatedCar createCar(double wheelBase) {
-		SimulatedCar car = new SimulatedCar(wheelBase, world, network);
+		SimulatedCar car;
+		synchronized (network) { // network.register(...) is called
+			car = new SimulatedCar(wheelBase, world, network);
+		}
 		add(car);
 		return car;
 	}
