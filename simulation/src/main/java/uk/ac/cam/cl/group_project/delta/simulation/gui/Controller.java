@@ -28,6 +28,12 @@ public class Controller {
 	 * to the power of the zoom factor.
 	 */
 	public static final double MOUSE_SCROLL_SENSITIVITY = 0.0005;
+
+	/**
+	 * Number of GUI units per simulation metre.
+	 */
+	public static final double UNITS_PER_METRE = 100.0;
+
 	/**
 	 * Thread running this application's simulation.
 	 */
@@ -48,7 +54,7 @@ public class Controller {
 	 * The simulated world containing nodes representing the simulated objects.
 	 */
 	@FXML
-	private Group scene;
+	private Pane scene;
 
 	/**
 	 * GUI element containing the hierarchical information for a selected
@@ -132,7 +138,7 @@ public class Controller {
 	 * @return     X-coordinate, in world space.
 	 */
 	private double fromViewPaneToWorldSpaceX(double x) {
-		return (x - scene.getTranslateX()) / scene.getScaleX();
+		return (x - scene.getTranslateX()) / (scene.getScaleX() * UNITS_PER_METRE);
 	}
 
 	/**
@@ -142,7 +148,7 @@ public class Controller {
 	 * @return     Y-coordinate, in world space.
 	 */
 	private double fromViewPaneToWorldSpaceY(double y) {
-		return (y - scene.getTranslateY()) / scene.getScaleY();
+		return (y - scene.getTranslateY()) / (scene.getScaleY() * UNITS_PER_METRE);
 	}
 
 	/**
@@ -152,7 +158,7 @@ public class Controller {
 	 * @return     X-coordinate, in view-pane space.
 	 */
 	private double fromWorldToViewPaneSpaceX(double x) {
-		return x * scene.getScaleX() + scene.getTranslateX();
+		return x * scene.getScaleX() * UNITS_PER_METRE + scene.getTranslateX();
 	}
 
 	/**
@@ -162,7 +168,7 @@ public class Controller {
 	 * @return     Y-coordinate, in view-pane space.
 	 */
 	private double fromWorldToViewPaneSpaceY(double y) {
-		return y * scene.getScaleY() + scene.getTranslateY();
+		return y * scene.getScaleY() * UNITS_PER_METRE + scene.getTranslateY();
 	}
 
 	/**
@@ -230,8 +236,8 @@ public class Controller {
 		scene.setScaleX(scene.getScaleX() * scaling);
 		scene.setScaleY(scene.getScaleY() * scaling);
 
-		scene.setTranslateX(event.getX() - mouseWorldX * scene.getScaleX());
-		scene.setTranslateY(event.getY() - mouseWorldY * scene.getScaleY());
+		scene.setTranslateX(event.getX() - mouseWorldX * scene.getScaleX() * UNITS_PER_METRE);
+		scene.setTranslateY(event.getY() - mouseWorldY * scene.getScaleY() * UNITS_PER_METRE);
 
 	}
 

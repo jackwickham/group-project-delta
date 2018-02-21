@@ -33,11 +33,11 @@
             </AnchorPane>
             <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" onMouseDragged="#onViewPaneMouseDragged" onMousePressed="#onViewPaneMousePressed" onScroll="#onViewPaneScroll" scaleY="-1.0">
                <children>
-                  <Group fx:id="scene">
+                  <Pane fx:id="scene">
                      <children>
                         <Line endX="10.0" startX="-10.0" />
                         <Line endY="10.0" startY="-10.0" />
-                     </children></Group>
+                     </children></Pane>
                </children>
 				<cursor>
 					<Cursor fx:constant="OPEN_HAND" />

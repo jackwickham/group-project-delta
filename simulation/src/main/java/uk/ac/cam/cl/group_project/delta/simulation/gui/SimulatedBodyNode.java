@@ -51,8 +51,8 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	 */
 	public void update() {
 		synchronized (body) {
-			this.setTranslateX(body.getPosition().getX());
-			this.setTranslateY(body.getPosition().getY());
+			this.setTranslateX(body.getPosition().getX() * Controller.UNITS_PER_METRE);
+			this.setTranslateY(body.getPosition().getY() * Controller.UNITS_PER_METRE);
 		}
 	}
 
