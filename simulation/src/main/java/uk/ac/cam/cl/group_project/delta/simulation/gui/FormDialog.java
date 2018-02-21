@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -33,7 +35,11 @@ public abstract class FormDialog extends Stage {
 		Button cancel = new Button("Cancel");
 		Button confirm = new Button("Confirm");
 		HBox buttons = new HBox(cancel, confirm);
+		buttons.setAlignment(Pos.BASELINE_RIGHT);
 		VBox root = new VBox(form, buttons);
+		root.setPadding(new Insets(10.0));
+		root.setSpacing(10.0);
+
 		this.setScene(new Scene(root));
 
 		cancel.setCancelButton(true);

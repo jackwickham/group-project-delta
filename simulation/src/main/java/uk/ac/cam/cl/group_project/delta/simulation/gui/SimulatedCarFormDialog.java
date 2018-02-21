@@ -1,7 +1,11 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.Spinner;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 
 /**
@@ -48,20 +52,28 @@ public class SimulatedCarFormDialog extends FormDialog {
 
 		// TODO: validation of spinner input (avoid ParseException)
 
+		GridPane grid = new GridPane();
+		this.getForm().getChildren().add(grid);
+		grid.setHgap(10.0);
+		grid.setVgap(10.0);
+
+		grid.add(new Text("Wheel base"), 0, 0);
+		grid.add(new Text("Position"), 0, 1);
+
 		Spinner<Double> wheelBaseSpinner = new Spinner<>(0.0, 10.0, 2.5, 0.5);
 		wheelBaseSpinner.setEditable(true);
 		this.wheelBaseInput = wheelBaseSpinner.valueProperty();
-		this.getForm().getChildren().add(wheelBaseSpinner);
+		grid.add(wheelBaseSpinner, 1, 0, 2, 1);
 
 		Spinner<Double> posXSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, x, 1.0);
 		posXSpinner.setEditable(true);
 		this.positionX = posXSpinner.valueProperty();
-		this.getForm().getChildren().add(posXSpinner);
+		grid.add(posXSpinner, 1, 1);
 
 		Spinner<Double> posYSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, y, 1.0);
 		posYSpinner.setEditable(true);
 		this.positionY = posYSpinner.valueProperty();
-		this.getForm().getChildren().add(posYSpinner);
+		grid.add(posYSpinner, 2, 1);
 
 	}
 
