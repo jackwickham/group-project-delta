@@ -1,7 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Spinner;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
@@ -11,18 +9,36 @@ import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
  */
 public class SimulatedCarFormDialog extends FormDialog {
 
+	/**
+	 * Function to call when we exit the dialog by clicking the confirmation
+	 * button.
+	 */
 	private Callback callback;
 
+	/**
+	 * Value property for wheel base input spinner.
+	 */
 	private ObservableValue<Double> wheelBaseInput;
 
+	/**
+	 * Value property for x-position input spinner.
+	 */
 	private ObservableValue<Double> positionX;
 
+	/**
+	 * Value property for y-position input spinner.
+	 */
 	private ObservableValue<Double> positionY;
 
 	//private StringProperty algorithmController;
 
 	//private static final HashMap<String, Algorithm> ALGORITHM_HASH_MAP;
 
+	/**
+	 * Construct a dialog for inputting the values required to construct a
+	 * {@link SimulatedCar}: wheel-base and position.
+	 * @param callback    Function to call on confirmation of input.
+	 */
 	public SimulatedCarFormDialog(Callback callback) {
 
 		super();
@@ -42,8 +58,11 @@ public class SimulatedCarFormDialog extends FormDialog {
 
 	}
 
+	/**
+	 * On confirmation of input, call the callback function.
+	 */
 	@Override
-	public void confirm() {
+	protected void confirm() {
 		callback.call(
 			wheelBaseInput.getValue(),
 			positionX.getValue(),
@@ -51,8 +70,19 @@ public class SimulatedCarFormDialog extends FormDialog {
 		);
 	}
 
+	/**
+	 * An interface for the confirmation callback. This is a
+	 * {@link FunctionalInterface}, and hence lambda functions are permitted in
+	 * place of implementing classes.
+	 */
 	@FunctionalInterface
 	public interface Callback {
+		/**
+		 * Perform the callback operation.
+		 * @param wheelBase    Wheel-base input to the dialog.
+		 * @param posX         X-position input to the dialog.
+		 * @param posY         Y-position input to the dialog.
+		 */
 		void call(double wheelBase, double posX, double posY);
 	}
 
