@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.ac.cam.cl.group_project.delta.simulation.gui.Controller">
    <children>
@@ -33,7 +34,10 @@
             <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" onMouseDragged="#onViewPaneMouseDragged" onMousePressed="#onViewPaneMousePressed">
                <children>
                   <Group fx:id="scene">
-                  </Group>
+                     <children>
+                        <Line endX="10.0" startX="-10.0" />
+                        <Line endY="10.0" startY="-10.0" />
+                     </children></Group>
                </children>
 				<cursor>
 					<Cursor fx:constant="OPEN_HAND" />
