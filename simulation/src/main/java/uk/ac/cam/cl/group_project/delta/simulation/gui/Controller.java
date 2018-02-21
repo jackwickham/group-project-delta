@@ -4,7 +4,9 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -37,6 +39,12 @@ public class Controller {
 	private Pane viewPane;
 
 	/**
+	 * The simulated world containing nodes representing the simulated objects.
+	 */
+	@FXML
+	private Group scene;
+
+	/**
 	 * GUI element containing the hierarchical information for a selected
 	 * object.
 	 */
@@ -54,7 +62,7 @@ public class Controller {
 	private ContextMenu sceneContextMenu;
 
 	/**
-	 * The last recorded mouse position, in simulation world space.
+	 * The last recorded mouse position.
 	 */
 	private Vector2D cursorPosition;
 
@@ -114,6 +122,12 @@ public class Controller {
 		propertiesView.setRoot(root);
 	}
 
+	public void onGenericMouseEvent(double x, double y) {
+		sceneContextMenu.hide();
+		cursorPosition.setX(x);
+		cursorPosition.setY(y);
+	}
+
 	/**
 	 * Handle mouse click in the main simulation view area.
 	 * @param event     Mouse click event.
@@ -121,12 +135,26 @@ public class Controller {
 	@FXML
 	public void onViewPaneMouseClick(MouseEvent event) {
 
-		sceneContextMenu.hide();
-		cursorPosition.setX(event.getX());
-		cursorPosition.setY(event.getY());
-
 		if (event.getButton().equals(MouseButton.SECONDARY)) {
 			sceneContextMenu.show(viewPane, event.getScreenX(), event.getScreenY());
+		}
+
+	}
+
+	@FXML
+	public void onViewPaneMousePressed(MouseEvent event) {
+		onGenericMouseEvent(event.getX(), event.getY());
+	}
+
+	@FXML
+	public void onViewPaneMouseDragged(MouseEvent event) {
+
+		if (!event.isDragDetect()) {
+			// Calculate relative drag
+			scene.setTranslateX(scene.getTranslateX() + event.getX() - cursorPosition.getX());
+			scene.setTranslateY(scene.getTranslateY() + event.getY() - cursorPosition.getY());
+
+			onGenericMouseEvent(event.getX(), event.getY());
 		}
 
 	}
@@ -150,40 +178,12 @@ public class Controller {
 						e.consume();
 					}
 				);
-				viewPane.getChildren().add(node);
+				scene.getChildren().add(node);
 				simulatedNodes.add(node);
 			}
 		);
 		dialog.show();
 
-		/*SimulatedCar car = simulation.createCar(0.15);
-
-		car.setPosition(
-			new Vector2D(
-				event.getX(),
-				event.getY()
-			)
-		);
-
-		Random random = new Random();
-		car.setVelocity(
-			new Vector2D(
-				random.nextDouble() * 10 - 5,
-				random.nextDouble() * 10 - 5
-			)
-		);
-
-		SimulatedBodyNode node = new SimulatedBodyNode(car);
-		simulatedNodes.add(node);
-		node.addEventFilter(
-			MouseEvent.MOUSE_CLICKED,
-			e -> {
-				showProperties(node);
-				e.consume();
-			}
-		);
-
-		viewPane.getChildren().add(node);*/
 	}
 
 }

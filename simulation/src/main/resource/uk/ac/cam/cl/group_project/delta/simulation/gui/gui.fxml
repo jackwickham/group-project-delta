@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -28,15 +30,15 @@
                   </TabPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="400.0" prefWidth="298.0">
+            <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" onMouseDragged="#onViewPaneMouseDragged" onMousePressed="#onViewPaneMousePressed">
                <children>
-                  <Pane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" prefHeight="398.0" prefWidth="415.0" />
-                     </children>
-                  </Pane>
+                  <Group fx:id="scene">
+                  </Group>
                </children>
-            </AnchorPane>
+				<cursor>
+					<Cursor fx:constant="OPEN_HAND" />
+				</cursor>
+            </Pane>
          </items>
       </SplitPane>
    </children>
