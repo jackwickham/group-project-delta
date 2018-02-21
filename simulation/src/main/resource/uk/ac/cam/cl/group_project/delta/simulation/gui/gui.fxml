@@ -31,7 +31,7 @@
                   </TabPane>
                </children>
             </AnchorPane>
-            <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" onMouseDragged="#onViewPaneMouseDragged" onMousePressed="#onViewPaneMousePressed">
+            <Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick" onMouseDragged="#onViewPaneMouseDragged" onMousePressed="#onViewPaneMousePressed" scaleY="-1.0">
                <children>
                   <Group fx:id="scene">
                      <children>
