@@ -249,7 +249,6 @@ public class Controller {
 	private void addObject(ActionEvent event) {
 
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
-			// TODO: compensate for scaling
 			fromViewPaneToWorldSpaceX(cursorPosition.getX()),
 			fromViewPaneToWorldSpaceY(cursorPosition.getY()),
 			(wheelBase, posX, posY) -> {
@@ -258,7 +257,7 @@ public class Controller {
 					car.getPosition().setX(posX);
 					car.getPosition().setY(posY);
 				}
-				SimulatedBodyNode node = new SimulatedBodyNode(car);
+				SimulatedCarNode node = new SimulatedCarNode(car);
 				node.addEventFilter(
 					MouseEvent.MOUSE_CLICKED,
 					e -> {
