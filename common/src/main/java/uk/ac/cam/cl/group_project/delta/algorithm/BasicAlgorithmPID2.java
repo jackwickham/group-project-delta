@@ -29,7 +29,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	public final static double HEAD_TIME = 0.1;
 
 	//distance bellow which emergency stop happens
-	public final static double EMER_DIST = 0.5;
+	public final static double EMER_DIST = 0.1;
 
 	public BasicAlgorithmPID2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		super(driveInterface, sensorInterface, networkInterface);

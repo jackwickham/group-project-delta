@@ -22,7 +22,7 @@ public abstract class Algorithm {
 	/**
 	 *Builds and returns algorithm of type specified by AlgorithmEnum input
 	 */
-	public Algorithm createAlgorithm(AlgorithmEnum algorithmEnum, DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+	public static Algorithm createAlgorithm(AlgorithmEnum algorithmEnum, DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		switch (algorithmEnum) {
 			case BasicAlgorithm: return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface);
 			case BasicAlgorithm2: return new BasicAlgorithm2(driveInterface,sensorInterface,networkInterface);
@@ -33,7 +33,7 @@ public abstract class Algorithm {
 		return null;
 	}
 
-	public AlgorithmEnum[] getAlgorithmList() {
+	public static AlgorithmEnum[] getAlgorithmList() {
 		return AlgorithmEnum.values();
 	}
 
@@ -57,9 +57,9 @@ public abstract class Algorithm {
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
 
 		// get initial distance reading from sensor
-		algorithmData.previousDistance = algorithmData.sensorInterface.getFrontProximity();
-		algorithmData.previousSpeed = algorithmData.sensorInterface.getSpeed();
-		algorithmData.previousAcceleration = algorithmData.sensorInterface.getAcceleration();
+		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
+		algorithmData.previousSpeed = algorithmData.speed;
+		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
 
 	protected abstract void makeDecision();
@@ -93,7 +93,10 @@ public abstract class Algorithm {
 	protected long getTime() {
 		if(algorithmData.usingUpdate) {
 			return algorithmData.time;
-		} else return System.nanoTime();
+		}
+		 else {
+			return System.nanoTime();
+		}
 	}
 	/**
 	 * Runs one loop of algorithm
@@ -119,8 +122,10 @@ public abstract class Algorithm {
 
 		sendMessage();
 
-		// send instructions to drive
-		sendInstruction();
+		// send instructions to drive if not leader
+		if(!algorithmData.commsInterface.isLeader()) {
+			sendInstruction();
+		}
 
 		if (Thread.interrupted()) {
 			emergencyStop();
@@ -152,8 +157,10 @@ public abstract class Algorithm {
 
 			sendMessage();
 
-			// send instructions to drive
-			sendInstruction();
+			// send instructions to drive if not leader
+			if(!algorithmData.commsInterface.isLeader()) {
+				sendInstruction();
+			}
 
 			if (Thread.interrupted()) {
 				emergencyStop();
