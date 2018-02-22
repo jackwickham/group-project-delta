@@ -3,13 +3,14 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 import uk.ac.cam.cl.group_project.delta.Beacon;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 
 public class FaultySensorModule extends SimulatedSensorModule {
 	/**
 	 * Random number generator
 	 */
-	private Random random;
+	private final Random random;
 
 	/**
 	 * Constructs a sensor module for given car in provided world.
@@ -73,6 +74,22 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	}
 
 	//#endregion
+	//#region Beacon failure injection
+
+	/**
+	 * Whether the beacon values should be adjusted to match the behaviour of the Mindstorms
+	 */
+	private boolean beaconsEmulateMindstorms = false;
+
+	/**
+	 * The standard deviation of the normal distribution used for updating the beacon distance value
+	 */
+	private double beaconDistanceStdDev = 0.0;
+
+	/**
+	 * The standard deviation of the normal distribution used for updating the beacon angle
+	 */
+	private double beaconAngleStdDev = 0.0;
 
 	/**
 	 * Returns a list of objects that represent the visible beacons
@@ -84,8 +101,92 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 */
 	@Override
 	public List<Beacon> getBeacons () {
-		return super.getBeacons();
+		List<Beacon> beacons = super.getBeacons();
+		ListIterator<Beacon> it = beacons.listIterator();
+		while (it.hasNext()) {
+			Beacon beacon = it.next();
+			// Process the beacon distance
+			double distance = beacon.getDistanceLowerBound(); // Lower and upper bounds are equal
+			if (beaconDistanceStdDev > 0) {
+				distance += random.nextGaussian() * beaconDistanceStdDev;
+			}
+
+			double lowerBound, upperBound;
+			if (beaconsEmulateMindstorms) {
+				// Convert to a mindstorms sensor value and back to produce a range
+				double sensorValue = distanceToMindstormsBeaconValue(distance);
+				lowerBound = mindstormsBeaconToDistanceBound(sensorValue - 1);
+				upperBound = mindstormsBeaconToDistanceBound(sensorValue);
+			} else {
+				lowerBound = distance;
+				upperBound = distance;
+			}
+
+			// Process the beacon angle
+			double angle = beacon.getAngle();
+			if (beaconAngleStdDev > 0) {
+				angle += random.nextGaussian() * beaconAngleStdDev;
+			}
+
+			// Create the new beacon and replace it in the list
+			Beacon updatedBeacon = new Beacon(beacon.getBeaconIdentifier(), lowerBound, upperBound, angle);
+			it.set(updatedBeacon);
+		}
+		return beacons;
 	}
+
+	/**
+	 * In the mindstorms, we take the value `v` from the sensors and convert it using d = 0.0683 + 0.0267v + 0.000259v²,
+	 * so to emulate the mindstorms we need to invert that and round it.
+	 *
+	 * @param distance The distance that we are using
+	 * @return The value that the Mindstorms would give for that distance
+	 */
+	private double distanceToMindstormsBeaconValue (double distance) {
+		double a = 0.000259, b = 0.0267, c = 0.0683 - distance;
+		double equivalentSensorValue = (-b + Math.sqrt(b*b - 4 * a * c)) / (2 * a);
+		return (double) Math.round(Math.max(equivalentSensorValue, 1.0));
+	}
+
+	/**
+	 * Copied from the equivalent function in LEGO's BeaconTracker
+	 * @param sensorValue The value from the sensor
+	 * @return The upper bound of the distance that it corresponds to
+	 */
+	private double mindstormsBeaconToDistanceBound(double sensorValue) {
+		if (sensorValue == 0) {
+			// The sensor never actually returns 0, so it is only used when getting a lower bound. The closest that the
+			// beacon can be to the sensor is 0m, so that is the lower bound here.
+			return 0.0;
+		}
+		return 0.0683 + 0.0267 * sensorValue + 0.000259 * sensorValue * sensorValue;
+	}
+
+	/**
+	 * Set whether the beacons should attempt to match the Mindstorms' behaviour
+	 * @param beaconsEmulateMindstorms Whether to match the behaviour
+	 */
+	public void setBeaconsEmulateMindstorms (boolean beaconsEmulateMindstorms) {
+		this.beaconsEmulateMindstorms = beaconsEmulateMindstorms;
+	}
+
+	/**
+	 * Set the standard deviation for the distance measured by the beacons
+	 * @param beaconDistanceStdDev The new standard deviation
+	 */
+	public void setBeaconDistanceStdDev (double beaconDistanceStdDev) {
+		this.beaconDistanceStdDev = beaconDistanceStdDev;
+	}
+
+	/**
+	 * Set the standard deviation for the angle measured by the beacons
+	 * @param beaconAngleStdDev The new standard deviation
+	 */
+	public void setBeaconAngleStdDev (double beaconAngleStdDev) {
+		this.beaconAngleStdDev = beaconAngleStdDev;
+	}
+
+	//#endregion
 
 	/**
 	 * Returns the current acceleration of the vehicle.
