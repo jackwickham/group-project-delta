@@ -3,6 +3,9 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -17,13 +20,14 @@ public class PacketTest {
 	public void isEmergencyPacketTest() {
 		assertTrue(
 				Packet.isEmergencyMessage(
-						Packet.createPacket(new byte[0], 0, 0, MessageType.Emergency)));
+						Packet.createPacket(new EmergencyMessage(), 0, 0)));
 	}
 
 	@Test
 	public void createPacketTest() {
 		int vehicle = 100, platoon = 500;
-		byte[] bytes = Packet.createPacket(new byte[0], vehicle, platoon, MessageType.RequestToMerge);
+		List<Integer> list = new ArrayList<>();
+		byte[] bytes = Packet.createPacket(new RequestToMergeMessage(list, 150), vehicle, platoon);
 		
 		ByteBuffer buffer = ByteBuffer.wrap(bytes);
 		int initial = buffer.getInt();

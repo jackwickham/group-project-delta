@@ -10,6 +10,10 @@ public abstract class MergeMessage extends Message {
 		transactionId = bytes.getInt();
 	}
 	
+	public MergeMessage(int transactionId) {
+		this.transactionId = transactionId;
+	}
+
 	@Override
 	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
 		return bytes.putInt(transactionId);

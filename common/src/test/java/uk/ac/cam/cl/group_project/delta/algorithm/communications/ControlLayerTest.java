@@ -38,10 +38,10 @@ public class ControlLayerTest {
 		Packet p = new Packet(new MessageReceipt(byteData));
 		assertEquals(p.vehicleId, 200);
 		assertEquals(p.platoonId, 123);
-		assertEquals(p.type, MessageType.Data);
+		assertEquals(p.message.getType(), MessageType.Data);
 		
-		assertEquals(data.getSpeed(), p.message.getSpeed(), 0.0);
-		assertEquals(data.getChosenAcceleration(), p.message.getChosenAcceleration(), 0.0);
+		assertEquals(data.getSpeed(), ((VehicleData) p.message).getSpeed(), 0.0);
+		assertEquals(data.getChosenAcceleration(), ((VehicleData)p.message).getChosenAcceleration(), 0.0);
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class ControlLayerTest {
 			.thenReturn(
 				Arrays.asList(
 						new MessageReceipt(
-								Packet.createDataPacket(data, 100, 123))));
+								Packet.createPacket(data, 100, 123))));
 		
 		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
 		

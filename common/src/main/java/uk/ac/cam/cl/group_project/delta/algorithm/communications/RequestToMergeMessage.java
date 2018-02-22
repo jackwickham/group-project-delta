@@ -30,6 +30,12 @@ public class RequestToMergeMessage extends MergeMessage {
 		}
 	}
 
+	public RequestToMergeMessage(List<Integer> platoon, int newPlatoonId, int transactionId) {
+		super(transactionId);
+		mergingPlatoonId = newPlatoonId;
+		newPlatoon = platoon;
+	}
+
 	/**
 	 * Append the data currently held in this message to the passed byte buffer
 	 * 

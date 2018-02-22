@@ -8,6 +8,10 @@ public class ConfirmMergeMessage extends MergeMessage {
 		super(bytes);
 	}
 
+	public ConfirmMergeMessage(int transactionId) {
+		super(transactionId);
+	}
+
 	@Override
 	public MessageType getType() {
 		return MessageType.ConfirmMerge;

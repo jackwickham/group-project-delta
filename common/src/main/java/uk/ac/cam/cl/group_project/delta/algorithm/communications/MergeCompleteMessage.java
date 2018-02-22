@@ -8,6 +8,10 @@ public class MergeCompleteMessage extends MergeMessage {
 		super(bytes);
 	}
 
+	public MergeCompleteMessage(int transactionId) {
+		super(transactionId);
+	}
+
 	@Override
 	public MessageType getType() {
 		return MessageType.MergeComplete;

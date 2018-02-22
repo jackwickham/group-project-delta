@@ -27,7 +27,6 @@ public class Packet {
 	public final int vehicleId;
 	public final int platoonId;
 	public final int length;
-	public final MessageType type;
 	
 	public final Message message;
 	
@@ -40,21 +39,15 @@ public class Packet {
 	public Packet(MessageReceipt receipt) {
 		ByteBuffer bytes = ByteBuffer.wrap(receipt.getData());
 		int packedInt = bytes.getInt();							// Contains the type and length
-		type = MessageType.valueOf((packedInt >> 24) & 0x000000FF);
+		MessageType type = MessageType.valueOf((packedInt >> 24) & 0x000000FF);
 		length = packedInt & 0x00FFFFFF;
 		
 		platoonId = bytes.getInt();
 		vehicleId = bytes.getInt();
 		
-		if(type.equals(MessageType.Data)) {
-			message = new VehicleData(bytes);
-			message.setStartTime(receipt.getTime());
-			payload = null;
-		} else {
-			payload = new byte[length - SIZE_OF_HEADER];
-			bytes.get(payload, 0, length - SIZE_OF_HEADER);
-			
-			message = null;
+		message = Message.decodeMessage(bytes, type);
+		if(message instanceof VehicleData) {
+			((VehicleData) message).setStartTime(receipt.getTime());
 		}
 	}
 	
