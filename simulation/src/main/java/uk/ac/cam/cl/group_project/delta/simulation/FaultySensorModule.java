@@ -187,6 +187,12 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	}
 
 	//#endregion
+	//#region Motion failure injection
+
+	// The standard deviations for injecting faults into the acceleration, speed and turn rate values
+	private double accelerationStdDev = 0.0;
+	private double speedStdDev = 0.0;
+	private double turnRateStdDev = 0.0;
 
 	/**
 	 * Returns the current acceleration of the vehicle.
@@ -195,7 +201,11 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 */
 	@Override
 	public double getAcceleration () {
-		return super.getAcceleration();
+		double acceleration = super.getAcceleration();
+		if (accelerationStdDev > 0) {
+			acceleration += random.nextGaussian() * accelerationStdDev;
+		}
+		return acceleration;
 	}
 
 	/**
@@ -205,7 +215,11 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 */
 	@Override
 	public double getSpeed () {
-		return super.getSpeed();
+		double speed = super.getSpeed();
+		if (speedStdDev > 0) {
+			speed += random.nextGaussian() * speedStdDev;
+		}
+		return speed;
 	}
 
 	/**
@@ -215,6 +229,36 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 */
 	@Override
 	public double getTurnRate () {
-		return super.getTurnRate();
+		double turnRate = super.getTurnRate();
+		if (turnRateStdDev > 0) {
+			turnRate += random.nextGaussian() * turnRateStdDev;
+		}
+		return turnRate;
 	}
+
+	/**
+	 * Set the standard deviation for the acceleration error
+	 * @param accelerationStdDev The new standard deviation
+	 */
+	public void setAccelerationStdDev (double accelerationStdDev) {
+		this.accelerationStdDev = accelerationStdDev;
+	}
+
+	/**
+	 * Set the standard deviation for the speed error
+	 * @param speedStdDev The new standard deviation
+	 */
+	public void setSpeedStdDev (double speedStdDev) {
+		this.speedStdDev = speedStdDev;
+	}
+
+	/**
+	 * Set the standard deviation for the turn rate error
+	 * @param turnRateStdDev The new standard deviation
+	 */
+	public void setTurnRateStdDev (double turnRateStdDev) {
+		this.turnRateStdDev = turnRateStdDev;
+	}
+
+	//#endregion
 }
