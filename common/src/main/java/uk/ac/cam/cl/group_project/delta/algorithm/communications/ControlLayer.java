@@ -77,8 +77,8 @@ public class ControlLayer {
 	 * @param map
 	 *            - the position to message map to be used
 	 */
-	public ControlLayer(NetworkInterface network, PlatoonLookup map) {
-		messageLookup = map;
+	public ControlLayer(NetworkInterface network) {
+		messageLookup = new PlatoonLookup();
 		this.network = network;
 		Random r = new Random();
 		vehicleId = r.nextInt();
@@ -102,12 +102,12 @@ public class ControlLayer {
 	 * @param platoonOrder
 	 *            - a list of the current platoon in terms of their ids
 	 */
-	public ControlLayer(NetworkInterface network, PlatoonLookup map, int vehicleId, int platoonId,
+	public ControlLayer(NetworkInterface network, int vehicleId, int platoonId,
 			List<Integer> platoonOrder) {
 		this.vehicleId = vehicleId;
 		this.platoonId = platoonId;
 		this.network = network;
-		this.messageLookup = map;
+		this.messageLookup = new PlatoonLookup();
 		this.leaderId = platoonOrder.get(0);
 		idToPositionLookup = new HashMap<>();
 
@@ -135,6 +135,10 @@ public class ControlLayer {
 
 	public int getCurrentPosition() {
 		return position;
+	}
+
+	public PlatoonLookup getPlatoonLookup() {
+		return messageLookup;
 	}
 
 	/**
