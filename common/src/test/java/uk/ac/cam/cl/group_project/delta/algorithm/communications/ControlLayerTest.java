@@ -27,7 +27,7 @@ public class ControlLayerTest {
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 
-		ControlLayer control = new ControlLayer(network, null, 200, 123, initialPlatoon);
+		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
 
 		control.sendMessage(data);
 
@@ -48,7 +48,6 @@ public class ControlLayerTest {
 	public void updateMessagesDataTest() {
 		List<Integer> initialPlatoon = Arrays.asList(100, 200);
 		NetworkInterface network = mock(NetworkInterface.class);
-		PlatoonLookup lookup = new PlatoonLookup();
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 
@@ -58,12 +57,14 @@ public class ControlLayerTest {
 						new MessageReceipt(
 								Packet.createDataPacket(data, 100, 123))));
 
-		ControlLayer control = new ControlLayer(network, lookup, 200, 123, initialPlatoon);
+		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
 
 		control.updateMessages();
 
-		assertEquals(data.getSpeed(), lookup.get(1).getSpeed(), 0.0);
-		assertEquals(data.getChosenAcceleration(), lookup.get(1).getChosenAcceleration(), 0.0);
+		assertEquals(data.getSpeed(), control.getPlatoonLookup().get(1).getSpeed(), 0.0);
+		assertEquals(data.getChosenAcceleration(),
+				control.getPlatoonLookup().get(1).getChosenAcceleration(), 0.0);
+
 	}
 
 	@Test(expected = IllegalArgumentException.class)

@@ -1,11 +1,15 @@
 
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.NetworkInterface;
+import uk.ac.cam.cl.group_project.delta.SensorInterface;
+
 /**
  *Uses the formula found in the research paper
  */
 
-public class BasicAlgorithmPID2 {
+public class BasicAlgorithmPID2 extends Algorithm {
 
 	//ID parameters
 	//increases response time
@@ -24,9 +28,25 @@ public class BasicAlgorithmPID2 {
 	//constant headway time in s
 	public final static double HEAD_TIME = 0.1;
 
-	public static void makeDecision(AlgorithmData algorithmData) {
-		//decide on chosen acceleration, speed and turnRate
+	//distance bellow which emergency stop happens
+	public final static double EMER_DIST = 0.1;
 
+	public BasicAlgorithmPID2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+		super(driveInterface, sensorInterface, networkInterface);
+	}
+
+	@Override
+	protected void initialise() {
+
+	}
+
+	@Override
+	public void makeDecision() {
+
+		//decide on chosen acceleration, speed and turnRate
+		if(algorithmData.sensorFrontProximity < EMER_DIST) {
+			emergencyStop();
+		}
 		//This multiplies the error by a constant term PID_P
 		double pTerm = PID_P*(algorithmData.sensorFrontProximity +
 				HEAD_TIME*(algorithmData.predecessorSpeed-algorithmData.speed) - BUFF_DIST);
@@ -35,7 +55,15 @@ public class BasicAlgorithmPID2 {
 		double dTerm = PID_D*(algorithmData.predecessorSpeed -
 				algorithmData.speed+HEAD_TIME*(algorithmData.predecessorChosenAcceleration-algorithmData.acceleration));
 
-		algorithmData.chosenAcceleration = pTerm + dTerm;
+		//clamp chosen acceleration within range min and max acceleration
+		double chosenAcceleration = pTerm + dTerm;
+		if(chosenAcceleration > MAX_ACC) {
+			chosenAcceleration = MAX_ACC;
+		} else if(chosenAcceleration < MIN_ACC) {
+			chosenAcceleration = MIN_ACC;
+		}
+
+		algorithmData.chosenAcceleration = chosenAcceleration;
 
 		//TODO: This is not calculated
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;

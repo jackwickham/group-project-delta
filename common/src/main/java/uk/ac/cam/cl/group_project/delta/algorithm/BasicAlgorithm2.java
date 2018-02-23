@@ -1,14 +1,28 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.NetworkInterface;
+import uk.ac.cam.cl.group_project.delta.SensorInterface;
+
 /**
  * Uses the predecessors acceleration as in the first basic algorithm but
  * additionally modifies the chosen acceleration by a linear function of the
  * front proximity
  */
-public class BasicAlgorithm2 {
+public class BasicAlgorithm2 extends Algorithm{
 
-	public static void makeDecision(AlgorithmData algorithmData) {
-		// decide on chosen acceleration, speed and turnRate
+	public BasicAlgorithm2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+		super(driveInterface, sensorInterface, networkInterface);
+	}
+
+	@Override
+	protected void initialise() {
+
+	}
+
+	@Override
+	protected void makeDecision() {
+	// decide on chosen acceleration, speed and turnRate
 		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
 		if (algorithmData.sensorFrontProximity < 5) {
 			if (algorithmData.chosenAcceleration >= 0) {
