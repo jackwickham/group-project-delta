@@ -159,14 +159,13 @@ public class ControlLayer {
 			Packet p = new Packet(msg);
 
 			//Ignore packets sent by this vehicle
-			if(p.vehicleId == vehicleId) {
+			if(p.vehicleId != vehicleId) {
 				packets.add(p);
 			}
 			containsRTM |= p.message.getType().equals(MessageType.RequestToMerge);
 		}
 
 		for (Packet packet: packets) {
-
 			if(packet.message instanceof VehicleData) {
 				if (packet.platoonId == platoonId) {
 					// Update the data for that vehicle
