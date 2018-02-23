@@ -1,6 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,6 +85,7 @@ public class ControlLayer {
 		leaderId = vehicleId;
 
 		idToPositionLookup = new HashMap<>();
+		idToPositionLookup.put(vehicleId, 0);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class ControlLayer {
 	 *            - the message to be sent
 	 */
 	public void sendMessage(VehicleData message) {
-		network.sendData(Packet.createDataPacket(message, vehicleId, platoonId));
+		network.sendData(Packet.createPacket(message, vehicleId, platoonId));
 	}
 
 	public int getCurrentPosition() {
@@ -145,7 +145,7 @@ public class ControlLayer {
 	 * Send an emergency packet to the network
 	 */
 	public void notifyEmergency() {
-		network.sendData(Packet.createPacket(new byte[0], vehicleId, platoonId, MessageType.Emergency));
+		network.sendData(Packet.createPacket(new EmergencyMessage(), vehicleId, platoonId));
 	}
 
 	/**
@@ -155,52 +155,53 @@ public class ControlLayer {
 	 * the message does not have either of these characteristics then it is ignored.
 	 */
 	public void updateMessages() {
-		for (MessageReceipt msg : network.pollData()) {
-			Packet packet = new Packet(msg);
+		boolean containsRTM = false;
+		List<Packet> packets = new ArrayList<>();
+		for(MessageReceipt msg : network.pollData()) {
+			Packet p = new Packet(msg);
 
-			if (packet.vehicleId == vehicleId) {
-				// Ignore packets sent by this vehicle
-				continue;
+			//Ignore packets sent by this vehicle
+			if(p.vehicleId != vehicleId) {
+				packets.add(p);
 			}
+			containsRTM |= p.message.getType().equals(MessageType.RequestToMerge);
+		}
 
-			switch (packet.type) {
-			case Data:
+		for (Packet packet: packets) {
+			if(packet.message instanceof VehicleData) {
 				if (packet.platoonId == platoonId) {
 					// Update the data for that vehicle
-					messageLookup.put(idToPositionLookup.get(packet.vehicleId), packet.message);
+					messageLookup.put(idToPositionLookup.get(packet.vehicleId),
+							(VehicleData) packet.message);
 				} else {
-					beginMergeProtocol(packet);
+					if(!containsRTM) {
+						beginMergeProtocol(packet);
+					}
 				}
-				break;
-			case RequestToMerge:
+			} else if(packet.message instanceof RequestToMergeMessage) {
 				if (packet.platoonId == platoonId || packet.vehicleId == leaderId) {
 					handleRequestToMerge(packet);
 				}
-				break;
-			case AcceptToMerge:
+			} else if(packet.message instanceof AcceptToMergeMessage) {
 				if (packet.platoonId == platoonId || packet.vehicleId == leaderId) {
 					handleAcceptToMerge(packet);
 				}
-				break;
-			case ConfirmMerge:
+			} else if(packet.message instanceof ConfirmMergeMessage) {
 				if (packet.platoonId == platoonId && position == 0) {
 					handleConfirmMerge(packet);
 				}
-				break;
-			case MergeComplete:
+			} else if(packet.message instanceof MergeCompleteMessage) {
 				if (packet.platoonId == platoonId) {
 					// Check the correct transaction id and commit
-					if (currentMerge != null && getFirstInt(packet.payload) == currentMerge.getTransactionId()) {
+					if (currentMerge != null &&
+							((MergeMessage) packet.message).getTransactionId()
+							== currentMerge.getTransactionId()) {
 						commitMerge();
 					}
 				}
-				break;
-			case Emergency:
-				// Already processed, fall through
-			default:
+			} else {
 				// This indicates an Emergency which wasn't triggered or something
 				Log.error("Unexpected message received by ControlLayer");
-				break;
 			}
 		}
 	}
@@ -217,8 +218,8 @@ public class ControlLayer {
 			currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
 
 			// Send an initial request to join
-			byte[] payload = createNewMergeRequest(currentMerge.getTransactionId());
-			network.sendData(Packet.createPacket(payload, vehicleId, packet.platoonId, MessageType.RequestToMerge));
+			Message m = createNewMergeRequest(currentMerge.getTransactionId());
+			network.sendData(Packet.createPacket(m, vehicleId, packet.platoonId));
 		}
 	}
 
@@ -231,20 +232,24 @@ public class ControlLayer {
 	 */
 	private void handleRequestToMerge(Packet packet) {
 		// Everyone need to remember this info
-		currentMerge = new Merge(packet.platoonId, platoonId, packet.payload);
+		currentMerge = new Merge(packet.platoonId, platoonId, packet.message);
 
 		if (position == 0) {
 			// This is the leader of the main platoon, so make a response
 
 			// Currently always accept merge
-			byte[] payload = createNewMergeAccept(currentMerge.getTransactionId(), true,
+			Message m = createNewMergeAccept(currentMerge.getTransactionId(), true,
 					currentMerge.getAdditionalIdLookups());
-			network.sendData(Packet.createPacket(payload, vehicleId, currentMerge.getMergingPlatoonId(),
-					MessageType.AcceptToMerge));
+
+			// Add this acceptance to the current merge
+			currentMerge.handleMessage(m);
+			network.sendData(Packet.createPacket(m, vehicleId, currentMerge.getMergingPlatoonId()));
 
 			// Also send confirm message
-			sendBlankMergingMessage(currentMerge.getTransactionId(), currentMerge.getMergingPlatoonId(),
-					MessageType.ConfirmMerge);
+			network.sendData(Packet.createPacket(
+					new ConfirmMergeMessage(currentMerge.getTransactionId()),
+					vehicleId,
+					currentMerge.getMergingPlatoonId()));
 		}
 	}
 
@@ -259,12 +264,14 @@ public class ControlLayer {
 		// The merge has been agreed, update the merge information
 		// with the new info from the leader of the main platoon
 		if (currentMerge != null && currentMerge.isValid()) {
-			currentMerge.handlePayload(packet.type, packet.payload);
+			currentMerge.handleMessage(packet.message);
 
 			if (currentMerge.doesAccept() && (position != 0)) {
 				// This vehicle is happy so sends a confirmation
-				sendBlankMergingMessage(currentMerge.getTransactionId(), currentMerge.getMergingPlatoonId(),
-						MessageType.ConfirmMerge);
+				network.sendData(Packet.createPacket(
+						new ConfirmMergeMessage(currentMerge.getTransactionId()),
+						vehicleId,
+						currentMerge.getMergingPlatoonId()));
 			}
 		}
 	}
@@ -279,39 +286,40 @@ public class ControlLayer {
 	 */
 	private void handleConfirmMerge(Packet packet) {
 		if (currentMerge != null && currentMerge.isValid()) {
-			currentMerge.handlePayload(packet.type, packet.payload);
+			currentMerge.handleMessage(packet.message);
 
 			// The merge has been agreed by all parties, so commits
 			if (currentMerge.isConfirmed()) {
 				// Tell everyone in both platoons to agree the merge
-				sendBlankMergingMessage(currentMerge.getTransactionId(), currentMerge.getMergingPlatoonId(),
-						MessageType.ConfirmMerge);
-				sendBlankMergingMessage(currentMerge.getTransactionId(), currentMerge.getMainPlatoonId(),
-						MessageType.ConfirmMerge);
+				network.sendData(Packet.createPacket(
+						new MergeCompleteMessage(currentMerge.getTransactionId()),
+						vehicleId,
+						currentMerge.getMergingPlatoonId()));
+				network.sendData(Packet.createPacket(
+						new MergeCompleteMessage(currentMerge.getTransactionId()),
+						vehicleId,
+						currentMerge.getMainPlatoonId()));
 				commitMerge();
 			}
 		}
 	}
 
 	/**
-	 * Used to generate the payload for a RequestToMerge packet
+	 * Used to generate the message for a RequestToMerge packet
 	 *
 	 * @param transactionId
 	 *            - The Id of the transaction this packet belongs to
-	 * @return the RTM payload
+	 * @return the RTM message
 	 */
-	private byte[] createNewMergeRequest(int transactionId) {
+	private Message createNewMergeRequest(int transactionId) {
 		assert (position == 0);
 
-		ByteBuffer result = ByteBuffer.allocate(12 + 4 * idToPositionLookup.size());
-		result.putInt(transactionId);
-		result.putInt(platoonId);
-		result.putInt(idToPositionLookup.size());
+		List<Integer> platoon = new ArrayList<>();
 
 		for (Map.Entry<Integer, Integer> item : sortMapByValues(idToPositionLookup)) {
-			result.putInt(item.getKey());
+			platoon.add(item.getKey());
 		}
-		return result.array();
+		return new RequestToMergeMessage(platoon, platoonId, transactionId);
 	}
 
 	/**
@@ -326,7 +334,7 @@ public class ControlLayer {
 	 *            - The new ids of the vehicles in the merging platoon
 	 * @return the ATM payload
 	 */
-	private byte[] createNewMergeAccept(int transactionId, boolean allowMerge, List<Integer> newIds) {
+	private Message createNewMergeAccept(int transactionId, boolean allowMerge, List<Integer> newIds) {
 		assert (position == 0);
 		// Calculate which ids conflict
 		List<Integer> conflictingIds = new ArrayList<>();
@@ -335,44 +343,23 @@ public class ControlLayer {
 				conflictingIds.add(i);
 			}
 		}
-
-		ByteBuffer result = ByteBuffer.allocate(12 + 4 * idToPositionLookup.size() + 4 * conflictingIds.size());
-		result.putInt((transactionId & 0x00FFFFFF) | (allowMerge ? 0x01000000 : 0));
-		result.putInt(idToPositionLookup.size());
+		List<Integer> currentPlatoon = new ArrayList<>();
 
 		// First add the members of the main platoon
 		for (Map.Entry<Integer, Integer> item : sortMapByValues(idToPositionLookup)) {
-			result.putInt(item.getKey());
+			currentPlatoon.add(item.getKey());
 		}
-		result.putInt(conflictingIds.size());
+		Map<Integer, Integer> renames = new HashMap<>();
 		Random r = new Random();
 		// Record new names to fix any conflicts
 		for (Integer i : conflictingIds) {
-			result.putInt(i);
 			int newId = r.nextInt();
 			while (idToPositionLookup.containsKey(newId) || newIds.contains(newId)) {
 				newId = r.nextInt();
 			}
-			result.putInt(newId);
+			renames.put(i, newId);
 		}
-		return result.array();
-	}
-
-	/**
-	 * Sends a message which contains only the transaction id which is of the
-	 * specified type
-	 *
-	 * @param transactionId
-	 *            - The id of the merging transaction
-	 * @param platoonId
-	 *            - The id of the main platoon
-	 * @param type
-	 *            - The type of the message to be sent
-	 */
-	public void sendBlankMergingMessage(int transactionId, int platoonId, MessageType type) {
-		network.sendData(Packet.createPacket(new byte[] { (byte) (currentMerge.getTransactionId() >>> 24),
-				(byte) (currentMerge.getTransactionId() >>> 16), (byte) (currentMerge.getTransactionId() >>> 8),
-				(byte) (currentMerge.getTransactionId()), }, vehicleId, platoonId, type));
+		return new AcceptToMergeMessage(allowMerge, currentPlatoon, renames, transactionId);
 	}
 
 	/**
@@ -445,33 +432,18 @@ public class ControlLayer {
 	}
 
 	/**
-	 * Return the first 4 bytes of the argument interpreting them as a big-endian
-	 * integer
-	 *
-	 * @param bytes
-	 *            - the byte source to be read
-	 * @return the first 4 bytes as an int
-	 */
-	public static int getFirstInt(byte[] bytes) {
-		if (bytes.length < 4) {
-			throw new IllegalArgumentException("Tried to read an int from an empty array.");
-		}
-		return (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
-	}
-
-	/**
-	 * Return a list of <Key, values> pairs for the given list which is sorted by
-	 * the value of the item in the list
+	 * Return a list of <Key, values> pairs for the given list which is sorted
+	 * in reverse by the value of the item in the list
 	 *
 	 * @param unsorted - the unsorted map structure
-	 * @return a list of sorted pairs
+	 * @return a list of reverse sorted pairs
 	 */
 	public static List<Map.Entry<Integer, Integer>> sortMapByValues(Map<Integer, Integer> unsorted) {
 		List<Map.Entry<Integer, Integer>> list = new LinkedList<>(unsorted.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
 			@Override
 			public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-				return (o1.getValue()).compareTo(o2.getValue());
+				return (o2.getValue()).compareTo(o1.getValue());
 			}
 		});
 		return list;
