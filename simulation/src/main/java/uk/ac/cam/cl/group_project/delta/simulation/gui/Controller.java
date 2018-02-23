@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
@@ -60,7 +61,7 @@ public class Controller {
 	 * object.
 	 */
 	@FXML
-	private TreeView<String> propertiesView;
+	private AnchorPane propertiesPane;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -124,10 +125,9 @@ public class Controller {
 	 * Display the object in the information pane.
 	 * @param obj    The object to display.
 	 */
-	private void showProperties(Treeable obj) {
-		TreeItem<String> root = obj.toTree();
-		root.setExpanded(true);
-		propertiesView.setRoot(root);
+	private void showProperties(Paneable obj) {
+		Pane root = obj.toPane();
+		propertiesPane.getChildren().setAll(root);
 	}
 
 	/**
@@ -187,11 +187,9 @@ public class Controller {
 	 */
 	@FXML
 	public void onViewPaneMouseClick(MouseEvent event) {
-
 		if (event.getButton().equals(MouseButton.SECONDARY)) {
 			sceneContextMenu.show(viewPane, event.getScreenX(), event.getScreenY());
 		}
-
 	}
 
 	/**

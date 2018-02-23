@@ -1,14 +1,14 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
 
 /**
  * Encapsulates the GUI representation of a simulated object in the world.
  */
-public class SimulatedBodyNode extends Group implements Treeable {
+public class SimulatedBodyNode extends Group {
 
 	/**
 	 * The physics body that this node represents.
@@ -16,12 +16,36 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	private final PhysicsBody body;
 
 	/**
+	 * Property binding for the current x-coordinate.
+	 */
+	private final DoubleProperty posX;
+
+	/**
+	 * Property binding for the current y-coordinate.
+	 */
+	private final DoubleProperty posY;
+
+	/**
 	 * Construct representation of the given body.
 	 * @param body    The body that this represents.
 	 */
 	public SimulatedBodyNode(PhysicsBody body) {
 		this.body = body;
-		this.setVisible(false);
+		posX = new SimpleDoubleProperty(body.getPosition().getX());
+		posY = new SimpleDoubleProperty(body.getPosition().getY());
+		translateXProperty().bind(posX);
+		translateYProperty().bind(posY);
+	}
+
+	/**
+	 * Update the positions of this representation based on the physics
+	 * simulation.
+	 */
+	public void update() {
+		synchronized (body) {
+			posX.set(body.getPosition().getX() * Controller.UNITS_PER_METRE);
+			posY.set(body.getPosition().getY() * Controller.UNITS_PER_METRE);
+		}
 	}
 
 	/**
@@ -33,37 +57,21 @@ public class SimulatedBodyNode extends Group implements Treeable {
 	}
 
 	/**
-	 * Update the positions of this representation based on the physics
-	 * simulation.
+	 * Get the property for the x-position of the simulated object that this
+	 * GUI element represents.
+	 * @return    A {@link DoubleProperty}
 	 */
-	public void update() {
-		this.setVisible(true);
-		synchronized (body) {
-			this.setTranslateX(body.getPosition().getX() * Controller.UNITS_PER_METRE);
-			this.setTranslateY(body.getPosition().getY() * Controller.UNITS_PER_METRE);
-		}
+	public DoubleProperty posXProperty() {
+		return posX;
 	}
 
 	/**
-	 * Convert this object to a {@link TreeItem<String>} for display in a
-	 * {@link TreeView}.
-	 * @return    Hierarchical representation of this object.
+	 * Get the property for the y-position of the simulated object that this
+	 * GUI element represents.
+	 * @return    A {@link DoubleProperty}
 	 */
-	public TreeItem<String> toTree() {
-		synchronized (body) {
-			TreeItem<String> root = new TreeItem<>("Body #" + body.getUuid());
-
-			TreeItem<String> position = new TreeItem<>("position");
-			root.getChildren().add(position);
-			position.getChildren().add(
-				new TreeItem<>("x = " + body.getPosition().getX())
-			);
-			position.getChildren().add(
-				new TreeItem<>("y = " + body.getPosition().getY())
-			);
-
-			return root;
-		}
+	public DoubleProperty posYProperty() {
+		return posY;
 	}
 
 }

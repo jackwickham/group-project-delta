@@ -19,7 +19,7 @@ sourceSets {
 	main {
 		resources {
 			srcDirs = ["src/main/resource"]
-			includes = ["**/*.fxml"]
+			includes = ["**/*"]
 		}
 	}
 }
