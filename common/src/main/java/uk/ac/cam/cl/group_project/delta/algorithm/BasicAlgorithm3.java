@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 /**
@@ -10,20 +11,32 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  * time preriod, and the sensor proximity data
  */
 
-public class BasicAlgorithm3 {
+public class BasicAlgorithm3 extends Algorithm{
+
+	public BasicAlgorithm3(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+		super(driveInterface, sensorInterface, networkInterface);
+	}
 
 	private static double weightFrontProximity(double predictedFrontProximity, double sensorFrontProximity) {
 		return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
 	}
 
-	public static void makeDecision(AlgorithmData algorithmData) {
+	@Override
+	protected void initialise() {
+
+	}
+
+	@Override
+	public void makeDecision() {
 		// decide on chosen acceleration, speed and turnRate
 		// calculate the distance us and our predecessor have travelled in the previous
 		// time period
-		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * algorithmData.timePeriod
-				+ 0.5 * algorithmData.predecessorAcceleration * algorithmData.predecessorAcceleration;
-		algorithmData.predictedMovement = algorithmData.previousSpeed * algorithmData.timePeriod
-				+ 0.5 * algorithmData.previousAcceleration * algorithmData.previousAcceleration;
+		double delay = getTime() - algorithmData.receiveMessageData.getStartTime() / 100000000;
+		//calculate the distance us and our predecessor have travelled since message received
+		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
+				+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
+		algorithmData.predictedMovement = algorithmData.previousSpeed * delay
+				+ 0.5 * algorithmData.previousAcceleration * delay * delay;
 		algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 				- algorithmData.predictedMovement + algorithmData.previousDistance;
 
