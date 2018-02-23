@@ -1,15 +1,8 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.Log;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
-import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.PlatoonLookup;
 
 import java.io.*;
 import java.util.ArrayList;
