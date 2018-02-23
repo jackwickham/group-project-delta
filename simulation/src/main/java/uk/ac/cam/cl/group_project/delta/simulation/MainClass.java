@@ -62,6 +62,11 @@ class MainClass {
 				i * 0.3, 0
 			));
 
+			if (i == 0) {
+				// Make the first car drive forwards for testing purposes
+				car.setEnginePower(0.05);
+			}
+
 			cars.add(car);
 		}
 
