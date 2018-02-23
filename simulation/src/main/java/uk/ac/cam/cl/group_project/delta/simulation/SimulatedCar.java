@@ -29,7 +29,7 @@ public class SimulatedCar extends PhysicsCar {
 	/**
 	 * The algorithm that is controlling this car.
 	 */
-	private Thread controller;
+	private Algorithm controller;
 
 	/**
 	 * The default wheel base of created cars. Set to 15cm for compatibility
@@ -88,49 +88,25 @@ public class SimulatedCar extends PhysicsCar {
 	 * @param algorithm    Algorithm that will make decisions for this vehicle.
 	 */
 	public void setController(Algorithm algorithm) {
-		if (controller != null) {
-			// Make sure the existing controller relinquishes control of the vehicle
-			stop();
-		}
-		controller = new AlgorithmThread(algorithm);
+		controller = algorithm;
+		algorithm.initialise();
 	}
 
 	/**
-	 * Run the controller algorithm.
+	 * Call the algorithm to update this car's state and communicate it to the other vehicles
+	 * @param timeNanos The world time in nanoseconds
 	 */
-	public void start() {
-		controller.start();
+	public void updateControl(long timeNanos) {
+		if (controller == null) {
+			throw new IllegalStateException("An algorithm must be attached to this vehicle before it can update");
+		}
+		controller.update(timeNanos);
 	}
 
+	/**
+	 * Stop the vehicle
+	 */
 	public void stop() {
-		try {
-			controller.interrupt();
-			controller.join(100);
-			if (controller.isAlive()) {
-				// It was supposed to have died
-				Log.critical("Controller didn't release control of vehicle within 100ms");
-			}
-		}
-		catch (InterruptedException e) {
-			Log.error("Unexpected interruption while stopping algorithm thread");
-		}
+		//controller.emergencyStop();
 	}
-
-	private static class AlgorithmThread extends Thread {
-
-		private Algorithm algorithm;
-
-		public AlgorithmThread(Algorithm algorithm) {
-			this.algorithm = algorithm;
-		}
-
-		@Override
-		public void run() {
-			if (algorithm != null) {
-				algorithm.run();
-			}
-		}
-
-	}
-
 }
