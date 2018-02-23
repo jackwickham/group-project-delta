@@ -85,6 +85,7 @@ public class ControlLayer {
 		leaderId = vehicleId;
 
 		idToPositionLookup = new HashMap<>();
+		idToPositionLookup.put(vehicleId, 0);
 	}
 
 	/**
@@ -239,6 +240,9 @@ public class ControlLayer {
 			// Currently always accept merge
 			Message m = createNewMergeAccept(currentMerge.getTransactionId(), true,
 					currentMerge.getAdditionalIdLookups());
+
+			// Add this acceptance to the current merge
+			currentMerge.handleMessage(m);
 			network.sendData(Packet.createPacket(m, vehicleId, currentMerge.getMergingPlatoonId()));
 
 			// Also send confirm message
