@@ -111,6 +111,8 @@ public class Merge {
 			return;
 		}
 
+		state = MergeState.Requested;
+
 		RequestToMergeMessage msg = (RequestToMergeMessage) m;
 		transactionId = msg.getTransactionId();
 		this.mergingPlatoonId = msg.getMergingPlatoonId();
