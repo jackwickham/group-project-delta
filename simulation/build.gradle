@@ -14,12 +14,3 @@ compileJava {
 	// Reset to Java 8 compilation
 	options.bootstrapClasspath = null
 }
-
-sourceSets {
-	main {
-		resources {
-			srcDirs = ["src/main/resource"]
-			includes = ["**/*"]
-		}
-	}
-}
