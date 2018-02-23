@@ -153,14 +153,19 @@ public class ControlLayer {
 	 * the message does not have either of these characteristics then it is ignored.
 	 */
 	public void updateMessages() {
-		System.out.println("here2");
-		for (MessageReceipt msg : network.pollData()) {
-			Packet packet = new Packet(msg);
+		boolean containsRTM = false;
+		List<Packet> packets = new ArrayList<>();
+		for(MessageReceipt msg : network.pollData()) {
+			Packet p = new Packet(msg);
 
-			if (packet.vehicleId == vehicleId) {
-				// Ignore packets sent by this vehicle
-				continue;
+			//Ignore packets sent by this vehicle
+			if(p.vehicleId == vehicleId) {
+				packets.add(p);
 			}
+			containsRTM |= p.message.getType().equals(MessageType.RequestToMerge);
+		}
+
+		for (Packet packet: packets) {
 
 			if(packet.message instanceof VehicleData) {
 				if (packet.platoonId == platoonId) {
@@ -168,7 +173,9 @@ public class ControlLayer {
 					messageLookup.put(idToPositionLookup.get(packet.vehicleId),
 							(VehicleData) packet.message);
 				} else {
-					beginMergeProtocol(packet);
+					if(!containsRTM) {
+						beginMergeProtocol(packet);
+					}
 				}
 			} else if(packet.message instanceof RequestToMergeMessage) {
 				if (packet.platoonId == platoonId || packet.vehicleId == leaderId) {
@@ -204,7 +211,6 @@ public class ControlLayer {
 	 *            - the data in Packet format
 	 */
 	private void beginMergeProtocol(Packet packet) {
-		System.out.println("here");
 		// Found a new platoon which we could merge with
 		if (position == 0 && (currentMerge == null || !currentMerge.isValid())) {
 			currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
