@@ -356,6 +356,7 @@ public class ControlLayer {
 			renames.put(i, newId);
 		}
 		return new AcceptToMergeMessage(allowMerge, currentPlatoon, renames, transactionId);
+	}
 
 	/**
 	 * Commit the current merge by changing all of the data structures
