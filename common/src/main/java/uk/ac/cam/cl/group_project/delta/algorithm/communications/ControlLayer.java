@@ -245,7 +245,7 @@ public class ControlLayer {
 			network.sendData(Packet.createPacket(
 					new ConfirmMergeMessage(currentMerge.getTransactionId()),
 					vehicleId,
-					platoonId));
+					currentMerge.getMergingPlatoonId()));
 		}
 	}
 

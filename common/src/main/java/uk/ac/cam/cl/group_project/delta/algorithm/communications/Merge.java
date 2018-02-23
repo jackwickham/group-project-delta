@@ -128,19 +128,21 @@ public class Merge {
 	}
 
 	/**
-	 * Handle the specific type of message, if something is incorrect
-	 * then the state is set to Cancelled
+	 * Handle the specific type of message, if something is incorrect then the state
+	 * is set to Cancelled
 	 *
 	 * @param m - the data to be added to this merge
 	 */
 	public void handleMessage(Message m) {
-		if(!(m instanceof MergeMessage)) {
-			// TODO: Log this, as it indicated the message has been routed
+		if (!(m instanceof MergeMessage)) {
+			// Log this, as it indicated the message has been routed
 			// to the wrong place. Critical error.
+			Log.error("Merge tried to handle a non-merge message.");
 			return;
 		}
 		MergeMessage message = (MergeMessage) m;
-		if(message.getTransactionId() != this.transactionId) {
+
+		if (message.getTransactionId() != this.transactionId) {
 			// Log the multiple concurrent merges
 			Log.warn("Multiple concurrent merges occurring");
 			state = MergeState.Cancelled;
@@ -165,8 +167,9 @@ public class Merge {
 		} else if(message instanceof MergeCompleteMessage) {
 			state = MergeState.Confirmed;
 		} else {
-			// TODO: Log this, as it again indicated the message was
+			// Log this, as it again indicated the message was
 			// routed to the wrong place.
+			Log.error("Merge tried to handle an unexpected message.");
 		}
 	}
 
