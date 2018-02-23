@@ -16,7 +16,7 @@ public class RequestToMergeMessage extends MergeMessage {
 	private List<Integer> newPlatoon;
 
 	/**
-	 * The constructor to create a new RequestToMerge message from a bytebuffer 
+	 * The constructor to create a new RequestToMerge message from a bytebuffer
 	 * which represents the payload of a packet.
 	 * @param bytes - the location of the data
 	 */
@@ -26,7 +26,7 @@ public class RequestToMergeMessage extends MergeMessage {
 		int length = 0x00FFFFFF & bytes.getInt();
 		newPlatoon = new ArrayList<>(length);
 		for(int i = 0; i < length; i++) {
-			newPlatoon.set(i, bytes.getInt());
+			newPlatoon.add(i, bytes.getInt());
 		}
 	}
 
@@ -38,24 +38,25 @@ public class RequestToMergeMessage extends MergeMessage {
 
 	/**
 	 * Append the data currently held in this message to the passed byte buffer
-	 * 
+	 *
 	 * @param bytes - the buffer to be written to
 	 */
 	@Override
 	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
 		super.appendToBuffer(bytes);
+		bytes.putInt(mergingPlatoonId);
 		bytes.putInt(newPlatoon.size() & 0x00FFFFFF);
 		for(int i : newPlatoon) {
 			bytes.putInt(i);
 		}
 		return bytes;
 	}
-	
+
 	@Override
 	public MessageType getType() {
 		return MessageType.RequestToMerge;
 	}
-	
+
 	public int getMergingPlatoonId() {
 		return mergingPlatoonId;
 	}

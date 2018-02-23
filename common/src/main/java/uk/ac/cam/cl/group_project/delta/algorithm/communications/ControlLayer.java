@@ -1,6 +1,5 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -154,6 +153,7 @@ public class ControlLayer {
 	 * the message does not have either of these characteristics then it is ignored.
 	 */
 	public void updateMessages() {
+		System.out.println("here2");
 		for (MessageReceipt msg : network.pollData()) {
 			Packet packet = new Packet(msg);
 
@@ -204,6 +204,7 @@ public class ControlLayer {
 	 *            - the data in Packet format
 	 */
 	private void beginMergeProtocol(Packet packet) {
+		System.out.println("here");
 		// Found a new platoon which we could merge with
 		if (position == 0 && (currentMerge == null || !currentMerge.isValid())) {
 			currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
@@ -420,18 +421,18 @@ public class ControlLayer {
 	}
 
 	/**
-	 * Return a list of <Key, values> pairs for the given list which is sorted by
-	 * the value of the item in the list
+	 * Return a list of <Key, values> pairs for the given list which is sorted
+	 * in reverse by the value of the item in the list
 	 *
 	 * @param unsorted - the unsorted map structure
-	 * @return a list of sorted pairs
+	 * @return a list of reverse sorted pairs
 	 */
 	public static List<Map.Entry<Integer, Integer>> sortMapByValues(Map<Integer, Integer> unsorted) {
 		List<Map.Entry<Integer, Integer>> list = new LinkedList<>(unsorted.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
 			@Override
 			public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-				return (o1.getValue()).compareTo(o2.getValue());
+				return (o2.getValue()).compareTo(o1.getValue());
 			}
 		});
 		return list;

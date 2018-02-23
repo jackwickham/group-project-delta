@@ -31,7 +31,7 @@ public class AcceptToMergeMessage extends MergeMessage {
 		int length = 0x00FFFFFF & tmp;
 		mainPlatoon = new ArrayList<>(length);
 		for(int i = 0; i < length; i++) {
-			mainPlatoon.set(i, bytes.getInt());
+			mainPlatoon.add(i, bytes.getInt());
 		}
 		int numReplaced = bytes.getInt();
 		renames = new HashMap<>(numReplaced);
