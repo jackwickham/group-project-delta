@@ -93,8 +93,7 @@ public abstract class Algorithm {
 	protected long getTime() {
 		if(algorithmData.usingUpdate) {
 			return algorithmData.time;
-		}
-		 else {
+		} else {
 			return System.nanoTime();
 		}
 	}

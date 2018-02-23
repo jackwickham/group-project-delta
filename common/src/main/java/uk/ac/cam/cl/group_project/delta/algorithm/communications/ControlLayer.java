@@ -136,7 +136,7 @@ public class ControlLayer {
 	public int getCurrentPosition() {
 		return position;
 	}
-	
+
 	public PlatoonLookup getPlatoonLookup() {
 		return messageLookup;
 	}
