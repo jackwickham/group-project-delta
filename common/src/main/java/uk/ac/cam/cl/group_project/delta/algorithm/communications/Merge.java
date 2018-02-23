@@ -1,5 +1,10 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
+import uk.ac.cam.cl.group_project.delta.Log;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -126,7 +131,7 @@ public class Merge {
 	}
 
 	/**
-	 * Handle the payload for a specific type of message, if something is incorrect
+	 * Handle the specific type of message, if something is incorrect
 	 * then the state is set to Cancelled
 	 *
 	 * @param m - the data to be added to this merge
@@ -139,13 +144,14 @@ public class Merge {
 		}
 		MergeMessage message = (MergeMessage) m;
 		if(message.getTransactionId() != this.transactionId) {
-			// TODO: Log the multiple concurrent merges
+			// Log the multiple concurrent merges
+			Log.warn("Multiple concurrent merges occurring");
 			state = MergeState.Cancelled;
 			return;
 		}
 		if(message instanceof AcceptToMergeMessage) {
 			if(!state.equals(MergeState.Requested)) {
-				// TODO: Log the out of order merge protocol
+				Log.warn("Out or order merge messages received: AcceptToMerge received when not in Requested");
 				state = MergeState.Cancelled;
 				return;
 			} else {
@@ -153,7 +159,7 @@ public class Merge {
 			}
 		} else if(message instanceof ConfirmMergeMessage) {
 			if(!state.equals(MergeState.Accepted)) {
-				// TODO: Log the out of order merge protocol
+				Log.warn("Out or order merge messages received: Accepted received when not in ConfirmMerge");
 				state = MergeState.Cancelled;
 				return;
 			} else {
@@ -215,7 +221,7 @@ public class Merge {
 	public boolean isValid() {
 		return !state.equals(MergeState.Cancelled) && (System.nanoTime() - TIMEOUT) < lastUpdate;
 	}
-
+  
 	public boolean doesAccept() {
 		return state.equals(MergeState.Accepted);
 	}

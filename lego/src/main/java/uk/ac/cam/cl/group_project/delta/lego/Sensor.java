@@ -1,8 +1,21 @@
-package uk.ac.cam.cl.group_project.delta;
+package uk.ac.cam.cl.group_project.delta.lego;
+
+import lejos.hardware.ev3.EV3;
+import uk.ac.cam.cl.group_project.delta.Beacon;
+import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 import java.util.List;
 
-public interface SensorInterface {
+public class Sensor implements SensorInterface {
+
+	private Drive drive;
+
+	private BeaconTracker beaconTracker;
+
+	public Sensor(Drive d, EV3 ev3) {
+		drive = d;
+		beaconTracker = new BeaconTracker(ev3);
+	}
 
 	/**
 	 * Returns a floating point value representing the distance
@@ -12,7 +25,10 @@ public interface SensorInterface {
 	 *
 	 * @return the distance in m or null if there is no hardware support
 	 */
-	public Double getFrontProximity();
+	@Override
+	public Double getFrontProximity() {
+		return null;
+	}
 
 	/**
 	 * Returns a list of objects that represent the visible beacons
@@ -22,31 +38,38 @@ public interface SensorInterface {
 	 *
 	 * @return list containing Beacons visible
 	 */
-	public List<Beacon> getBeacons();
+	@Override
+	public List<Beacon> getBeacons() {
+		return beaconTracker.getBeaconData();
+	}
 
 	/**
 	 * Returns the current acceleration of the vehicle.
+	 *
 	 * @return acceleration in m/s^2
 	 */
-	public double getAcceleration();
+	@Override
+	public double getAcceleration() {
+		return drive.getAcceleration();
+	}
 
 	/**
 	 * Returns the current speed.
+	 *
 	 * @return speed in m/s
 	 */
-	public double getSpeed();
+	@Override
+	public double getSpeed() {
+		return drive.getSpeed();
+	}
 
 	/**
 	 * Returns the current turn rate.
+	 *
 	 * @return turn rate in rad/s
 	 */
-	public double getTurnRate();
-
-	/**
-	 * Returns the current position of the vehicle in some standard
-	 * coordinate system.
-	 * @returns current position 2D vector
-	 */
-	// public Vector getAbsolutePosition();
-
+	@Override
+	public double getTurnRate() {
+		return drive.getTurnRate();
+	}
 }

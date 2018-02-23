@@ -63,6 +63,7 @@ public class ControlLayerTest {
 		assertEquals(data.getSpeed(), control.getPlatoonLookup().get(1).getSpeed(), 0.0);
 		assertEquals(data.getChosenAcceleration(),
 				control.getPlatoonLookup().get(1).getChosenAcceleration(), 0.0);
+
 	}
 
 	@Test

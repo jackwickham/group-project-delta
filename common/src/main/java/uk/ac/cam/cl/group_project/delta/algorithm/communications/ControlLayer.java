@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
@@ -198,7 +199,8 @@ public class ControlLayer {
 					}
 				}
 			} else {
-				// TODO: This indicates an Emergency which wasn't triggered or something
+				// This indicates an Emergency which wasn't triggered or something
+				Log.error("Unexpected message received by ControlLayer");
 			}
 		}
 	}
@@ -354,7 +356,6 @@ public class ControlLayer {
 			renames.put(i, newId);
 		}
 		return new AcceptToMergeMessage(allowMerge, currentPlatoon, renames, transactionId);
-	}
 
 	/**
 	 * Commit the current merge by changing all of the data structures
