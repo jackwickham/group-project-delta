@@ -45,7 +45,7 @@ class MainClass {
 			world.getBodies().add(car);
 
 			car.setController(Algorithm.createAlgorithm(
-					AlgorithmEnum.BasicAlgorithm3,
+					AlgorithmEnum.BasicAlgorithm,
 					car.getDriveInterface(),
 					car.getSensorInterface(),
 					car.getNetworkInterface()
@@ -55,9 +55,9 @@ class MainClass {
 				i * 0.3, 0
 			));
 
-			if (i == 0) {
-				// Make the first car drive forwards for testing purposes
-				car.setEnginePower(0.05);
+			if (i == 1) {
+				// Make one of the cars drive forwards for the purpose of testing
+				car.setEnginePower(0.3);
 			}
 
 			cars.add(car);
@@ -72,8 +72,7 @@ class MainClass {
 
 			long time = 0;
 
-			for (int step = 0; step < simulationSteps; step++) {
-				time += UPDATE_INTERVAL;
+			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL) {
 
 				// Update the positions of everything in the world
 				world.update(UPDATE_INTERVAL / 1E9);
