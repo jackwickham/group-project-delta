@@ -27,9 +27,9 @@ public class Packet {
 	public final int vehicleId;
 	public final int platoonId;
 	public final int length;
-	
+
 	public final Message message;
-	
+
 	/**
 	 * This constructor parses a packet and updates the fields appropriately.
 	 * Only one of message and payload will be defined, depending on the type.
@@ -44,7 +44,7 @@ public class Packet {
 
 		platoonId = bytes.getInt();
 		vehicleId = bytes.getInt();
-		
+
 		message = Message.decodeMessage(bytes, type);
 		if(message instanceof VehicleData) {
 			((VehicleData) message).setStartTime(receipt.getTime());

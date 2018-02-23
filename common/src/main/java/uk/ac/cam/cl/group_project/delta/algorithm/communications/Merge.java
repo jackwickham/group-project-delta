@@ -2,9 +2,6 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import uk.ac.cam.cl.group_project.delta.Log;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -221,7 +218,7 @@ public class Merge {
 	public boolean isValid() {
 		return !state.equals(MergeState.Cancelled) && (System.nanoTime() - TIMEOUT) < lastUpdate;
 	}
-  
+
 	public boolean doesAccept() {
 		return state.equals(MergeState.Accepted);
 	}
