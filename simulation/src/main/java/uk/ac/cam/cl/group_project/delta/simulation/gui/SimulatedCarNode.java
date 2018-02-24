@@ -182,6 +182,9 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			CarPropertiesController controller = loader.getController();
 
 			controller.uuid.setText(Integer.toString(getCar().getUuid()));
+			controller.controller.setText(
+				getCar().getController().getClass().getSimpleName()
+			);
 			controller.positionX.textProperty().bind(
 				posXProperty().divide(Controller.UNITS_PER_METRE).asString("%.2f")
 			);

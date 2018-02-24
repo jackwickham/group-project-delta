@@ -27,6 +27,11 @@
 								<Label text="UUID"/>
 								<Label fx:id="uuid" text="#VALUE"
 									   GridPane.columnIndex="1"/>
+								<Label text="Controller"
+									   GridPane.rowIndex="1"/>
+								<Label fx:id="controller" text="#VALUE"
+									   GridPane.rowIndex="1"
+									   GridPane.columnIndex="1"/>
 							</children>
 						</GridPane>
 					</children>

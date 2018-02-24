@@ -9,6 +9,9 @@ public class CarPropertiesController {
 	public Label uuid;
 
 	@FXML
+	public Label controller;
+
+	@FXML
 	public Label positionX;
 
 	@FXML
