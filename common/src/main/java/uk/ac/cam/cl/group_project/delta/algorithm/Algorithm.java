@@ -17,6 +17,7 @@ public abstract class Algorithm {
 		algorithmData.commsInterface = new Communications(new ControlLayer(networkInterface));
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
+		algorithmData = new AlgorithmData();
 	}
 
 	/**
@@ -98,13 +99,11 @@ public abstract class Algorithm {
 			return System.nanoTime();
 		}
 	}
+
 	/**
-	 * Runs one loop of algorithm
-	 * @param time -time in nanoseconds, algorithm assumes this is the current time
+	 * Run one loop of algorithm
 	 */
-	public void update(long time) {
-		algorithmData.usingUpdate = true;
-		algorithmData.time = time;
+	private void loop() {
 		// read data from sensors into data class
 		readSensors();
 
@@ -131,6 +130,15 @@ public abstract class Algorithm {
 			emergencyStop();
 		}
 	}
+	/**
+	 * Runs one loop of algorithm
+	 * @param time -time in nanoseconds, algorithm assumes this is the current time
+	 */
+	public void update(long time) {
+		algorithmData.usingUpdate = true;
+		algorithmData.time = time;
+		loop();
+	}
 
 	public void run() {
 		algorithmData.usingUpdate = false;
@@ -138,35 +146,7 @@ public abstract class Algorithm {
 		long startTime = System.nanoTime();
 
 		while (!algorithmData.emergencyOccurred) {
-			// read data from sensors into data class
-			readSensors();
-
-			if (Thread.interrupted()) {
-				emergencyStop();
-				break;
-			}
-
-			if(!algorithmData.commsInterface.isLeader()) {
-				makeDecision();
-			}
-
-			if (Thread.interrupted()) {
-				emergencyStop();
-				break;
-			}
-
-			sendMessage();
-
-			// send instructions to drive if not leader
-			if(!algorithmData.commsInterface.isLeader()) {
-				sendInstruction();
-			}
-
-			if (Thread.interrupted()) {
-				emergencyStop();
-				break;
-			}
-
+			loop();
 			try {
 				long nanosToSleep = System.nanoTime() - startTime - ALGORITHM_LOOP_DURATION;
 				if(nanosToSleep > 0) {
