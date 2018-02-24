@@ -11,7 +11,7 @@ public abstract class Algorithm {
 
 	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
 
-	protected AlgorithmData algorithmData;
+	protected AlgorithmData algorithmData = new AlgorithmData();
 
 	protected Algorithm(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		algorithmData.commsInterface = new Communications(new ControlLayer(networkInterface));
@@ -37,17 +37,21 @@ public abstract class Algorithm {
 		return AlgorithmEnum.values();
 	}
 
-	protected abstract void initialise();
+	public void initialise() {
+
+	}
 
 	private void readSensors() {
 		// read data from predecessor's message
 		algorithmData.receiveMessageData = algorithmData.commsInterface.getPredecessorMessage(1);
-		algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
-		algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
-		algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
-		algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
-		algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
-		algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
+		if (algorithmData.receiveMessageData != null) {
+			algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
+			algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
+			algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
+			algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
+			algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
+			algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
+		}
 
 		// TODO: values could be null if no data available
 		// read data from sensors
@@ -167,12 +171,12 @@ public abstract class Algorithm {
 			}
 
 			try {
-				long nanosToSleep = System.nanoTime() - startTime - ALGORITHM_LOOP_DURATION;
+				long nanosToSleep = ALGORITHM_LOOP_DURATION - (System.nanoTime() - startTime);
 				if(nanosToSleep > 0) {
 					// Note: integer division desired
 					Thread.sleep(nanosToSleep/1000000);
 				} else {
-					Log.warn("LOOP_DURATION is too low, algorithm can't keep up");
+					Log.warn(String.format("LOOP_DURATION is too low, algorithm can't keep up (%dms too slow)", -nanosToSleep/1000000));
 				}
 			} catch (InterruptedException e) {
 				emergencyStop();

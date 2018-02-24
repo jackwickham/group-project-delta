@@ -5,12 +5,12 @@ public class KinematicBody extends PhysicsBody {
 	/**
 	 * Vector velocity in metres per second.
 	 */
-	private Vector2D velocity;
+	private Vector2D velocity = new Vector2D(0.0, 0.0);
 
 	/**
 	 * Vector acceleration in metres per second per second.
 	 */
-	private Vector2D acceleration;
+	private Vector2D acceleration = new Vector2D(0.0, 0.0);
 
 	/**
 	 * Update this object, solving kinematic motion equations.

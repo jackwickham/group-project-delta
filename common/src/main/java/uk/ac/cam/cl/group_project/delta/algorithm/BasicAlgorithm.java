@@ -15,11 +15,6 @@ public class BasicAlgorithm extends Algorithm {
 	}
 
 	@Override
-	protected void initialise() {
-
-	}
-
-	@Override
 	public void makeDecision() {
 		// decide on chosen acceleration, speed and turnRate
 		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;

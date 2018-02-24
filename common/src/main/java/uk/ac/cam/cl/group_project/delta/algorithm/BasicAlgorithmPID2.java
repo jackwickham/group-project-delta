@@ -36,11 +36,6 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	}
 
 	@Override
-	protected void initialise() {
-
-	}
-
-	@Override
 	public void makeDecision() {
 
 		//decide on chosen acceleration, speed and turnRate
