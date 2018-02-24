@@ -17,9 +17,9 @@ class MainClass {
 	private static final int NUMBER_OF_VEHICLES = 10;
 
 	/**
-	 * Time interval between CSV logs of the world state, in nanoseconds.
+	 * Interval between CSV logs of the world state, in simulation steps.
 	 */
-	private static final long POSITION_LOG_INTERVAL = 100000000; // 0.1 sec
+	private static final long POSITION_LOG_INTERVAL = 10; // 0.1 sec
 
 	/**
 	 * The time interval in world time nanoseconds between calling the algorithm
@@ -75,14 +75,14 @@ class MainClass {
 			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL) {
 
 				// Update the positions of everything in the world
-				world.update(UPDATE_INTERVAL / 1E9);
+				world.update(UPDATE_INTERVAL / 1E9); // ns to s
 				// then run the algorithm
 				for (SimulatedCar car : cars) {
 					car.updateControl(time);
 				}
 
 				// If we should log, do it
-				if (time % POSITION_LOG_INTERVAL == 0) {
+				if (step % POSITION_LOG_INTERVAL == 0) {
 					// Log the position of all objects
 					for (PhysicsBody body : world.getBodies()) {
 						Vector2D pos = body.getPosition();
@@ -103,10 +103,8 @@ class MainClass {
 			Log.critical(e);
 		}
 
-		for (PhysicsBody body : world.getBodies()) {
-			if (body.getClass() == SimulatedCar.class) {
-				((SimulatedCar) body).stop();
-			}
+		for (SimulatedCar car : cars) {
+			car.stop();
 		}
 
 	}
