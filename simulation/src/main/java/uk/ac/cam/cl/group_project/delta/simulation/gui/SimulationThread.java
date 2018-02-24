@@ -140,10 +140,7 @@ public class SimulationThread extends Thread {
 	 * @return             The car created.
 	 */
 	public SimulatedCar createCar(double wheelBase) {
-		SimulatedCar car;
-		synchronized (network) { // network.register(...) is called
-			car = new SimulatedCar(wheelBase, world, network);
-		}
+		SimulatedCar car = new SimulatedCar(wheelBase, world, network);
 		car.setController(StubAlgorithm.getInstance());
 		add(car);
 		return car;
