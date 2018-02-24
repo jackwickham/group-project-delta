@@ -217,9 +217,11 @@ public class Controller {
 					case W:
 					case S:
 						car.setEnginePower(0.0);
+						break;
 					case A:
 					case D:
 						car.setWheelAngle(0.0);
+						break;
 				}
 			}
 		}
