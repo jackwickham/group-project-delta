@@ -69,9 +69,13 @@ public class SimulationThread extends Thread {
 			}
 
 			// Update world
+			double dt = (tmp - time) / 1e9;
 			for (PhysicsBody body : bodies) {
 				synchronized (body) {
-					body.update((tmp - time) / 1e9);
+					body.update(dt);
+					if (body instanceof SimulatedCar) {
+						((SimulatedCar)body).updateControl(time);
+					}
 				}
 			}
 
