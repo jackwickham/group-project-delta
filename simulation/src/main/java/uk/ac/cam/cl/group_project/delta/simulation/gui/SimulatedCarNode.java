@@ -30,14 +30,29 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private static final double BODY_HEIGHT_RATIO = 1.4;
 
+	/**
+	 * X-component of the car's velocity. Updated by a call to `update()`.
+	 */
 	private final DoubleProperty velX;
 
+	/**
+	 * Y-component of the car's velocity. Updated by a call to `update()`.
+	 */
 	private final DoubleProperty velY;
 
+	/**
+	 * Heading of the car. Updated by a call to `update()`.
+	 */
 	private final DoubleProperty heading;
 
+	/**
+	 * Angle of the car's front wheels. Updated by a call to `update()`.
+	 */
 	private final DoubleProperty wheelAngle;
 
+	/**
+	 * Car's engine power. Updated by a call to `update()`.
+	 */
 	private final DoubleProperty enginePower;
 
 	/**
@@ -113,7 +128,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	}
 
 	/**
-	 * Update the GUI representation of the simulated object according to the
+	 * Update the GUI representation of the simulated object by polling the
 	 * simulation state.
 	 */
 	@Override
