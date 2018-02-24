@@ -36,9 +36,14 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	private static double frontProximityStdDev = 0.0;
 
 	/**
-	 * The proportion of the time where the proximity sensor will return null when a reading is available
+	 * The proportion of the time where the proximity sensor will return infinity when a reading is available
 	 */
 	private static double frontProximityFailureRate = 0.0;
+
+	/**
+	 * Whether the front proximity sensor should give values or return null
+	 */
+	private static boolean frontProximityEnabled = true;
 
 	/**
 	 * Returns a floating point value representing the distance
@@ -50,14 +55,17 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 */
 	@Override
 	public Double getFrontProximity () {
+		if (!frontProximityEnabled) {
+			return null;
+		}
 		Double result = super.getFrontProximity();
 		if (frontProximityFailureRate > random.nextFloat()) {
 			// Fake a failed reading
-			result = null;
+			result = Double.POSITIVE_INFINITY;
 		}
 		if (result != null && frontProximityStdDev > 0) {
 			// Sample from the normal distribution with mean result and std dev of frontProximityStdDev
-			result = random.nextGaussian() * frontProximityStdDev + result;
+			result = Math.max(0, random.nextGaussian() * frontProximityStdDev + result);
 		}
 		return result;
 	}
@@ -76,6 +84,10 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 */
 	public static void setFrontProximityFailureRate (double frontProximityFailureRate) {
 		FaultySensorModule.frontProximityFailureRate = frontProximityFailureRate;
+	}
+
+	public static void setFrontProximityEnabled(boolean enabled) {
+		FaultySensorModule.frontProximityEnabled = enabled;
 	}
 
 	//#endregion
