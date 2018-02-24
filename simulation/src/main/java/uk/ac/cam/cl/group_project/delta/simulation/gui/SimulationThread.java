@@ -47,6 +47,7 @@ public class SimulationThread extends Thread {
 		this.world = new World();
 		this.network = new SimulatedNetwork();
 		running = false;
+		timeDilationFactor = 1.0;
 		this.setDaemon(true);
 	}
 
