@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork;
@@ -105,6 +106,7 @@ public class SimulationThread extends Thread {
 		synchronized (network) { // network.register(...) is called
 			car = new SimulatedCar(wheelBase, world, network);
 		}
+		car.setController(StubAlgorithm.getInstance());
 		add(car);
 		return car;
 	}
@@ -123,6 +125,35 @@ public class SimulationThread extends Thread {
 	 */
 	public synchronized void terminate() {
 		running = false;
+	}
+
+	/**
+	 * A singleton implementation of {@link Algorithm} that does nothing.
+	 */
+	private static class StubAlgorithm extends Algorithm {
+
+		private static StubAlgorithm instance = new StubAlgorithm();
+
+		private StubAlgorithm() {
+			super(null, null, null);
+		}
+
+		public static StubAlgorithm getInstance() {
+			return instance;
+		}
+
+		@Override
+		public void initialise() {}
+
+		@Override
+		public void update(long time) {}
+
+		@Override
+		public void run() {}
+
+		@Override
+		protected void makeDecision() {}
+
 	}
 
 }
