@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ControlLayerTest {
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 
-		ControlLayer control = new ControlLayer(network, null, 200, 123, initialPlatoon);
+		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
 
 		control.sendMessage(data);
 
@@ -38,42 +37,64 @@ public class ControlLayerTest {
 		Packet p = new Packet(new MessageReceipt(byteData));
 		assertEquals(p.vehicleId, 200);
 		assertEquals(p.platoonId, 123);
-		assertEquals(p.type, MessageType.Data);
+		assertEquals(p.message.getType(), MessageType.Data);
 
-		assertEquals(data.getSpeed(), p.message.getSpeed(), 0.0);
-		assertEquals(data.getChosenAcceleration(), p.message.getChosenAcceleration(), 0.0);
+		assertEquals(data.getSpeed(), ((VehicleData) p.message).getSpeed(), 0.0);
+		assertEquals(data.getChosenAcceleration(), ((VehicleData)p.message).getChosenAcceleration(), 0.0);
 	}
 
 	@Test
 	public void updateMessagesDataTest() {
 		List<Integer> initialPlatoon = Arrays.asList(100, 200);
 		NetworkInterface network = mock(NetworkInterface.class);
-		PlatoonLookup lookup = new PlatoonLookup();
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 
 		when(network.pollData())
-			.thenReturn(
+		.thenReturn(
 				Arrays.asList(
 						new MessageReceipt(
-								Packet.createDataPacket(data, 100, 123))));
+								Packet.createPacket(data, 100, 123))));
 
-		ControlLayer control = new ControlLayer(network, lookup, 200, 123, initialPlatoon);
+		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
 
 		control.updateMessages();
 
-		assertEquals(data.getSpeed(), lookup.get(1).getSpeed(), 0.0);
-		assertEquals(data.getChosenAcceleration(), lookup.get(1).getChosenAcceleration(), 0.0);
+		assertEquals(data.getSpeed(), control.getPlatoonLookup().get(1).getSpeed(), 0.0);
+		assertEquals(data.getChosenAcceleration(),
+				control.getPlatoonLookup().get(1).getChosenAcceleration(), 0.0);
+
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void sendBlankMergingMessageTest() {
-		ByteBuffer b = ByteBuffer.allocate(4);
-		b.putInt(101);
-		assertEquals(ControlLayer.getFirstInt(b.array()), 101);
+	@Test
+	public void sendRequestToMergeMessageTest() {
+		NetworkInterface network = mock(NetworkInterface.class);
+		List<Integer> initialPlatoon = Arrays.asList(100, 200);
 
-		// Throws Exception
-		ControlLayer.getFirstInt(new byte[0]);
+		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+
+		when(network.pollData())
+		.thenReturn(
+				Arrays.asList(
+						new MessageReceipt(
+								Packet.createPacket(data, 500, 101))));
+
+		ControlLayer control = new ControlLayer(network, 100, 123, initialPlatoon);
+
+		control.updateMessages();
+
+		ArgumentCaptor<byte[]> argument = ArgumentCaptor.forClass(byte[].class);
+		verify(network).sendData(argument.capture());
+
+
+		Packet p = new Packet(new MessageReceipt(argument.getValue()));
+		assertEquals(p.platoonId, 101);
+		assertEquals(p.vehicleId, 100);
+		assertEquals(p.message.getType(), MessageType.RequestToMerge);
+
+		RequestToMergeMessage rtm = (RequestToMergeMessage) p.message;
+		assertEquals(rtm.getMergingPlatoonId(), 123);
+		assertEquals(rtm.getNewPlatoon(), initialPlatoon);
 	}
 
 	@Test
@@ -88,11 +109,11 @@ public class ControlLayerTest {
 		List<Map.Entry<Integer, Integer>> sortedPairs =
 				ControlLayer.sortMapByValues(testMap);
 
-		assertEquals(sortedPairs.get(0).getKey().intValue(), 8765);
-		assertEquals(sortedPairs.get(1).getKey().intValue(), 9764);
+		assertEquals(sortedPairs.get(0).getKey().intValue(), 124);
+		assertEquals(sortedPairs.get(1).getKey().intValue(), 643);
 		assertEquals(sortedPairs.get(2).getKey().intValue(), 283);
-		assertEquals(sortedPairs.get(3).getKey().intValue(), 643);
-		assertEquals(sortedPairs.get(4).getKey().intValue(), 124);
+		assertEquals(sortedPairs.get(3).getKey().intValue(), 9764);
+		assertEquals(sortedPairs.get(4).getKey().intValue(), 8765);
 	}
 
 }

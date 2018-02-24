@@ -26,9 +26,8 @@ public class Communications implements CommsInterface {
 	 * @param messageLookup - the mapping from relative positions to their latest message
 	 */
 	public Communications(
-			ControlLayer messageLayer,
-			PlatoonLookup messageLookup) {
-		this.messageLookup = messageLookup;
+			ControlLayer messageLayer) {
+		this.messageLookup = messageLayer.getPlatoonLookup();
 		this.messageLayer = messageLayer;
 	}
 

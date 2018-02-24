@@ -43,7 +43,7 @@ public class VehicleDataTest {
 		bytes.putDouble(chosenTurnRate);
 		bytes.rewind();
 
-		VehicleData md = VehicleData.generateDataFromBytes(bytes);
+		VehicleData md = new VehicleData(bytes);
 
 		assertEquals(speed, md.getSpeed(), 0);
 		assertEquals(acceleration, md.getAcceleration(), 0);
