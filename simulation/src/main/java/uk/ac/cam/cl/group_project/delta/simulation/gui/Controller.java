@@ -185,19 +185,22 @@ public class Controller {
 	 */
 	public void onKeyPressed(KeyEvent keyEvent) {
 		if (currentSelection != null) {
-			switch (keyEvent.getCode()) {
-				case W:
-					currentSelection.getCar().setEnginePower(1.0);
-					break;
-				case S:
-					currentSelection.getCar().setEnginePower(-1000.0);
-					break;
-				case A:
-					currentSelection.getCar().setWheelAngle(0.5);
-					break;
-				case D:
-					currentSelection.getCar().setWheelAngle(-0.5);
-					break;
+			SimulatedCar car = currentSelection.getCar();
+			synchronized (car) {
+				switch (keyEvent.getCode()) {
+					case W:
+						car.setEnginePower(1.0);
+						break;
+					case S:
+						car.setEnginePower(-1000.0);
+						break;
+					case A:
+						car.setWheelAngle(0.5);
+						break;
+					case D:
+						car.setWheelAngle(-0.5);
+						break;
+				}
 			}
 		}
 	}
@@ -208,13 +211,16 @@ public class Controller {
 	 */
 	public void onKeyReleased(KeyEvent keyEvent) {
 		if (currentSelection != null) {
-			switch (keyEvent.getCode()) {
-				case W:
-				case S:
-					currentSelection.getCar().setEnginePower(0.0);
-				case A:
-				case D:
-					currentSelection.getCar().setWheelAngle(0.0);
+			SimulatedCar car = currentSelection.getCar();
+			synchronized (car) {
+				switch (keyEvent.getCode()) {
+					case W:
+					case S:
+						car.setEnginePower(0.0);
+					case A:
+					case D:
+						car.setWheelAngle(0.0);
+				}
 			}
 		}
 	}
