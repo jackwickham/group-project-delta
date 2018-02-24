@@ -179,6 +179,10 @@ public class Controller {
 		return y * scene.getScaleY() * UNITS_PER_METRE + scene.getTranslateY();
 	}
 
+	/**
+	 * Handle a key press event.
+	 * @param keyEvent    Structure containing event information (e.g. key code)
+	 */
 	public void onKeyPressed(KeyEvent keyEvent) {
 		if (currentSelection != null) {
 			switch (keyEvent.getCode()) {
@@ -198,9 +202,16 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Handle a key released event.
+	 * @param keyEvent    Structure containing event information (e.g. key code)
+	 */
 	public void onKeyReleased(KeyEvent keyEvent) {
 		if (currentSelection != null) {
 			switch (keyEvent.getCode()) {
+				case W:
+				case S:
+					currentSelection.getCar().setEnginePower(0.0);
 				case A:
 				case D:
 					currentSelection.getCar().setWheelAngle(0.0);
