@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
@@ -18,6 +19,12 @@ public class SimulationThread extends Thread {
 	 * Minimum number of real nanoseconds between simulation updates.
 	 */
 	private static final long UPDATE_INTERVAL = 1000000; // 0.1 sec
+
+	/**
+	 * Target number of simulation nanoseconds between algorithm controller
+	 * updates.
+	 */
+	private static final long CONTROLLER_INTERVAL = Algorithm.ALGORITHM_LOOP_DURATION;
 
 	/**
 	 * Simulated world.
@@ -62,6 +69,8 @@ public class SimulationThread extends Thread {
 		long time = start;
 		double cumulative = 0.0;
 
+		double lastAlgorithmUpdate = 0.0; // w.r.t. cumulative
+
 		synchronized (this) {
 			running = true;
 		}
@@ -76,7 +85,7 @@ public class SimulationThread extends Thread {
 
 			long tmp = System.nanoTime();
 
-			if (time - tmp < UPDATE_INTERVAL) {
+			if (tmp - time > UPDATE_INTERVAL) {
 
 				// Fetch bodies from world
 				List<PhysicsBody> bodies;
@@ -86,14 +95,24 @@ public class SimulationThread extends Thread {
 
 				// Update world
 				double dt = (tmp - time) / 1e9 * timeDilationFactor;
-				cumulative += dt;
 				for (PhysicsBody body : bodies) {
 					synchronized (body) {
 						body.update(dt);
+					}
+				}
+
+				// Update cars
+				cumulative += dt;
+				if (cumulative - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
+					for (PhysicsBody body : bodies) {
 						if (body instanceof SimulatedCar) {
 							((SimulatedCar) body).updateControl((long) cumulative);
 						}
 					}
+					if (cumulative - lastAlgorithmUpdate % CONTROLLER_INTERVAL != 1) {
+						Log.warn("Simulation thread cannot keep algorithms up-to-date");
+					}
+					lastAlgorithmUpdate += CONTROLLER_INTERVAL;
 				}
 
 				time = tmp;
