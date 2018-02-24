@@ -26,9 +26,9 @@ public class ControlLayerTest {
 		NetworkInterface network = mock(NetworkInterface.class);
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
-		
+
 		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
-		
+
 		control.sendMessage(data);
 
 		ArgumentCaptor<byte[]> argument = ArgumentCaptor.forClass(byte[].class);
@@ -56,13 +56,13 @@ public class ControlLayerTest {
 				Arrays.asList(
 						new MessageReceipt(
 								Packet.createDataPacket(data, 100, 123))));
-		
+
 		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
-		
+
 		control.updateMessages();
-		
+
 		assertEquals(data.getSpeed(), control.getPlatoonLookup().get(1).getSpeed(), 0.0);
-		assertEquals(data.getChosenAcceleration(), 
+		assertEquals(data.getChosenAcceleration(),
 				control.getPlatoonLookup().get(1).getChosenAcceleration(), 0.0);
 
 	}

@@ -18,31 +18,31 @@ public class CommunicationsTest {
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
 
 		PlatoonLookup lookup = new PlatoonLookup();
-		
+
 		when(controlLayer.getPlatoonLookup()).thenReturn(lookup);
-		
+
 		VehicleData data = new VehicleData(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 		lookup.put(2, data);
-		
+
 		Communications comms = new Communications(controlLayer);
-		
+
 		assertEquals(comms.getLeaderMessage(), data);
 	}
-	
+
 	@Test
 	public void getPredecessorMessageValidTest() {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
 
 		PlatoonLookup lookup = new PlatoonLookup();
-		
+
 		when(controlLayer.getPlatoonLookup()).thenReturn(lookup);
-		
+
 		VehicleData data = new VehicleData(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 		lookup.put(1, data);
-		
+
 		Communications comms = new Communications(controlLayer);
-		
+
 		assertEquals(comms.getPredecessorMessage(1), data);
 	}
 
@@ -51,9 +51,9 @@ public class CommunicationsTest {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
 		when(controlLayer.getPlatoonLookup()).thenReturn(new PlatoonLookup());
-		
+
 		Communications comms = new Communications(controlLayer);
-		
+
 		// Throws IllegalArgumentException
 		comms.getPredecessorMessage(-1);
 	}
@@ -63,9 +63,9 @@ public class CommunicationsTest {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
 		when(controlLayer.getPlatoonLookup()).thenReturn(new PlatoonLookup());
-		
+
 		Communications comms = new Communications(controlLayer);
-		
+
 		assertNull(comms.getPredecessorMessage(5));
 	}
 }
