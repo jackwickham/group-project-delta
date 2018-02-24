@@ -67,9 +67,9 @@ public class SimulationThread extends Thread {
 
 		long start = System.nanoTime();
 		long time = start;
-		double cumulative = 0.0;
+		long cumulative = 0;
 
-		double lastAlgorithmUpdate = 0.0; // w.r.t. cumulative
+		long lastAlgorithmUpdate = 0; // w.r.t. cumulative
 
 		synchronized (this) {
 			running = true;
@@ -94,7 +94,8 @@ public class SimulationThread extends Thread {
 				}
 
 				// Update world
-				double dt = (tmp - time) / 1e9 * timeDilationFactor;
+				long l_dt = (long) ((tmp - time) * timeDilationFactor);
+				double dt = l_dt / 1e9;
 				for (PhysicsBody body : bodies) {
 					synchronized (body) {
 						body.update(dt);
@@ -102,14 +103,14 @@ public class SimulationThread extends Thread {
 				}
 
 				// Update cars
-				cumulative += dt;
+				cumulative += l_dt;
 				if (cumulative - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
 					for (PhysicsBody body : bodies) {
 						if (body instanceof SimulatedCar) {
-							((SimulatedCar) body).updateControl((long) cumulative);
+							((SimulatedCar) body).updateControl(cumulative);
 						}
 					}
-					if (cumulative - lastAlgorithmUpdate % CONTROLLER_INTERVAL != 1) {
+					if ((cumulative - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
 						Log.warn("Simulation thread cannot keep algorithms up-to-date");
 					}
 					lastAlgorithmUpdate += CONTROLLER_INTERVAL;
