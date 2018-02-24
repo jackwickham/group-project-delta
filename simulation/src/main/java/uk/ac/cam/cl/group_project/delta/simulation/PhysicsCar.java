@@ -3,13 +3,15 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 /**
  * Represents the physically simulated instantiation of a car.
  */
-public class PhysicsCar extends KinematicBody {
+public class PhysicsCar extends PhysicsBody {
 
 	/**
-	 * The angle at which the wheels are set. These are relative to the car
-	 * body.
+	 * The turn rate of the vehicle in radians/second
+	 *
+	 * A positive value means that it is turning to the right (clockwise), and
+	 * a negative value means that it is turning to the left (anticlockwise)
 	 */
-	private double wheelAngle = 0.0;
+	private double turnRate = 0.0;
 
 	/**
 	 * The angle at which the car body is currently facing. The cardinal axis of
@@ -18,12 +20,19 @@ public class PhysicsCar extends KinematicBody {
 	private double heading = 0.0;
 
 	/**
+	 * The speed of the car in direction `heading`, in ms^-1
+	 *
+	 * This value can never be negative
+	 */
+	private double speed = 0.0;
+
+	/**
 	 * Length from rear to front axle, in metres.
 	 */
 	private double wheelBase = 2.5;
 
 	/**
-	 * Current power of the engine.
+	 * Current power of the engine (equivalent to acceleration).
 	 */
 	private double enginePower = 0.0;
 
@@ -37,46 +46,60 @@ public class PhysicsCar extends KinematicBody {
 
 	/**
 	 * Update the kinematic state of the car, considering friction forces.
+	 *
+	 * Turning isn't really compatible with
+	 *
 	 * @param dt                      Timestep in seconds.
 	 */
 	@Override
 	public void update(double dt) {
+		// First handle the vehicle translation
+		Vector2D translation;
+		double distanceTravelled = speed * dt;
 
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		if (turnRate == 0.0) {
+			// Straight line, with heading = 0 in y direction
+			translation = new Vector2D(
+				distanceTravelled * Math.sin(heading),
+				distanceTravelled * Math.cos(heading)
+			);
+		} else {
+			// The vehicle will travel around the circle with radius speed/turn rate
+			double radius = speed / turnRate;
+			double angleMovedAroundCircle = distanceTravelled / radius; // angle measured clockwise
 
-		// Calculate wheel speed (discounting any lateral drift)
-		double speed = getVelocity().dot(vecHeading);
+			double startAngle = heading;
+			double endAngle = heading + angleMovedAroundCircle;
 
-		// Don't brake so hard we go backwards
-		double acceleration = Math.max(enginePower, -speed);
-		this.setAcceleration(vecHeading.multiply(acceleration));
+			double dx = radius * (Math.cos(startAngle) - Math.cos(endAngle));
+			double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
 
-		/* Geometry dictates that the radius of the circle traced is
-		   wheelBase / sin(wheelAngle) and the angular velocity is
-		   speed / radius. */
-		double radius = wheelBase / Math.sin(wheelAngle);
-		this.setHeading(getHeading() + (speed / radius) * dt);
+			translation = new Vector2D(dx, dy);
+			heading = endAngle;
+		}
+
+		setPosition(getPosition().add(translation));
+
+		// Now update the velocity, making sure that we don't go backwards
+		speed = Math.max(speed + enginePower * dt, 0.0);
 
 		super.update(dt);
-
 	}
 
 	/**
-	 * Fetch current wheel angle.
-	 * @return    Current wheel angle.
+	 * Fetch current turn rate
+	 * @return    Current turn rate
 	 */
-	public double getWheelAngle() {
-		return wheelAngle;
+	public double getTurnRate() {
+		return turnRate;
 	}
 
 	/**
-	 * Set the current wheel angle.
-	 * @param wheelAngle    Wheel angle to set.
+	 * Set the current turn rate
+	 * @param turnRate    New turn rate
 	 */
-	public void setWheelAngle(double wheelAngle) {
-		this.wheelAngle = wheelAngle;
+	public void setTurnRate(double turnRate) {
+		this.turnRate = turnRate;
 	}
 
 	/**
@@ -93,6 +116,47 @@ public class PhysicsCar extends KinematicBody {
 	 */
 	public void setEnginePower(double enginePower) {
 		this.enginePower = enginePower;
+	}
+
+	/**
+	 * Get the current acceleration
+	 * @return The acceleration vector
+	 */
+	public Vector2D getAcceleration() {
+		// Currently, engine power sets acceleration directly
+		// In future, this may take into account the turn rate and any limits
+		// on the speed that the vehicle can obtain (air resistance/friction)
+		return new Vector2D(
+			enginePower * Math.cos(heading),
+			enginePower * Math.sin(heading)
+		);
+	}
+
+	/**
+	 * Get the current speed in the direction of `heading`
+	 * @return Current speed in ms^-1
+	 */
+	public double getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * Set the current speed, which will be in the direction of `heading`
+	 * @param speed The new speed
+	 */
+	private void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	/**
+	 * Get the current velocity of the car
+	 * @return The velocity vector
+	 */
+	public Vector2D getVelocity() {
+		return new Vector2D(
+			speed * Math.sin(heading),
+			speed * Math.cos(heading)
+		);
 	}
 
 	/**

@@ -135,12 +135,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return turn rate in rad/s
 	 */
 	public double getTurnRate() {
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
-		double radius = car.getWheelBase() / Math.sin(car.getWheelAngle());
-		return car.getVelocity().dot(vecHeading) / radius;
+		return car.getTurnRate();
 	}
 
 	/**
