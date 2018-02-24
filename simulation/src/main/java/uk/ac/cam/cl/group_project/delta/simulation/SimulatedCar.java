@@ -1,8 +1,10 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 
 /**
  * Encapsulation of simulated car object and its associated interface modules.
@@ -25,8 +27,19 @@ public class SimulatedCar extends PhysicsCar {
 	private DriveInterface driveInterface;
 
 	/**
+	 * The algorithm that is controlling this car.
+	 */
+	private Algorithm controller;
+
+	/**
+	 * The default wheel base of created cars. Set to 15cm for compatibility
+	 * with the LEGO(R) vehicles.
+	 */
+	private static final double DEFAULT_WHEEL_BASE = 0.15;
+
+	/**
 	 * Constructs a car, but do not add it to the world.
-	 * @param length     Wheel base of this car.
+	 * @param length     Wheel base of the vehicle.
 	 * @param world      Simulated world in which this car exists.
 	 * @param network    Simulated network on which this car will communicate.
 	 */
@@ -35,6 +48,15 @@ public class SimulatedCar extends PhysicsCar {
 		networkInterface = new SimulatedNetworkModule(this, network);
 		sensorInterface = new SimulatedSensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
+	}
+
+	/**
+	 * Constructs a car, but do not add it to the world.
+	 * @param world      Simulated world in which this car exists.
+	 * @param network    Simulated network on which this car will communicate.
+	 */
+	public SimulatedCar(World world, SimulatedNetwork network) {
+		this(DEFAULT_WHEEL_BASE, world, network);
 	}
 
 	/**
@@ -61,4 +83,30 @@ public class SimulatedCar extends PhysicsCar {
 		return driveInterface;
 	}
 
+	/**
+	 * Set the current algorithm controller for this car.
+	 * @param algorithm    Algorithm that will make decisions for this vehicle.
+	 */
+	public void setController(Algorithm algorithm) {
+		controller = algorithm;
+		algorithm.initialise();
+	}
+
+	/**
+	 * Call the algorithm to update this car's state and communicate it to the other vehicles
+	 * @param timeNanos The world time in nanoseconds
+	 */
+	public void updateControl(long timeNanos) {
+		if (controller == null) {
+			throw new IllegalStateException("An algorithm must be attached to this vehicle before it can update");
+		}
+		controller.update(timeNanos);
+	}
+
+	/**
+	 * Stop the vehicle
+	 */
+	public void stop() {
+		//controller.emergencyStop();
+	}
 }

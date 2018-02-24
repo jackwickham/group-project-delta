@@ -22,11 +22,6 @@ public class BasicAlgorithm3 extends Algorithm{
 	}
 
 	@Override
-	protected void initialise() {
-
-	}
-
-	@Override
 	public void makeDecision() {
 		// decide on chosen acceleration, speed and turnRate
 		// calculate the distance us and our predecessor have travelled in the previous
