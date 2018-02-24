@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Line?>
+<?import java.net.URL?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0"
+			xmlns="http://javafx.com/javafx/8.0.112"
+			xmlns:fx="http://javafx.com/fxml/1"
+			fx:controller="uk.ac.cam.cl.group_project.delta.simulation.gui.Controller">
+	<stylesheets>
+		<URL value="@style.css"/>
+	</stylesheets>
+	<children>
+		<SplitPane dividerPositions="0.3" prefHeight="400.0" prefWidth="600.0"
+				   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+				   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<items>
+				<AnchorPane>
+					<children>
+						<TabPane prefHeight="400.0" prefWidth="200.0"
+								 tabClosingPolicy="UNAVAILABLE"
+								 AnchorPane.bottomAnchor="0.0"
+								 AnchorPane.leftAnchor="0.0"
+								 AnchorPane.rightAnchor="0.0"
+								 AnchorPane.topAnchor="0.0">
+							<tabs>
+								<Tab text="Properties">
+									<content>
+										<AnchorPane>
+											<children>
+												<ScrollPane fitToWidth="true"
+															hbarPolicy="NEVER"
+															AnchorPane.bottomAnchor="0.0"
+															AnchorPane.leftAnchor="0.0"
+															AnchorPane.rightAnchor="0.0"
+															AnchorPane.topAnchor="0.0">
+													<content>
+														<AnchorPane
+																fx:id="propertiesPane"/>
+													</content>
+												</ScrollPane>
+											</children>
+										</AnchorPane>
+									</content>
+								</Tab>
+							</tabs>
+						</TabPane>
+					</children>
+				</AnchorPane>
+				<Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick"
+					  onMouseDragged="#onViewPaneMouseDragged"
+					  onMousePressed="#onViewPaneMousePressed"
+					  onScroll="#onViewPaneScroll" scaleY="-1.0">
+					<children>
+						<Pane fx:id="scene">
+							<children>
+								<Line endX="10.0" startX="-10.0"/>
+								<Line endY="10.0" startY="-10.0"/>
+							</children>
+						</Pane>
+					</children>
+					<cursor>
+						<Cursor fx:constant="OPEN_HAND"/>
+					</cursor>
+				</Pane>
+			</items>
+		</SplitPane>
+	</children>
+</AnchorPane>
