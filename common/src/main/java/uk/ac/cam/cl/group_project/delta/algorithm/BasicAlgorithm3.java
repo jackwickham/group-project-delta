@@ -26,7 +26,8 @@ public class BasicAlgorithm3 extends Algorithm{
 		// decide on chosen acceleration, speed and turnRate
 		// calculate the distance us and our predecessor have travelled in the previous
 		// time period
-		double delay = getTime() - algorithmData.receiveMessageData.getStartTime() / 100000000;
+		//TODO: recieveMessageData can be null
+		double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 		//calculate the distance us and our predecessor have travelled since message received
 		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 				+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;

@@ -45,7 +45,9 @@ public class BasicAlgorithmPID extends Algorithm{
 
 		//calculate time since message received
 		//TODO: add something to take into account network delay
-		double delay = getTime() - algorithmData.receiveMessageData.getStartTime() / 100000000;
+		//TODO: recieveMessageData can be null
+		//TODO: sensorFrontProxmity can be null
+		double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 		//calculate the distance us and our predecessor have travelled since message received
 		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 				+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
