@@ -3,13 +3,9 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.invocation.Invocation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -17,6 +13,8 @@ import static org.hamcrest.Matchers.*;
 
 /**
  * Tests for SimulatedNetworkModule's failure injection functionality
+ *
+ * @author Jack Wickham
  */
 public class SimulatedNetworkFailureTest {
 	private SimulatedNetworkModule mockReceiver;
