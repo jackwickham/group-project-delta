@@ -29,7 +29,7 @@ public class PhysicsCar extends PhysicsBody {
 	/**
 	 * Length from rear to front axle, in metres.
 	 */
-	private double wheelBase = 2.5;
+	private double wheelBase;
 
 	/**
 	 * Current power of the engine (equivalent to acceleration).

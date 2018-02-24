@@ -1,15 +1,8 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.Log;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
-import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.PlatoonLookup;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,9 +17,9 @@ class MainClass {
 	private static final int NUMBER_OF_VEHICLES = 10;
 
 	/**
-	 * Time interval between CSV logs of the world state, in nanoseconds.
+	 * Interval between CSV logs of the world state, in simulation steps.
 	 */
-	private static final long POSITION_LOG_INTERVAL = 100000000; // 0.1 sec
+	private static final long POSITION_LOG_INTERVAL = 10; // 0.1 sec
 
 	/**
 	 * The time interval in world time nanoseconds between calling the algorithm
@@ -52,7 +45,7 @@ class MainClass {
 			world.getBodies().add(car);
 
 			car.setController(Algorithm.createAlgorithm(
-					AlgorithmEnum.BasicAlgorithm3,
+					AlgorithmEnum.BasicAlgorithm,
 					car.getDriveInterface(),
 					car.getSensorInterface(),
 					car.getNetworkInterface()
@@ -62,9 +55,9 @@ class MainClass {
 				i * 0.3, 0
 			));
 
-			if (i == 0) {
-				// Make the first car drive forwards for testing purposes
-				car.setEnginePower(0.05);
+			if (i == 1) {
+				// Make one of the cars drive forwards for the purpose of testing
+				car.setEnginePower(0.3);
 			}
 
 			cars.add(car);
@@ -79,18 +72,17 @@ class MainClass {
 
 			long time = 0;
 
-			for (int step = 0; step < simulationSteps; step++) {
-				time += UPDATE_INTERVAL;
+			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL) {
 
 				// Update the positions of everything in the world
-				world.update(UPDATE_INTERVAL / 1E9);
+				world.update(UPDATE_INTERVAL / 1E9); // ns to s
 				// then run the algorithm
 				for (SimulatedCar car : cars) {
 					car.updateControl(time);
 				}
 
 				// If we should log, do it
-				if (time % POSITION_LOG_INTERVAL == 0) {
+				if (step % POSITION_LOG_INTERVAL == 0) {
 					// Log the position of all objects
 					for (PhysicsBody body : world.getBodies()) {
 						Vector2D pos = body.getPosition();
@@ -111,10 +103,8 @@ class MainClass {
 			Log.critical(e);
 		}
 
-		for (PhysicsBody body : world.getBodies()) {
-			if (body.getClass() == SimulatedCar.class) {
-				((SimulatedCar) body).stop();
-			}
+		for (SimulatedCar car : cars) {
+			car.stop();
 		}
 
 	}
