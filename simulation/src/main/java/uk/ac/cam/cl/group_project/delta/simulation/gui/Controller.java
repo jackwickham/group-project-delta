@@ -163,6 +163,10 @@ public class Controller {
 		propertiesPane.getChildren().setAll(root);
 	}
 
+	/**
+	 * Add a message to the network log tab.
+	 * @param message   Message to add.
+	 */
 	private void addToNetworkLog(String message) {
 		ObservableList<Node> kids = networkLog.getChildren();
 		if (kids.size() > 100) {
