@@ -39,7 +39,7 @@ public class Gui extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource(UI_FXML));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setResizable(true);
-		primaryStage.setTitle("Gooey");
+		primaryStage.setTitle("Simulation");
 		primaryStage.show();
 	}
 
