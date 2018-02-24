@@ -89,7 +89,7 @@ public class SimulatedNetwork {
 	 * means that no packets will be dropped.
 	 *
 	 *
-	 * @link https://www.wolframalpha.com/input/?i=y+%3D+0.55705+-+0.35463+*+arctan+(0.7+*+x+-+2)+for+0+<+x+<+10
+	 * @link https://www.wolframalpha.com/input/?i=y+%3D+0.55705+-+0.35463+*+arctan+(0.7+*+x+-+3)+for+0+<+x+<+10
 	 *
 	 * @param distance The distance between the two vehicles involved in this communication
 	 * @return Whether the packet should be dropped
