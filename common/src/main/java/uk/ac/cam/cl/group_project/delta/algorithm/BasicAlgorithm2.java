@@ -19,6 +19,7 @@ public class BasicAlgorithm2 extends Algorithm{
 	protected void makeDecision() {
 	// decide on chosen acceleration, speed and turnRate
 		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
+		//TODO: sensorFrontProximity could be null
 		if (algorithmData.sensorFrontProximity < 5) {
 			if (algorithmData.chosenAcceleration >= 0) {
 				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.sensorFrontProximity
