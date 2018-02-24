@@ -19,7 +19,7 @@ public class SimulatedNetwork {
 	 * A modifier for the rate at which packets should be dropped.
 	 * @see #setMessageDeliveryModifier(double) for full details.
 	 */
-	private double messageDeliveryModifier = 0.0;
+	private static double messageDeliveryModifier = 0.0;
 
 	// Random is used for deciding whether a message should be delivered
 	private Random random;
@@ -72,7 +72,7 @@ public class SimulatedNetwork {
 	 *
 	 * @param value The new delivery modifier
 	 */
-	public synchronized void setMessageDeliveryModifier (double value) {
+	public static synchronized void setMessageDeliveryModifier (double value) {
 		if (value < 0) {
 			throw new IllegalArgumentException("Message delivery modifier must be at least 0");
 		}

@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+/**
+ * A wrapper around the normal simulated sensors which provides failure injection
+ *
+ * @author Jack Wickham
+ */
 public class FaultySensorModule extends SimulatedSensorModule {
 	/**
 	 * Random number generator
@@ -28,12 +33,12 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	/**
 	 * The standard deviation of the normal distribution used for the front proximity sensor
 	 */
-	private double frontProximityStdDev = 0.0;
+	private static double frontProximityStdDev = 0.0;
 
 	/**
 	 * The proportion of the time where the proximity sensor will return null when a reading is available
 	 */
-	private double frontProximityFailureRate = 0.0;
+	private static double frontProximityFailureRate = 0.0;
 
 	/**
 	 * Returns a floating point value representing the distance
@@ -61,16 +66,16 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 * Set the standard deviation for the front proximity sensor's readings
 	 * @param frontProximityStdDev The new standard deviation
 	 */
-	public void setFrontProximityStdDev (double frontProximityStdDev) {
-		this.frontProximityStdDev = frontProximityStdDev;
+	public static void setFrontProximityStdDev (double frontProximityStdDev) {
+		FaultySensorModule.frontProximityStdDev = frontProximityStdDev;
 	}
 
 	/**
 	 * Set the proportion of the time when the proximity sensor will incorrectly report no reading
 	 * @param frontProximityFailureRate The new failure rate
 	 */
-	public void setFrontProximityFailureRate (double frontProximityFailureRate) {
-		this.frontProximityFailureRate = frontProximityFailureRate;
+	public static void setFrontProximityFailureRate (double frontProximityFailureRate) {
+		FaultySensorModule.frontProximityFailureRate = frontProximityFailureRate;
 	}
 
 	//#endregion
@@ -79,17 +84,17 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	/**
 	 * Whether the beacon values should be adjusted to match the behaviour of the Mindstorms
 	 */
-	private boolean beaconsEmulateMindstorms = false;
+	private static boolean beaconsEmulateMindstorms = false;
 
 	/**
 	 * The standard deviation of the normal distribution used for updating the beacon distance value
 	 */
-	private double beaconDistanceStdDev = 0.0;
+	private static double beaconDistanceStdDev = 0.0;
 
 	/**
 	 * The standard deviation of the normal distribution used for updating the beacon angle
 	 */
-	private double beaconAngleStdDev = 0.0;
+	private static double beaconAngleStdDev = 0.0;
 
 	/**
 	 * Returns a list of objects that represent the visible beacons
@@ -166,33 +171,33 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 * Set whether the beacons should attempt to match the Mindstorms' behaviour
 	 * @param beaconsEmulateMindstorms Whether to match the behaviour
 	 */
-	public void setBeaconsEmulateMindstorms (boolean beaconsEmulateMindstorms) {
-		this.beaconsEmulateMindstorms = beaconsEmulateMindstorms;
+	public static void setBeaconsEmulateMindstorms (boolean beaconsEmulateMindstorms) {
+		FaultySensorModule.beaconsEmulateMindstorms = beaconsEmulateMindstorms;
 	}
 
 	/**
 	 * Set the standard deviation for the distance measured by the beacons
 	 * @param beaconDistanceStdDev The new standard deviation
 	 */
-	public void setBeaconDistanceStdDev (double beaconDistanceStdDev) {
-		this.beaconDistanceStdDev = beaconDistanceStdDev;
+	public static void setBeaconDistanceStdDev (double beaconDistanceStdDev) {
+		FaultySensorModule.beaconDistanceStdDev = beaconDistanceStdDev;
 	}
 
 	/**
 	 * Set the standard deviation for the angle measured by the beacons
 	 * @param beaconAngleStdDev The new standard deviation
 	 */
-	public void setBeaconAngleStdDev (double beaconAngleStdDev) {
-		this.beaconAngleStdDev = beaconAngleStdDev;
+	public static void setBeaconAngleStdDev (double beaconAngleStdDev) {
+		FaultySensorModule.beaconAngleStdDev = beaconAngleStdDev;
 	}
 
 	//#endregion
 	//#region Motion failure injection
 
 	// The standard deviations for injecting faults into the acceleration, speed and turn rate values
-	private double accelerationStdDev = 0.0;
-	private double speedStdDev = 0.0;
-	private double turnRateStdDev = 0.0;
+	private static double accelerationStdDev = 0.0;
+	private static double speedStdDev = 0.0;
+	private static double turnRateStdDev = 0.0;
 
 	/**
 	 * Returns the current acceleration of the vehicle.
@@ -240,24 +245,24 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 * Set the standard deviation for the acceleration error
 	 * @param accelerationStdDev The new standard deviation
 	 */
-	public void setAccelerationStdDev (double accelerationStdDev) {
-		this.accelerationStdDev = accelerationStdDev;
+	public static void setAccelerationStdDev (double accelerationStdDev) {
+		FaultySensorModule.accelerationStdDev = accelerationStdDev;
 	}
 
 	/**
 	 * Set the standard deviation for the speed error
 	 * @param speedStdDev The new standard deviation
 	 */
-	public void setSpeedStdDev (double speedStdDev) {
-		this.speedStdDev = speedStdDev;
+	public static void setSpeedStdDev (double speedStdDev) {
+		FaultySensorModule.speedStdDev = speedStdDev;
 	}
 
 	/**
 	 * Set the standard deviation for the turn rate error
 	 * @param turnRateStdDev The new standard deviation
 	 */
-	public void setTurnRateStdDev (double turnRateStdDev) {
-		this.turnRateStdDev = turnRateStdDev;
+	public static void setTurnRateStdDev (double turnRateStdDev) {
+		FaultySensorModule.turnRateStdDev = turnRateStdDev;
 	}
 
 	//#endregion
