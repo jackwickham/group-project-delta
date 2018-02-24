@@ -130,7 +130,7 @@ public class SimulationThread extends Thread {
 	/**
 	 * A singleton implementation of {@link Algorithm} that does nothing.
 	 */
-	private static class StubAlgorithm extends Algorithm {
+	public static class StubAlgorithm extends Algorithm {
 
 		private static StubAlgorithm instance = new StubAlgorithm();
 

@@ -4,13 +4,17 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
+import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
@@ -77,6 +81,11 @@ public class Controller {
 	 * The last recorded mouse position.
 	 */
 	private Vector2D cursorPosition;
+
+	/**
+	 * The currently user-selected car.
+	 */
+	private SimulatedCarNode currentSelection;
 
 	/**
 	 * Construct the application's simulation thread.
@@ -170,6 +179,35 @@ public class Controller {
 		return y * scene.getScaleY() * UNITS_PER_METRE + scene.getTranslateY();
 	}
 
+	public void onKeyPressed(KeyEvent keyEvent) {
+		if (currentSelection != null) {
+			switch (keyEvent.getCode()) {
+				case W:
+					currentSelection.getCar().setEnginePower(1.0);
+					break;
+				case S:
+					currentSelection.getCar().setEnginePower(-1000.0);
+					break;
+				case A:
+					currentSelection.getCar().setWheelAngle(0.5);
+					break;
+				case D:
+					currentSelection.getCar().setWheelAngle(-0.5);
+					break;
+			}
+		}
+	}
+
+	public void onKeyReleased(KeyEvent keyEvent) {
+		if (currentSelection != null) {
+			switch (keyEvent.getCode()) {
+				case A:
+				case D:
+					currentSelection.getCar().setWheelAngle(0.0);
+			}
+		}
+	}
+
 	/**
 	 * Update the stored cursor position.
 	 * @param x    X-position of cursor.
@@ -248,17 +286,29 @@ public class Controller {
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
 			fromViewPaneToWorldSpaceX(cursorPosition.getX()),
 			fromViewPaneToWorldSpaceY(cursorPosition.getY()),
-			(wheelBase, posX, posY) -> {
+			(wheelBase, posX, posY, controller) -> {
 				SimulatedCar car = simulation.createCar(wheelBase);
+				AlgorithmEnum algo = controller.toAlgorithmEnum();
 				synchronized (car) {
 					car.getPosition().setX(posX);
 					car.getPosition().setY(posY);
+					if (algo != null) {
+						car.setController(
+							Algorithm.createAlgorithm(
+								algo,
+								car.getDriveInterface(),
+								car.getSensorInterface(),
+								car.getNetworkInterface()
+							)
+						);
+					}
 				}
 				SimulatedCarNode node = new SimulatedCarNode(car);
 				node.addEventFilter(
 					MouseEvent.MOUSE_CLICKED,
 					e -> {
 						showProperties(node);
+						currentSelection = node;
 						e.consume();
 					}
 				);
@@ -269,5 +319,4 @@ public class Controller {
 		dialog.show();
 
 	}
-
 }
