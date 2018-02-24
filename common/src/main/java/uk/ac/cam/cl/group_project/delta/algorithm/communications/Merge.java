@@ -2,9 +2,6 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import uk.ac.cam.cl.group_project.delta.Log;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -60,7 +57,7 @@ public class Merge {
 	/**
 	 * The new ids to be added if the merge is committed, in their platoon order
 	 */
-	private ArrayList<Integer> additionalIdLookups;
+	private List<Integer> additionalIdLookups;
 
 	/**
 	 * The mapping from old ids to new ids.
@@ -106,50 +103,60 @@ public class Merge {
 	 * @param currentPlatoon - the platoon id of the current platoon
 	 * @param payload - the payload of a RequestToMerge packet
 	 */
-	public Merge(int mainPlatoon, int currentPlatoon, byte[] payload) {
+	public Merge(int mainPlatoon, int currentPlatoon, Message m) {
 		this.mainPlatoonId = mainPlatoon;
 		this.platoonId = currentPlatoon;
 		vehiclesToConfirm = -1;
 
-		ByteBuffer bytes = ByteBuffer.wrap(payload);
-		transactionId = bytes.getInt();
-		this.mergingPlatoonId = bytes.getInt();
+		if(!(m instanceof RequestToMergeMessage)) {
+			state = MergeState.Cancelled;
+			return;
+		}
+
+		state = MergeState.Requested;
+
+		RequestToMergeMessage msg = (RequestToMergeMessage) m;
+		transactionId = msg.getTransactionId();
+		this.mergingPlatoonId = msg.getMergingPlatoonId();
 
 		// New platoon merging into this one
 		if(mainPlatoon == currentPlatoon) {
-			int length = bytes.getInt() & 0x00FFFFFF;			// First byte is reserved
-			readNewIdList(bytes, length);
-			changePosition = length;
+			additionalIdLookups = msg.getNewPlatoon();
+			changePosition = additionalIdLookups.size();
 		}
 		lastUpdate = System.nanoTime();
 	}
 
 	/**
-	 * Handle the payload for a specific type of message, if something is incorrect
-	 * then the state is set to Cancelled
+	 * Handle the specific type of message, if something is incorrect then the state
+	 * is set to Cancelled
 	 *
-	 * @param payload - the data to be added to this merge
+	 * @param m - the data to be added to this merge
 	 */
-	public void handlePayload(MessageType type, byte[] payload) {
-		ByteBuffer bytes = ByteBuffer.wrap(payload);
-		int transactionId = bytes.getInt();
+	public void handleMessage(Message m) {
+		if (!(m instanceof MergeMessage)) {
+			// Log this, as it indicated the message has been routed
+			// to the wrong place. Critical error.
+			Log.error("Merge tried to handle a non-merge message.");
+			return;
+		}
+		MergeMessage message = (MergeMessage) m;
 
-		if(transactionId != this.transactionId) {
+		if (message.getTransactionId() != this.transactionId) {
+			// Log the multiple concurrent merges
 			Log.warn("Multiple concurrent merges occurring");
 			state = MergeState.Cancelled;
 			return;
 		}
-		switch(type) {
-		case AcceptToMerge:
+		if(message instanceof AcceptToMergeMessage) {
 			if(!state.equals(MergeState.Requested)) {
 				Log.warn("Out or order merge messages received: AcceptToMerge received when not in Requested");
 				state = MergeState.Cancelled;
 				return;
 			} else {
-				handleAcceptMessage(bytes);
+				handleAcceptMessage((AcceptToMergeMessage) message);
 			}
-			break;
-		case ConfirmMerge:
+		} else if(message instanceof ConfirmMergeMessage) {
 			if(!state.equals(MergeState.Accepted)) {
 				Log.warn("Out or order merge messages received: Accepted received when not in ConfirmMerge");
 				state = MergeState.Cancelled;
@@ -157,43 +164,34 @@ public class Merge {
 			} else {
 				handleConfirmMessage();
 			}
-			break;
-		case MergeComplete:
+		} else if(message instanceof MergeCompleteMessage) {
 			state = MergeState.Confirmed;
-			break;
-		default:
-			break;
+		} else {
+			// Log this, as it again indicated the message was
+			// routed to the wrong place.
+			Log.error("Merge tried to handle an unexpected message.");
 		}
 	}
 
 	/**
 	 * Handle the payload of an AcceptToMerge message
-	 * @param bytes - the buffer with the payload bytes
+	 * @param msg - the message to be handled
 	 */
-	private void handleAcceptMessage(ByteBuffer bytes) {
-		int tmp = bytes.getInt();
-		if((tmp & 0xFF000000) == 0) {
+	private void handleAcceptMessage(AcceptToMergeMessage msg) {
+		if(!msg.isAccepted()) {
 			// Rejected by the leader of the main platoon
 			state = MergeState.Cancelled;
-			return;
 		} else {
 			state = MergeState.Accepted;
 			if(mainPlatoonId != platoonId) {
-				readNewIdList(bytes, tmp & 0x00FFFFFF);
+				additionalIdLookups = msg.getMainPlatoon();
 				if(vehiclesToConfirm > 0) {
 					// This is a leader, so needs to track the number
 					// of vehicles to confirm.
-					vehiclesToConfirm += tmp & 0x00FFFFFF;
+					vehiclesToConfirm += msg.getMainPlatoon().size();
 				}
-			} else {
-				// Skip over this known data
-				bytes.position(bytes.position() + 4*(tmp & 0x00FFFFFF));
 			}
-			int mappingLength = bytes.getInt();
-			idClashReplacements = new HashMap<>();
-			for(int i = 0; i < mappingLength; i++) {
-				idClashReplacements.put(bytes.getInt(), bytes.getInt());
-			}
+			idClashReplacements = msg.getRenames();
 		}
 		lastUpdate = System.nanoTime();
 	}
@@ -222,19 +220,6 @@ public class Merge {
 	 */
 	public boolean isValid() {
 		return !state.equals(MergeState.Cancelled) && (System.nanoTime() - TIMEOUT) < lastUpdate;
-	}
-
-	/**
-	 * Update the new ids list to include the ids of the other platoon
-	 *
-	 * @param bytes - the payload from the packet with the new ids
-	 * @param length - the number of new ids
-	 */
-	private void readNewIdList(ByteBuffer bytes, int length) {
-		additionalIdLookups = new ArrayList<>(length);
-		for(int i = 0; i < length; i++) {
-			additionalIdLookups.add(i, bytes.getInt());
-		}
 	}
 
 	public boolean doesAccept() {

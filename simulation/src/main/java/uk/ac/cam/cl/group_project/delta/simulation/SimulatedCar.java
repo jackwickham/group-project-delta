@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
@@ -28,7 +29,7 @@ public class SimulatedCar extends PhysicsCar {
 	/**
 	 * The algorithm that is controlling this car.
 	 */
-	private Thread controller;
+	private Algorithm controller;
 
 	/**
 	 * The default wheel base of created cars. Set to 15cm for compatibility
@@ -87,44 +88,25 @@ public class SimulatedCar extends PhysicsCar {
 	 * @param algorithm    Algorithm that will make decisions for this vehicle.
 	 */
 	public void setController(Algorithm algorithm) {
-		if (controller != null) {
-			controller.interrupt();
-		}
-		controller = new AlgorithmThread(algorithm);
+		controller = algorithm;
+		algorithm.initialise();
 	}
 
 	/**
-	 * Run the controller algorithm.
+	 * Call the algorithm to update this car's state and communicate it to the other vehicles
+	 * @param timeNanos The world time in nanoseconds
 	 */
-	public void start() {
-		controller.start();
+	public void updateControl(long timeNanos) {
+		if (controller == null) {
+			throw new IllegalStateException("An algorithm must be attached to this vehicle before it can update");
+		}
+		controller.update(timeNanos);
 	}
 
+	/**
+	 * Stop the vehicle
+	 */
 	public void stop() {
-		try {
-			controller.interrupt();
-			controller.join(100);
-		}
-		catch (InterruptedException e) {
-			// TODO: Something here?
-		}
+		//controller.emergencyStop();
 	}
-
-	private static class AlgorithmThread extends Thread {
-
-		private Algorithm algorithm;
-
-		public AlgorithmThread(Algorithm algorithm) {
-			this.algorithm = algorithm;
-		}
-
-		@Override
-		public void run() {
-			if (algorithm != null) {
-				algorithm.run();
-			}
-		}
-
-	}
-
 }
