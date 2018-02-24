@@ -191,4 +191,18 @@ public class PhysicsCar extends PhysicsBody {
 		this.wheelBase = wheelBase;
 	}
 
+	/**
+	 * Get the angle between the wheels and the vehicle
+	 * @return Wheel angle
+	 */
+	public double getWheelAngle() {
+		if (turnRate == 0.0) {
+			return 0.0;
+		} else {
+			double radius = speed / turnRate;
+			double vehicleLength = 1.4 * wheelBase;
+			return Math.PI/2 - Math.atan2(vehicleLength, radius);
+		}
+	}
+
 }
