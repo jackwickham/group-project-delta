@@ -92,22 +92,22 @@ public class SimulatedSensorModule implements SensorInterface {
 		);
 
 		for (PhysicsBody body : bodies) {
+			if (body != car) {
+				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+				double relDistance = relPos.magnitude();
+				double angle = Math.acos(
+					relPos.dot(vecHeading) / relDistance
+				);
 
-			Vector2D relPos = body.getPosition().subtract(car.getPosition());
-			double relDistance = relPos.magnitude();
-			double angle = Math.acos(
-				relPos.dot(vecHeading) / relDistance
-			);
-
-			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
-				beacons.add(new Beacon(
-					body.getUuid(),
-					relDistance,
-					relDistance,
-					angle
-				));
+				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
+					beacons.add(new Beacon(
+						body.getUuid(),
+						relDistance,
+						relDistance,
+						angle
+					));
+				}
 			}
-
 		}
 
 		return beacons;
