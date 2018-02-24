@@ -5,6 +5,7 @@ import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork;
 import uk.ac.cam.cl.group_project.delta.simulation.World;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public class SimulationThread extends Thread {
 			// Fetch bodies from world
 			List<PhysicsBody> bodies;
 			synchronized (world) {
-				bodies = world.getBodies();
+				bodies = new ArrayList<>(world.getBodies());
 			}
 
 			// Update world
