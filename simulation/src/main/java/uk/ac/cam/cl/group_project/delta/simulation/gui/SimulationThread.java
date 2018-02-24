@@ -179,6 +179,22 @@ public class SimulationThread extends Thread {
 	}
 
 	/**
+	 * Get the simulated world.
+	 * @return    The physics world.
+	 */
+	public synchronized World getWorld() {
+		return world;
+	}
+
+	/**
+	 * Get the simulated network.
+	 * @return    The virtual network.
+	 */
+	public synchronized SimulatedNetwork getNetwork() {
+		return network;
+	}
+
+	/**
 	 * A singleton implementation of {@link Algorithm} that does nothing.
 	 */
 	public static class StubAlgorithm extends Algorithm {

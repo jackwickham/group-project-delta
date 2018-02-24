@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0"
 			xmlns="http://javafx.com/javafx/8.0.112"
 			xmlns:fx="http://javafx.com/fxml/1"
@@ -43,6 +44,28 @@
 													<content>
 														<AnchorPane
 																fx:id="propertiesPane"/>
+													</content>
+												</ScrollPane>
+											</children>
+										</AnchorPane>
+									</content>
+								</Tab>
+								<Tab text="Network">
+									<content>
+										<AnchorPane>
+											<children>
+												<ScrollPane fitToWidth="true"
+															hbarPolicy="NEVER"
+															AnchorPane.bottomAnchor="0.0"
+															AnchorPane.leftAnchor="0.0"
+															AnchorPane.rightAnchor="0.0"
+															AnchorPane.topAnchor="0.0">
+													<content>
+														<VBox fx:id="networkLog" spacing="20">
+															<padding>
+																<Insets top="20" bottom="20" left="20" right="20"/>
+															</padding>
+														</VBox>
 													</content>
 												</ScrollPane>
 											</children>

@@ -17,10 +17,16 @@ public class SimulatedNetwork {
 	private List<SimulatedNetworkModule> handlers;
 
 	/**
+	 * List of sniffer callbacks in the network.
+	 */
+	private List<Sniffer> sniffers;
+
+	/**
 	 * Construct network.
 	 */
 	public SimulatedNetwork() {
 		handlers = new ArrayList<>();
+		sniffers = new ArrayList<>();
 	}
 
 	/**
@@ -41,15 +47,49 @@ public class SimulatedNetwork {
 	}
 
 	/**
+	 * Register a new network packet sniffer to this network, which will be
+	 * called for every packet sent on the network.
+	 * @param sniffer    Sniffer to add.
+	 */
+	public synchronized void register(Sniffer sniffer) {
+		this.sniffers.add(sniffer);
+	}
+
+	/**
+	 * Remove a sniffer.
+	 * @param sniffer    Sniffer to remove.
+	 */
+	public synchronized void deregister(Sniffer sniffer) {
+		this.sniffers.remove(sniffer);
+	}
+
+	/**
 	 * Broadcast a message from the given sender node.
 	 * @param sender     Node from which this message was sent.
 	 * @param message    Byte array to send as a message.
 	 */
 	public synchronized void broadcast(SimulatedNetworkModule sender, byte[] message) {
+		for (Sniffer sniffer : sniffers) {
+			sniffer.handleMessage(message);
+		}
 		for (SimulatedNetworkModule handler : handlers) {
 			// TODO: Perform quality degradation with distance
 			handler.handleMessage(Arrays.copyOf(message, message.length));
 		}
+	}
+
+	/**
+	 * Functional interface for packet sniffing probes on the network.
+	 */
+	@FunctionalInterface
+	public interface Sniffer {
+
+		/**
+		 * Handle the broadcast of a packet.
+		 * @param message    Packet sent.
+		 */
+		void handleMessage(byte[] message);
+
 	}
 
 }

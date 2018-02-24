@@ -2,9 +2,13 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -12,9 +16,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.Packet;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
@@ -68,6 +75,12 @@ public class Controller {
 	private AnchorPane propertiesPane;
 
 	/**
+	 * GUI element containing a log of network messages.
+	 */
+	@FXML
+	private VBox networkLog;
+
+	/**
 	 * The JavaFX GUI updater - an "animation".
 	 */
 	private Timeline timeline;
@@ -115,6 +128,17 @@ public class Controller {
 	@FXML
 	public void initialize() {
 
+		simulation.getNetwork().register(message -> {
+			Packet packet = new Packet(new MessageReceipt(message));
+			String logMsg = String.format(
+				"Vehicle %d (Platoon %d): (Type %s)",
+				packet.vehicleId,
+				packet.platoonId,
+				packet.message.getType().toString()
+			);
+			Platform.runLater(() -> addToNetworkLog(logMsg));
+		});
+
 		// Start background tasks
 		simulation.start();
 		timeline.play();
@@ -137,6 +161,14 @@ public class Controller {
 	private void showProperties(Paneable obj) {
 		Pane root = obj.toPane();
 		propertiesPane.getChildren().setAll(root);
+	}
+
+	private void addToNetworkLog(String message) {
+		ObservableList<Node> kids = networkLog.getChildren();
+		if (kids.size() > 100) {
+			kids.remove(100, kids.size() - 1);
+		}
+		kids.add(0, new Label(message));
 	}
 
 	/**
