@@ -47,8 +47,6 @@ public class PhysicsCar extends PhysicsBody {
 	/**
 	 * Update the kinematic state of the car, considering friction forces.
 	 *
-	 * Turning isn't really compatible with
-	 *
 	 * @param dt                      Timestep in seconds.
 	 */
 	@Override
@@ -202,6 +200,19 @@ public class PhysicsCar extends PhysicsBody {
 			double radius = speed / turnRate;
 			double vehicleLength = 1.4 * wheelBase;
 			return Math.PI/2 - Math.atan2(vehicleLength, radius);
+		}
+	}
+
+	/**
+	 * Set the angle between the wheels and the vehicle
+	 * @param angle New wheel angle
+	 */
+	public void setWheelAngle(double angle) {
+		if (angle == 0.0) {
+			turnRate = 0.0;
+		} else {
+			double radius = 1.4 * wheelBase / Math.tan(angle);
+			turnRate = speed / radius;
 		}
 	}
 
