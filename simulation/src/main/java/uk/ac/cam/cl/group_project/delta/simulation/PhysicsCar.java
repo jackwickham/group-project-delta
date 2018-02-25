@@ -55,28 +55,30 @@ public class PhysicsCar extends PhysicsBody {
 		Vector2D translation;
 		double distanceTravelled = speed * dt;
 
-		if (turnRate == 0.0) {
-			// Straight line, with heading = 0 in y direction
-			translation = new Vector2D(
-				distanceTravelled * Math.sin(heading),
-				distanceTravelled * Math.cos(heading)
-			);
-		} else {
-			// The vehicle will travel around the circle with radius speed/turn rate
-			double radius = speed / turnRate;
-			double angleMovedAroundCircle = distanceTravelled / radius; // angle measured clockwise
+		if (speed != 0.0) { // Prevent division by 0
+			if (turnRate == 0.0) {
+				// Straight line, with heading = 0 in y direction
+				translation = new Vector2D(
+					distanceTravelled * Math.sin(heading),
+					distanceTravelled * Math.cos(heading)
+				);
+			} else {
+				// The vehicle will travel around the circle with radius speed/turn rate
+				double radius = speed / turnRate;
+				double angleMovedAroundCircle = distanceTravelled / radius; // angle measured clockwise
 
-			double startAngle = heading;
-			double endAngle = heading + angleMovedAroundCircle;
+				double startAngle = heading;
+				double endAngle = heading + angleMovedAroundCircle;
 
-			double dx = radius * (Math.cos(startAngle) - Math.cos(endAngle));
-			double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
+				double dx = radius * (Math.cos(startAngle) - Math.cos(endAngle));
+				double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
 
-			translation = new Vector2D(dx, dy);
-			heading = endAngle;
+				translation = new Vector2D(dx, dy);
+				heading = endAngle;
+			}
+
+			setPosition(getPosition().add(translation));
 		}
-
-		setPosition(getPosition().add(translation));
 
 		// Now update the velocity, making sure that we don't go backwards
 		speed = Math.max(speed + enginePower * dt, 0.0);
