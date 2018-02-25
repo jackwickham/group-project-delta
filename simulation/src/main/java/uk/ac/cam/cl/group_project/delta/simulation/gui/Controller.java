@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -90,6 +91,24 @@ public class Controller {
 	 * Backend store for network logs.
 	 */
 	private ObservableList<String> networkLogStore;
+
+	/**
+	 * Emergency messages filter button.
+	 */
+	@FXML
+	private ToggleButton filterEmergency;
+
+	/**
+	 * Data messages filter button.
+	 */
+	@FXML
+	private ToggleButton filterData;
+
+	/**
+	 * Merge coordination filter button.
+	 */
+	@FXML
+	private ToggleButton filterMerges;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -180,52 +199,81 @@ public class Controller {
 
 		switch(packet.message.getType()) {
 			case Emergency:
-				msg = "Emergency!";
-				break;
+				if (filterEmergency.isSelected()) {
+					msg = "Emergency!";
+					break;
+				}
+				else {
+					return;
+				}
 			case Data:
-				return; // These are not particularly interesting
-				/*VehicleData vd = (VehicleData) packet.message;
-				msg = String.format(
-					"Data: %f (%f) m/s, %f (%f) m/s², %f (%f) rad/s",
-					vd.getSpeed(),
-					vd.getChosenSpeed(),
-					vd.getAcceleration(),
-					vd.getChosenAcceleration(),
-					vd.getTurnRate(),
-					vd.getChosenTurnRate()
-				);
-				break;*/
+				if (filterData.isSelected()) {
+					VehicleData vd = (VehicleData) packet.message;
+					msg = String.format(
+						"Data: %f (%f) m/s, %f (%f) m/s², %f (%f) rad/s",
+						vd.getSpeed(),
+						vd.getChosenSpeed(),
+						vd.getAcceleration(),
+						vd.getChosenAcceleration(),
+						vd.getTurnRate(),
+						vd.getChosenTurnRate()
+					);
+					break;
+				}
+				else {
+					return;
+				}
 			case RequestToMerge:
-				RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
-				msg = String.format(
-					"Transaction %d: Requesting merge of platoon %d",
-					rtmm.getTransactionId(),
-					rtmm.getMergingPlatoonId()
-				);
-				break;
+				if (filterMerges.isSelected()) {
+					RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
+					msg = String.format(
+						"Transaction %d: Requesting merge of platoon %d",
+						rtmm.getTransactionId(),
+						rtmm.getMergingPlatoonId()
+					);
+					break;
+				}
+				else {
+					return;
+				}
 			case AcceptToMerge:
-				AcceptToMergeMessage atmm = (AcceptToMergeMessage) packet.message;
-				String status = atmm.isAccepted() ? "Accepting" : "Rejecting";
-				msg = String.format(
-					"Transaction %d: %s merge",
-					atmm.getTransactionId(),
-					status
-				);
-				break;
+				if (filterMerges.isSelected()) {
+					AcceptToMergeMessage atmm = (AcceptToMergeMessage) packet.message;
+					String status = atmm.isAccepted() ? "Accepting" : "Rejecting";
+					msg = String.format(
+						"Transaction %d: %s merge",
+						atmm.getTransactionId(),
+						status
+					);
+					break;
+				}
+				else {
+					return;
+				}
 			case ConfirmMerge:
-				ConfirmMergeMessage cmm = (ConfirmMergeMessage) packet.message;
-				msg = String.format(
-					"Transaction %d: Merge approved",
-					cmm.getTransactionId()
-				);
-				break;
+				if (filterMerges.isSelected()) {
+					ConfirmMergeMessage cmm = (ConfirmMergeMessage) packet.message;
+					msg = String.format(
+						"Transaction %d: Merge approved",
+						cmm.getTransactionId()
+					);
+					break;
+				}
+				else {
+					return;
+				}
 			case MergeComplete:
-				MergeCompleteMessage mcm = (MergeCompleteMessage) packet.message;
-				msg = String.format(
-					"Transaction %d: Merge complete",
-					mcm.getTransactionId()
-				);
-				break;
+				if (filterMerges.isSelected()) {
+					MergeCompleteMessage mcm = (MergeCompleteMessage) packet.message;
+					msg = String.format(
+						"Transaction %d: Merge complete",
+						mcm.getTransactionId()
+					);
+					break;
+				}
+				else {
+					return;
+				}
 		}
 
 		networkLogStore.add(

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
@@ -51,12 +50,64 @@
 									<content>
 										<AnchorPane>
 											<children>
-												<ListView fx:id="networkLog"
-														  AnchorPane.bottomAnchor="0.0"
+												<GridPane AnchorPane.bottomAnchor="0.0"
 														  AnchorPane.leftAnchor="0.0"
 														  AnchorPane.rightAnchor="0.0"
 														  AnchorPane.topAnchor="0.0">
-												</ListView>
+													<columnConstraints>
+														<ColumnConstraints hgrow="SOMETIMES"/>
+														<ColumnConstraints hgrow="SOMETIMES"/>
+														<ColumnConstraints hgrow="SOMETIMES"/>
+													</columnConstraints>
+													<children>
+														<AnchorPane>
+															<children>
+																<ToggleButton fx:id="filterEmergency"
+																			  text="Emergency"
+																			  selected="true"
+																			  AnchorPane.bottomAnchor="0.0"
+																			  AnchorPane.leftAnchor="0.0"
+																			  AnchorPane.rightAnchor="0.0"
+																			  AnchorPane.topAnchor="0.0">
+																	<tooltip>
+																		<Tooltip text="Filter emergency messages"/>
+																	</tooltip>
+																</ToggleButton>
+															</children>
+														</AnchorPane>
+														<AnchorPane GridPane.columnIndex="1">
+															<children>
+																<ToggleButton fx:id="filterData"
+																			  text="Data"
+																			  selected="false"
+																			  AnchorPane.bottomAnchor="0.0"
+																			  AnchorPane.leftAnchor="0.0"
+																			  AnchorPane.rightAnchor="0.0"
+																			  AnchorPane.topAnchor="0.0">
+																	<tooltip>
+																		<Tooltip text="Filter data messages"/>
+																	</tooltip>
+																</ToggleButton>
+															</children>
+														</AnchorPane>
+														<AnchorPane GridPane.columnIndex="2">
+															<children>
+																<ToggleButton fx:id="filterMerges"
+																			  text="Merges"
+																			  selected="true"
+																			  AnchorPane.bottomAnchor="0.0"
+																			  AnchorPane.leftAnchor="0.0"
+																			  AnchorPane.rightAnchor="0.0"
+																			  AnchorPane.topAnchor="0.0">
+																	<tooltip>
+																		<Tooltip text="Filter platoon merging communication"/>
+																	</tooltip>
+																</ToggleButton>
+															</children>
+														</AnchorPane>
+														<ListView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+													</children>
+												</GridPane>
 											</children>
 										</AnchorPane>
 									</content>
