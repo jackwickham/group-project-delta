@@ -56,17 +56,17 @@ public class SimulatedSensorModule implements SensorInterface {
 		double distance = Double.POSITIVE_INFINITY;
 
 		for (PhysicsBody body : bodies) {
+			if (body != car) {
+				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+				double relDistance = relPos.magnitude();
+				double angle = Math.acos(
+					relPos.dot(vecHeading) / relDistance
+				);
 
-			Vector2D relPos = body.getPosition().subtract(car.getPosition());
-			double relDistance = relPos.magnitude();
-			double angle = Math.acos(
-				relPos.dot(vecHeading) / relDistance
-			);
-
-			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
-				distance = Math.min(distance, relDistance);
+				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
+					distance = Math.min(distance, relDistance);
+				}
 			}
-
 		}
 
 		return distance;
@@ -92,22 +92,22 @@ public class SimulatedSensorModule implements SensorInterface {
 		);
 
 		for (PhysicsBody body : bodies) {
+			if (body != car) {
+				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+				double relDistance = relPos.magnitude();
+				double angle = Math.acos(
+					relPos.dot(vecHeading) / relDistance
+				);
 
-			Vector2D relPos = body.getPosition().subtract(car.getPosition());
-			double relDistance = relPos.magnitude();
-			double angle = Math.acos(
-				relPos.dot(vecHeading) / relDistance
-			);
-
-			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
-				beacons.add(new Beacon(
-					body.getUuid(),
-					relDistance,
-					relDistance,
-					angle
-				));
+				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
+					beacons.add(new Beacon(
+						body.getUuid(),
+						relDistance,
+						relDistance,
+						angle
+					));
+				}
 			}
-
 		}
 
 		return beacons;
@@ -135,12 +135,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return turn rate in rad/s
 	 */
 	public double getTurnRate() {
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
-		double radius = car.getWheelBase() / Math.sin(car.getWheelAngle());
-		return car.getVelocity().dot(vecHeading) / radius;
+		return car.getTurnRate();
 	}
 
 	/**
