@@ -141,9 +141,9 @@ public class Controller {
 	public void initialize() {
 
 		networkLog.setItems(networkLogStore);
-		simulation.getNetwork().register(message -> {
-			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(message)));
-		});
+		simulation.getNetwork().register(message ->
+			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(message)))
+		);
 
 		// Start background tasks
 		simulation.start();
