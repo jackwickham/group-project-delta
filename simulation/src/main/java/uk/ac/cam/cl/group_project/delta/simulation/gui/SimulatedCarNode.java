@@ -136,6 +136,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			velY.set(car.getVelocity().getY());
 			heading.set(Math.toDegrees(-car.getHeading()));
 			wheelAngle.set(Math.toDegrees(-car.getWheelAngle()));
+			enginePower.set(car.getEnginePower());
 		}
 
 	}
