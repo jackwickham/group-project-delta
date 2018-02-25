@@ -51,60 +51,34 @@
 										<AnchorPane>
 											<children>
 												<GridPane AnchorPane.bottomAnchor="0.0"
-														  AnchorPane.leftAnchor="0.0"
-														  AnchorPane.rightAnchor="0.0"
-														  AnchorPane.topAnchor="0.0">
+													  AnchorPane.leftAnchor="0.0"
+													  AnchorPane.rightAnchor="0.0"
+													  AnchorPane.topAnchor="0.0">
 													<columnConstraints>
-														<ColumnConstraints hgrow="SOMETIMES"/>
-														<ColumnConstraints hgrow="SOMETIMES"/>
-														<ColumnConstraints hgrow="SOMETIMES"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 													</columnConstraints>
+													<rowConstraints>
+														<RowConstraints vgrow="NEVER" prefHeight="30"/>
+														<RowConstraints vgrow="ALWAYS"/>
+													</rowConstraints>
 													<children>
-														<AnchorPane>
-															<children>
-																<ToggleButton fx:id="filterEmergency"
-																			  text="Emergency"
-																			  selected="true"
-																			  AnchorPane.bottomAnchor="0.0"
-																			  AnchorPane.leftAnchor="0.0"
-																			  AnchorPane.rightAnchor="0.0"
-																			  AnchorPane.topAnchor="0.0">
-																	<tooltip>
-																		<Tooltip text="Filter emergency messages"/>
-																	</tooltip>
-																</ToggleButton>
-															</children>
-														</AnchorPane>
-														<AnchorPane GridPane.columnIndex="1">
-															<children>
-																<ToggleButton fx:id="filterData"
-																			  text="Data"
-																			  selected="false"
-																			  AnchorPane.bottomAnchor="0.0"
-																			  AnchorPane.leftAnchor="0.0"
-																			  AnchorPane.rightAnchor="0.0"
-																			  AnchorPane.topAnchor="0.0">
-																	<tooltip>
-																		<Tooltip text="Filter data messages"/>
-																	</tooltip>
-																</ToggleButton>
-															</children>
-														</AnchorPane>
-														<AnchorPane GridPane.columnIndex="2">
-															<children>
-																<ToggleButton fx:id="filterMerges"
-																			  text="Merges"
-																			  selected="true"
-																			  AnchorPane.bottomAnchor="0.0"
-																			  AnchorPane.leftAnchor="0.0"
-																			  AnchorPane.rightAnchor="0.0"
-																			  AnchorPane.topAnchor="0.0">
-																	<tooltip>
-																		<Tooltip text="Filter platoon merging communication"/>
-																	</tooltip>
-																</ToggleButton>
-															</children>
-														</AnchorPane>
+														<CheckBox fx:id="filterEmergency" text="Emergency" selected="true">
+															<tooltip>
+																<Tooltip text="Show emergency messages"/>
+															</tooltip>
+														</CheckBox>
+														<CheckBox fx:id="filterMerges" text="Merges" selected="true"  GridPane.columnIndex="2">
+															<tooltip>
+																<Tooltip text="Show platoon merging communication"/>
+															</tooltip>
+														</CheckBox>
+														<CheckBox fx:id="filterData" text="Data" selected="false"  GridPane.columnIndex="1">
+															<tooltip>
+																<Tooltip text="Show data messages"/>
+															</tooltip>
+														</CheckBox>
 														<ListView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
 													</children>
 												</GridPane>

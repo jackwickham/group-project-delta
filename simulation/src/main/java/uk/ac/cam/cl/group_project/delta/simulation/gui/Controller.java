@@ -7,10 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -96,19 +93,19 @@ public class Controller {
 	 * Emergency messages filter button.
 	 */
 	@FXML
-	private ToggleButton filterEmergency;
+	private CheckBox filterEmergency;
 
 	/**
 	 * Data messages filter button.
 	 */
 	@FXML
-	private ToggleButton filterData;
+	private CheckBox filterData;
 
 	/**
 	 * Merge coordination filter button.
 	 */
 	@FXML
-	private ToggleButton filterMerges;
+	private CheckBox filterMerges;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
