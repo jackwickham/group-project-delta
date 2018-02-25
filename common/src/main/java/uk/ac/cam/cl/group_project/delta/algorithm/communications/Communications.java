@@ -1,5 +1,8 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
@@ -46,7 +49,7 @@ public class Communications implements CommsInterface {
 	 *
 	 * @return the latest message from the leader
 	 */
-	@Override
+	/*@Override
 	public VehicleData getLeaderMessage() {
 		messageLayer.updateMessages();
 
@@ -55,7 +58,7 @@ public class Communications implements CommsInterface {
 		} else {
 			return null;
 		}
-	}
+	}*/
 
 	/**
 	 * Return the latest message from the vehicle which is inFront ahead
@@ -64,7 +67,7 @@ public class Communications implements CommsInterface {
 	 * @throws IllegalArgumentException - if the inFront argument is negative or 0
 	 * @return the latest message for the requested vehicle, null if there is no data
 	 */
-	@Override
+	/*@Override
 	public VehicleData getPredecessorMessage(int inFront) {
 		messageLayer.updateMessages();
 		if(inFront <= 0) {
@@ -75,6 +78,22 @@ public class Communications implements CommsInterface {
 		} else {
 			return null;
 		}
+	}*/
+
+	/**
+	 * Return the messages from vehicles in front of this one
+	 */
+	@Override
+	public List<VehicleData> getPredecessorMessages() {
+		List<VehicleData> data = new ArrayList<>();
+		for(int i = 1; i <= messageLayer.getCurrentPosition(); i++) {
+			if(messageLookup.containsKey(i)) {
+				data.add(messageLookup.get(i));
+			} else {
+				data.add(null);
+			}
+		}
+		return data;
 	}
 
 	/**
