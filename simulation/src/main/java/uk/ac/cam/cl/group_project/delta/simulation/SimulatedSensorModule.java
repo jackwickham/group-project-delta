@@ -119,7 +119,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return acceleration in m/s^2
 	 */
 	public double getAcceleration() {
-		return car.getAcceleration().magnitude();
+		return car.getAcceleration();
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return speed in m/s
 	 */
 	public double getSpeed() {
-		return car.getVelocity().magnitude();
+		return car.getSpeed();
 	}
 
 	/**

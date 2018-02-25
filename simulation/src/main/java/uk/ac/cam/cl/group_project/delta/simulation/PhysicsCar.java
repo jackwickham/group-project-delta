@@ -37,6 +37,16 @@ public class PhysicsCar extends PhysicsBody {
 	private double enginePower = 0.0;
 
 	/**
+	 * The coefficient used for acceleration = engineForce - c * speed^2 - friction
+	 */
+	private static final double AIR_RESISTANCE_COEFFICIENT = 1.0;
+
+	/**
+	 * The constant that is used to reduce the acceleration
+	 */
+	private static final double FRICTION = 0.1;
+
+	/**
 	 * Initialise physically simulated representation of a car.
 	 * @param wheelBase    Distance from rear to front axle.
 	 */
@@ -81,7 +91,7 @@ public class PhysicsCar extends PhysicsBody {
 		}
 
 		// Now update the velocity, making sure that we don't go backwards
-		speed = Math.max(speed + enginePower * dt, 0.0);
+		speed = Math.max(speed + getAcceleration() * dt, 0.0);
 
 		super.update(dt);
 	}
@@ -118,17 +128,25 @@ public class PhysicsCar extends PhysicsBody {
 		this.enginePower = enginePower;
 	}
 
+	public double getAcceleration() {
+		double acceleration = enginePower - AIR_RESISTANCE_COEFFICIENT * speed * speed;
+		if (speed > 0) {
+			acceleration -= FRICTION;
+		}
+		return acceleration;
+	}
+
 	/**
 	 * Get the current acceleration
 	 * @return The acceleration vector
 	 */
-	public Vector2D getAcceleration() {
+	public Vector2D getAccelerationVector() {
 		// Currently, engine power sets acceleration directly
 		// In future, this may take into account the turn rate and any limits
 		// on the speed that the vehicle can obtain (air resistance/friction)
 		return new Vector2D(
-			enginePower * Math.cos(heading),
-			enginePower * Math.sin(heading)
+			getAcceleration() * Math.cos(heading),
+			getAcceleration() * Math.sin(heading)
 		);
 	}
 
