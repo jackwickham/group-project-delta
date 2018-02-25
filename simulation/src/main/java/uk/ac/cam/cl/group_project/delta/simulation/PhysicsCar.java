@@ -200,8 +200,7 @@ public class PhysicsCar extends PhysicsBody {
 			return 0.0;
 		} else {
 			double radius = speed / turnRate;
-			double vehicleLength = 1.4 * wheelBase;
-			return Math.PI/2 - Math.atan2(vehicleLength, radius);
+			return Math.atan2(wheelBase, radius);
 		}
 	}
 
@@ -213,7 +212,7 @@ public class PhysicsCar extends PhysicsBody {
 		if (angle == 0.0) {
 			turnRate = 0.0;
 		} else {
-			double radius = 1.4 * wheelBase / Math.tan(angle);
+			double radius = wheelBase / Math.tan(angle);
 			turnRate = speed / radius;
 		}
 	}
