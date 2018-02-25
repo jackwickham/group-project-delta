@@ -66,8 +66,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		// Construct observable properties
 		velX = new SimpleDoubleProperty(car.getVelocity().getX());
 		velY = new SimpleDoubleProperty(car.getVelocity().getY());
-		wheelAngle = new SimpleDoubleProperty(car.getWheelAngle());
-		heading = new SimpleDoubleProperty(car.getHeading());
+		wheelAngle = new SimpleDoubleProperty(Math.toDegrees(-car.getWheelAngle()));
+		heading = new SimpleDoubleProperty(Math.toDegrees(-car.getHeading()));
 		enginePower = new SimpleDoubleProperty(car.getEnginePower());
 
 		rotateProperty().bind(heading);
@@ -140,8 +140,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		synchronized (car) {
 			velX.set(car.getVelocity().getX());
 			velY.set(car.getVelocity().getY());
-			heading.set(Math.toDegrees(car.getHeading()));
-			wheelAngle.set(Math.toDegrees(car.getWheelAngle()));
+			heading.set(Math.toDegrees(-car.getHeading()));
+			wheelAngle.set(Math.toDegrees(-car.getWheelAngle()));
 		}
 
 	}
