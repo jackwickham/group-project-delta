@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -78,7 +79,7 @@ public class Controller {
 	 * GUI element containing a log of network messages.
 	 */
 	@FXML
-	private VBox networkLog;
+	private TextArea networkLog;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -168,11 +169,10 @@ public class Controller {
 	 * @param message   Message to add.
 	 */
 	private void addToNetworkLog(String message) {
-		ObservableList<Node> kids = networkLog.getChildren();
-		if (kids.size() > 100) {
-			kids.remove(100, kids.size() - 1);
-		}
-		kids.add(0, new Label(message));
+		String current = networkLog.getText();
+		networkLog.setText(
+			message + "\n" + current.substring(0, Math.min(current.length(), 1000))
+		);
 	}
 
 	/**
