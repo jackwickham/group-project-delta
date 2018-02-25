@@ -11,40 +11,40 @@ public class AlgorithmTest {
 	 */
 	@Test
 	public void testBasicAlgorithm() {
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, new mockDrive(), new mockSensor(), new mockNetwork());
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, new MockDrive(), new MockSensor(), new MockNetwork());
 		algorithm.update(0);
 		algorithm.update(10000000);
 	}
 
 	@Test
 	public void testBasicAlgorithm2() {
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm2, new mockDrive(), new mockSensor(), new mockNetwork());
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm2, new MockDrive(), new MockSensor(), new MockNetwork());
 		algorithm.update(0);
 		algorithm.update(10000000);
 	}
 
 	@Test
 	public void testBasicAlgorithm3() {
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm3, new mockDrive(), new mockSensor(), new mockNetwork());
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm3, new MockDrive(), new MockSensor(), new MockNetwork());
 		algorithm.update(0);
 		algorithm.update(10000000);
 	}
 
 	@Test
 	public void testBasicAlgorithmPID() {
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID, new mockDrive(), new mockSensor(), new mockNetwork());
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID, new MockDrive(), new MockSensor(), new MockNetwork());
 		algorithm.update(0);
 		algorithm.update(10000000);
 	}
 
 	@Test
 	public void testBasicAlgorithmPID2() {
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID2, new mockDrive(), new mockSensor(), new mockNetwork());
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID2, new MockDrive(), new MockSensor(), new MockNetwork());
 		algorithm.update(0);
 		algorithm.update(10000000);
 	}
 
-	public static class mockDrive implements DriveInterface {
+	public static class MockDrive implements DriveInterface {
 
 		@Override
 		public void setAcceleration(double acceleration) {
@@ -62,7 +62,7 @@ public class AlgorithmTest {
 		}
 	}
 
-	public static class mockSensor implements SensorInterface {
+	public static class MockSensor implements SensorInterface {
 
 		@Override
 		public Double getFrontProximity() {
@@ -90,7 +90,7 @@ public class AlgorithmTest {
 		}
 	}
 
-	public static class mockNetwork implements NetworkInterface {
+	public static class MockNetwork implements NetworkInterface {
 
 		@Override
 		public void sendData(byte[] message) {
