@@ -135,10 +135,10 @@ public class PhysicsCar extends PhysicsBody {
 	public void setTurnRate(double turnRate) {
 		this.turnRate = turnRate;
 		if (turnRate == 0.0) {
-			setInternalWheelAngle(0.0);
+			setWheelAngleInternal(0.0);
 		} else {
 			double radius = speed / turnRate;
-			setInternalWheelAngle(Math.atan2(wheelBase, radius));
+			setWheelAngleInternal(Math.atan2(wheelBase, radius));
 		}
 	}
 
@@ -157,14 +157,14 @@ public class PhysicsCar extends PhysicsBody {
 	public void setWheelAngle(double angle) {
 		// We set an angle, so stop trying to maintain a turn rate
 		this.turnRate = null;
-		setInternalWheelAngle(angle);
+		setWheelAngleInternal(angle);
 	}
 
 	/**
 	 * Set the wheel angle without changing the target turn rate
 	 * @param angle The angle to use
 	 */
-	private void setInternalWheelAngle(double angle) {
+	private void setWheelAngleInternal(double angle) {
 		wheelAngle = Math.max(Math.min(angle, MAX_WHEEL_ANGLE), -MAX_WHEEL_ANGLE);
 	}
 
@@ -194,17 +194,6 @@ public class PhysicsCar extends PhysicsBody {
 			acceleration -= FRICTION;
 		}
 		return acceleration;
-	}
-
-	/**
-	 * Get the current acceleration parallel to the vehicle (ignores turning)
-	 * @return The acceleration vector
-	 */
-	public Vector2D getAccelerationVector() {
-		return new Vector2D(
-			getAcceleration() * Math.cos(heading),
-			getAcceleration() * Math.sin(heading)
-		);
 	}
 
 	/**
@@ -240,6 +229,14 @@ public class PhysicsCar extends PhysicsBody {
 	 */
 	public double getHeading() {
 		return heading;
+	}
+
+	/**
+	 * Get the vehicle's current heading as a vector
+	 * @return The acceleration vector
+	 */
+	public Vector2D getHeadingVector() {
+		return new Vector2D(Math.cos(heading), Math.sin(heading));
 	}
 
 	/**
