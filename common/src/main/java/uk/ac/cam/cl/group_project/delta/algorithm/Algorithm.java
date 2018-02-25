@@ -49,9 +49,8 @@ public abstract class Algorithm {
 			//try to get predecessors messages, trying next car infront if message null, upto the front of platoon
 			//TODO: use timestamp in message to decide which to use
 			//note: individual algorithms handle case in which no message ever received
-			int infront = 1;
-			for (; infront <= algorithmData.controlLayer.getCurrentPosition(); infront++) {
-				algorithmData.receiveMessageData = algorithmData.commsInterface.getPredecessorMessage(infront);
+			for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
+				algorithmData.receiveMessageData = message;
 				if (algorithmData.receiveMessageData != null) {
 					algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
 					algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
