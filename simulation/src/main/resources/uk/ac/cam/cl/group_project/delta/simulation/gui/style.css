@@ -2,3 +2,7 @@
 	-fx-stroke: green;
 	-fx-fill: null;
 }
+
+*.list-cell {
+	-fx-background-color: white;
+}
