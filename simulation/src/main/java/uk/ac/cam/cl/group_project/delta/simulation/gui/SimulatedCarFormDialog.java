@@ -68,17 +68,17 @@ public class SimulatedCarFormDialog extends FormDialog {
 		grid.add(new Text("Position"), 0, 1);
 		grid.add(new Text("Algorithm"), 0, 2);
 
-		Spinner<Double> wheelBaseSpinner = new Spinner<>(0.0, 10.0, 2.5, 0.5);
+		Spinner<Double> wheelBaseSpinner = new EditableSpinner<>(0.0, 10.0, 2.5, 0.5);
 		wheelBaseSpinner.setEditable(true);
 		this.wheelBaseInput = wheelBaseSpinner.valueProperty();
 		grid.add(wheelBaseSpinner, 1, 0, 2, 1);
 
-		Spinner<Double> posXSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, x, 1.0);
+		Spinner<Double> posXSpinner = new EditableSpinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, x, 1.0);
 		posXSpinner.setEditable(true);
 		this.positionX = posXSpinner.valueProperty();
 		grid.add(posXSpinner, 1, 1);
 
-		Spinner<Double> posYSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, y, 1.0);
+		Spinner<Double> posYSpinner = new EditableSpinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, y, 1.0);
 		posYSpinner.setEditable(true);
 		this.positionY = posYSpinner.valueProperty();
 		grid.add(posYSpinner, 2, 1);
