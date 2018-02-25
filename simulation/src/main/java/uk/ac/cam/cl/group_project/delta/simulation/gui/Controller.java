@@ -3,21 +3,19 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
@@ -79,7 +77,12 @@ public class Controller {
 	 * GUI element containing a log of network messages.
 	 */
 	@FXML
-	private TextArea networkLog;
+	private ListView<String> networkLog;
+
+	/**
+	 * Backend store for network logs.
+	 */
+	private ObservableList<String> networkLogStore;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -109,6 +112,7 @@ public class Controller {
 		simulation = new SimulationThread();
 		simulatedNodes = new ArrayList<>();
 		cursorPosition = new Vector2D();
+		networkLogStore = FXCollections.observableArrayList();
 
 		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -129,15 +133,9 @@ public class Controller {
 	@FXML
 	public void initialize() {
 
+		networkLog.setItems(networkLogStore);
 		simulation.getNetwork().register(message -> {
-			Packet packet = new Packet(new MessageReceipt(message));
-			String logMsg = String.format(
-				"Vehicle %d (Platoon %d): (Type %s)",
-				packet.vehicleId,
-				packet.platoonId,
-				packet.message.getType().toString()
-			);
-			Platform.runLater(() -> addToNetworkLog(logMsg));
+			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(message)));
 		});
 
 		// Start background tasks
@@ -168,11 +166,10 @@ public class Controller {
 	 * Add a message to the network log tab.
 	 * @param message   Message to add.
 	 */
-	private void addToNetworkLog(String message) {
-		String current = networkLog.getText();
-		networkLog.setText(
-			message + "\n" + current.substring(0, Math.min(current.length(), 1000))
-		);
+	private void addToNetworkLog(MessageReceipt message) {
+		Packet packet = new Packet(message);
+		networkLogStore.add("VID" + packet.vehicleId);
+		networkLog.scrollTo(networkLogStore.size() - 1);
 	}
 
 	/**

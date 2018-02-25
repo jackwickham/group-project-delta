@@ -51,13 +51,12 @@
 									<content>
 										<AnchorPane>
 											<children>
-												<TextArea fx:id="networkLog"
-														  editable="false"
+												<ListView fx:id="networkLog"
 														  AnchorPane.bottomAnchor="0.0"
 														  AnchorPane.leftAnchor="0.0"
 														  AnchorPane.rightAnchor="0.0"
 														  AnchorPane.topAnchor="0.0">
-												</TextArea>
+												</ListView>
 											</children>
 										</AnchorPane>
 									</content>
