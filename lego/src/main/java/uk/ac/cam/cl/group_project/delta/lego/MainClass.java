@@ -10,7 +10,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 import java.io.IOException;
 
 class MainClass {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		EV3 ev3 = (EV3) BrickFinder.getLocal();
 		TextLCD lcd = ev3.getTextLCD();
 		Keys keys = ev3.getKeys();
@@ -25,8 +25,6 @@ class MainClass {
 			Algorithm algo = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, drive, sensor, network);
 			algo.initialise();
 			algo.run();
-		} catch (IOException e) {
-			lcd.drawString("IOException in network", 0, 5);
 		} finally {
 			if (network != null) {
 				network.close();
