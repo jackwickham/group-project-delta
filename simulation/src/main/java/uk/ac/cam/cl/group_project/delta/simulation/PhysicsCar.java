@@ -14,6 +14,13 @@ public class PhysicsCar extends PhysicsBody {
 	private double wheelAngle = 0.0;
 
 	/**
+	 * If not null, this means that we are trying to maintain a constant turn
+	 * rate rather than a constant wheel angle, so the wheel angle needs to be
+	 * updated in each simulation step
+	 */
+	private Double turnRate = null;
+
+	/**
 	 * The maximum permitted wheel angle, in radians
 	 */
 	private static final double MAX_WHEEL_ANGLE = Math.PI / 4;
@@ -71,6 +78,10 @@ public class PhysicsCar extends PhysicsBody {
 		Vector2D translation;
 		double distanceTravelled = speed * dt;
 
+		if (turnRate != null) {
+			setTurnRate(turnRate);
+		}
+
 		if (speed != 0.0) { // Prevent division by 0
 			if (wheelAngle == 0.0) {
 				// Straight line, with heading = 0 in y direction
@@ -116,18 +127,18 @@ public class PhysicsCar extends PhysicsBody {
 	}
 
 	/**
-	 * Set the current turn rate. The turn rate sets the wheel angle, and
-	 * future iterations will use the wheel angle to calculate turning
-	 * rather than the turn rate. This means that if the vehicle is changing
-	 * velocity the turn rate needs to be updated every simulation step
+	 * Set the current turn rate. The simulation will try to maintain this turn
+	 * rate in subsequent simulation steps by updating the wheel angle based on
+	 * the car's speed
 	 * @param turnRate    New turn rate
 	 */
 	public void setTurnRate(double turnRate) {
+		this.turnRate = turnRate;
 		if (turnRate == 0.0) {
-			wheelAngle = 0.0;
+			setInternalWheelAngle(0.0);
 		} else {
 			double radius = speed / turnRate;
-			wheelAngle = Math.atan2(wheelBase, radius);
+			setInternalWheelAngle(Math.atan2(wheelBase, radius));
 		}
 	}
 
@@ -144,6 +155,16 @@ public class PhysicsCar extends PhysicsBody {
 	 * @param angle New wheel angle
 	 */
 	public void setWheelAngle(double angle) {
+		// We set an angle, so stop trying to maintain a turn rate
+		this.turnRate = null;
+		setInternalWheelAngle(angle);
+	}
+
+	/**
+	 * Set the wheel angle without changing the target turn rate
+	 * @param angle The angle to use
+	 */
+	private void setInternalWheelAngle(double angle) {
 		wheelAngle = Math.max(Math.min(angle, MAX_WHEEL_ANGLE), -MAX_WHEEL_ANGLE);
 	}
 
