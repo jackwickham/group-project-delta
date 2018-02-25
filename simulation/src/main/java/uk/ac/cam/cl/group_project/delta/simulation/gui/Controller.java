@@ -183,7 +183,8 @@ public class Controller {
 				msg = "Emergency!";
 				break;
 			case Data:
-				VehicleData vd = (VehicleData) packet.message;
+				return; // These are not particularly interesting
+				/*VehicleData vd = (VehicleData) packet.message;
 				msg = String.format(
 					"Data: %f (%f) m/s, %f (%f) m/s², %f (%f) rad/s",
 					vd.getSpeed(),
@@ -193,7 +194,7 @@ public class Controller {
 					vd.getTurnRate(),
 					vd.getChosenTurnRate()
 				);
-				break;
+				break;*/
 			case RequestToMerge:
 				RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
 				msg = String.format(
