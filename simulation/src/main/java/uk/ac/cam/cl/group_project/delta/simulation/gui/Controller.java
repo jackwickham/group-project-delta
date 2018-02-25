@@ -231,10 +231,10 @@ public class Controller {
 						car.setEnginePower(-1000.0);
 						break;
 					case A:
-						car.setWheelAngle(-0.5);
+						car.setWheelAngle(-Math.PI / 8);
 						break;
 					case D:
-						car.setWheelAngle(0.5);
+						car.setWheelAngle(Math.PI / 8);
 						break;
 				}
 			}
