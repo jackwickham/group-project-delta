@@ -20,7 +20,8 @@ import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.Packet;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.*;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
@@ -43,6 +44,11 @@ public class Controller {
 	 * Number of GUI units per simulation metre.
 	 */
 	public static final double UNITS_PER_METRE = 30.0;
+
+	/**
+	 * Number of historic messages to show in the network log.
+	 */
+	public static final int NETWORK_LOG_CAPACITY = 100;
 
 	/**
 	 * Thread running this application's simulation.
@@ -167,9 +173,66 @@ public class Controller {
 	 * @param message   Message to add.
 	 */
 	private void addToNetworkLog(MessageReceipt message) {
+
 		Packet packet = new Packet(message);
-		networkLogStore.add("VID" + packet.vehicleId);
+		String msg = "UNKNOWN";
+
+		switch(packet.message.getType()) {
+			case Emergency:
+				msg = "Emergency!";
+				break;
+			case Data:
+				VehicleData vd = (VehicleData) packet.message;
+				msg = String.format(
+					"Data: %f (%f) m/s, %f (%f) m/s², %f (%f) rad/s",
+					vd.getSpeed(),
+					vd.getChosenSpeed(),
+					vd.getAcceleration(),
+					vd.getChosenAcceleration(),
+					vd.getTurnRate(),
+					vd.getChosenTurnRate()
+				);
+				break;
+			case RequestToMerge:
+				RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
+				msg = String.format(
+					"Transaction %d: Requesting merge of platoon %d",
+					rtmm.getTransactionId(),
+					rtmm.getMergingPlatoonId()
+				);
+				break;
+			case AcceptToMerge:
+				AcceptToMergeMessage atmm = (AcceptToMergeMessage) packet.message;
+				String status = atmm.isAccepted() ? "Accepting" : "Rejecting";
+				msg = String.format(
+					"Transaction %d: %s merge",
+					atmm.getTransactionId(),
+					status
+				);
+				break;
+			case ConfirmMerge:
+				ConfirmMergeMessage cmm = (ConfirmMergeMessage) packet.message;
+				msg = String.format(
+					"Transaction %d: Merge approved",
+					cmm.getTransactionId()
+				);
+				break;
+			case MergeComplete:
+				MergeCompleteMessage mcm = (MergeCompleteMessage) packet.message;
+				msg = String.format(
+					"Transaction %d: Merge complete",
+					mcm.getTransactionId()
+				);
+				break;
+		}
+
+		networkLogStore.add(String.format("[%d] %s", packet.vehicleId, msg));
+		if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
+			// Range is start-inclusive, end-exclusive
+			networkLogStore.remove(0, networkLogStore.size() - NETWORK_LOG_CAPACITY);
+		}
 		networkLog.scrollTo(networkLogStore.size() - 1);
+
 	}
 
 	/**
