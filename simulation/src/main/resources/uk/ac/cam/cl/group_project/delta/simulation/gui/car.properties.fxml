@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox AnchorPane.leftAnchor="0.0"
+	  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+	  xmlns="http://javafx.com/javafx/8.0.112"
+	  xmlns:fx="http://javafx.com/fxml/1"
+	  fx:controller="uk.ac.cam.cl.group_project.delta.simulation.gui.CarPropertiesController">
+	<children>
+		<TitledPane animated="false" text="General">
+			<content>
+				<AnchorPane>
+					<children>
+						<GridPane AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES"/>
+								<ColumnConstraints halignment="RIGHT"/>
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints prefHeight="30.0"/>
+							</rowConstraints>
+							<children>
+								<Label text="UUID"/>
+								<Label fx:id="uuid" text="#VALUE"
+									   GridPane.columnIndex="1"/>
+							</children>
+						</GridPane>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
+		<TitledPane animated="false" text="Position">
+			<content>
+				<AnchorPane>
+					<children>
+						<GridPane AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES"/>
+								<ColumnConstraints halignment="RIGHT"/>
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+							</rowConstraints>
+							<children>
+								<Label text="x"/>
+								<Label text="y" GridPane.rowIndex="1"/>
+								<Label fx:id="positionX" text="#VALUE"
+									   GridPane.columnIndex="1"/>
+								<Label fx:id="positionY" text="#VALUE"
+									   GridPane.columnIndex="1"
+									   GridPane.rowIndex="1"/>
+							</children>
+						</GridPane>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
+		<TitledPane animated="false" text="Velocity">
+			<content>
+				<AnchorPane>
+					<children>
+						<GridPane AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES"/>
+								<ColumnConstraints halignment="RIGHT"/>
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+							</rowConstraints>
+							<children>
+								<Label text="x"/>
+								<Label text="y" GridPane.rowIndex="1"/>
+								<Label fx:id="velocityX" text="#VALUE"
+									   GridPane.columnIndex="1"/>
+								<Label fx:id="velocityY" text="#VALUE"
+									   GridPane.columnIndex="1"
+									   GridPane.rowIndex="1"/>
+							</children>
+						</GridPane>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
+		<TitledPane animated="false" text="Driving">
+			<content>
+				<AnchorPane>
+					<children>
+						<GridPane AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES"/>
+								<ColumnConstraints halignment="RIGHT"/>
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+							</rowConstraints>
+							<children>
+								<Label text="heading"/>
+								<Label text="wheel angle"
+									   GridPane.rowIndex="1"/>
+								<Label text="engine power"
+									   GridPane.rowIndex="2"/>
+								<Label fx:id="heading" text="#VALUE"
+									   GridPane.columnIndex="1"/>
+								<Label fx:id="wheelAngle" text="#VALUE"
+									   GridPane.columnIndex="1"
+									   GridPane.rowIndex="1"/>
+								<Label fx:id="enginePower" text="#VALUE"
+									   GridPane.columnIndex="1"
+									   GridPane.rowIndex="2"/>
+							</children>
+						</GridPane>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
+	</children>
+</VBox>
