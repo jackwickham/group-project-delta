@@ -30,8 +30,12 @@ public class BasicAlgorithmPID extends Algorithm{
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time preriod,
 	//and the sensor proximity data
-	private static double weightFrontProximity(double predictedFrontProximity, double sensorFrontProximity) {
-		return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
+	private static double weightFrontProximity(double predictedFrontProximity, Double sensorFrontProximity) {
+		if (sensorFrontProximity != null) {
+			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
+		} else {
+			return predictedFrontProximity;
+		}
 	}
 
 	public void initialise() {
@@ -47,29 +51,43 @@ public class BasicAlgorithmPID extends Algorithm{
 		//TODO: add something to take into account network delay
 		//TODO: recieveMessageData can be null
 		//TODO: sensorFrontProxmity can be null
-		double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
-		//calculate the distance us and our predecessor have travelled since message received
-		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
-				+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
-		algorithmData.predictedMovement = algorithmData.previousSpeed * delay
-				+ 0.5 * algorithmData.previousAcceleration * delay * delay;
-		algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
-				- algorithmData.predictedMovement + algorithmData.previousDistance;
+		double desired_dist;
+		Double weightedFrontProximity;
+		if(algorithmData.receiveMessageData != null) {
+			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
+			//calculate the distance us and our predecessor have travelled since message received
+			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
+					+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
+			algorithmData.predictedMovement = algorithmData.previousSpeed * delay
+					+ 0.5 * algorithmData.previousAcceleration * delay * delay;
+			algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
+					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
-		double weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity, algorithmData.sensorFrontProximity);
+			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity, algorithmData.sensorFrontProximity);
 
-		//update previous state variables so that they are correct in next time period
-		algorithmData.previousDistance = weightedFrontProximity;
-		algorithmData.previousSpeed = algorithmData.speed;
-		algorithmData.previousAcceleration = algorithmData.acceleration;
+			//update previous state variables so that they are correct in next time period
+			algorithmData.previousDistance = weightedFrontProximity;
+			algorithmData.previousSpeed = algorithmData.speed;
+			algorithmData.previousAcceleration = algorithmData.acceleration;
 
-		//calculate desired distance
-		double desired_dist = BUFF_DIST + HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed);
+			//calculate desired distance
+			desired_dist = BUFF_DIST + HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed);
 
-		//get chosen acceleration from PID by giving it our proximity
-		algorithmData.chosenAcceleration = algorithmData.miniPID.getOutput(desired_dist - weightedFrontProximity);
-
-		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
-		algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+		} else {
+			//no message received
+			desired_dist = BUFF_DIST;
+			weightedFrontProximity = algorithmData.sensorFrontProximity;
+			algorithmData.chosenSpeed = algorithmData.speed;
+			algorithmData.chosenTurnRate = algorithmData.turnRate;
+		}
+		if(weightedFrontProximity != null) {
+			//get chosen acceleration from PID by giving it our proximity
+			algorithmData.chosenAcceleration = algorithmData.miniPID.getOutput(desired_dist - weightedFrontProximity);
+		} else {
+			//no messages received and proximity sensor not working
+			algorithmData.chosenAcceleration = 0;
+		}
 	}
 }

@@ -37,7 +37,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	@Override
 	public void makeDecision() {
-
+		//TODO: predecessor data could be null if no message ever received
 		//decide on chosen acceleration, speed and turnRate
 		if(algorithmData.sensorFrontProximity < EMER_DIST) {
 			emergencyStop();

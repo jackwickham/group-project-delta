@@ -48,7 +48,7 @@ public abstract class Algorithm {
 		if(!algorithmData.commsInterface.isLeader()) {
 			//try to get predecessors messages, trying next car infront if message null, upto the front of platoon
 			//TODO: use timestamp in message to decide which to use
-			//TODO: handle case in which no message ever received
+			//note: individual algorithms handle case in which no message ever received
 			int infront = 1;
 			for (; infront <= algorithmData.controlLayer.getCurrentPosition(); infront++) {
 				algorithmData.receiveMessageData = algorithmData.commsInterface.getPredecessorMessage(infront);
@@ -67,11 +67,10 @@ public abstract class Algorithm {
 
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
-
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
 		algorithmData. turnRate = algorithmData.sensorInterface.getTurnRate();
 
-		//note these could be null
+		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
 
 		// get initial distance reading from sensor, distance null if no distance reading

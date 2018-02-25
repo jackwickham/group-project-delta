@@ -17,8 +17,12 @@ public class BasicAlgorithm3 extends Algorithm{
 		super(driveInterface, sensorInterface, networkInterface);
 	}
 
-	private static double weightFrontProximity(double predictedFrontProximity, double sensorFrontProximity) {
-		return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
+	private static double weightFrontProximity(double predictedFrontProximity, Double sensorFrontProximity) {
+		if(sensorFrontProximity != null) {
+			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
+		} else {
+			return predictedFrontProximity;
+		}
 	}
 
 	@Override
@@ -26,44 +30,57 @@ public class BasicAlgorithm3 extends Algorithm{
 		// decide on chosen acceleration, speed and turnRate
 		// calculate the distance us and our predecessor have travelled in the previous
 		// time period
-		//TODO: recieveMessageData can be null
-		double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
-		//calculate the distance us and our predecessor have travelled since message received
-		algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
-				+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
-		algorithmData.predictedMovement = algorithmData.previousSpeed * delay
-				+ 0.5 * algorithmData.previousAcceleration * delay * delay;
-		algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
-				- algorithmData.predictedMovement + algorithmData.previousDistance;
+		Double weightedFrontProximity;
+		if (algorithmData.receiveMessageData != null) {
+			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
+			//calculate the distance us and our predecessor have travelled since message received
+			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
+					+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
+			algorithmData.predictedMovement = algorithmData.previousSpeed * delay
+					+ 0.5 * algorithmData.previousAcceleration * delay * delay;
+			algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
+					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
-		double weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-				algorithmData.sensorFrontProximity);
+			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
+					algorithmData.sensorFrontProximity);
 
-		// update previous state variables so that they are correct in next time period
-		algorithmData.previousDistance = weightedFrontProximity;
-		algorithmData.previousSpeed = algorithmData.speed;
-		algorithmData.previousAcceleration = algorithmData.acceleration;
+			// update previous state variables so that they are correct in next time period
+			algorithmData.previousDistance = weightedFrontProximity;
+			algorithmData.previousSpeed = algorithmData.speed;
+			algorithmData.previousAcceleration = algorithmData.acceleration;
 
-		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
-		if (algorithmData.sensorFrontProximity < 5) {
-			if (algorithmData.chosenAcceleration >= 0) {
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / 5.0;
+			algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
+			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+		} else {
+			algorithmData.chosenAcceleration = algorithmData.acceleration;
+			weightedFrontProximity = algorithmData.sensorFrontProximity;
+			algorithmData.chosenSpeed = algorithmData.speed;
+			algorithmData.chosenTurnRate = algorithmData.turnRate;
+		}
+		if (weightedFrontProximity != null) {
+			if (weightedFrontProximity < 5) {
+				if (algorithmData.chosenAcceleration >= 0) {
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / 5.0;
+				} else {
+					// if braking then divide by value so deceleration decreases if gap too small
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / 5.0);
+				}
 			} else {
-				// if braking then divide by value so deceleration decreases if gap too small
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / 5.0);
+				if (algorithmData.chosenAcceleration >= 0) {
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
+							* (0.75 + weightedFrontProximity / 20.0);
+				} else {
+					// if braking then divide by value so deceleration decreases if gap too small
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
+							/ (0.75 + weightedFrontProximity / 20.0);
+				}
 			}
 		} else {
-			if (algorithmData.chosenAcceleration >= 0) {
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-						* (0.75 + weightedFrontProximity / 20.0);
-			} else {
-				// if braking then divide by value so deceleration decreases if gap too small
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-						/ (0.75 + weightedFrontProximity / 20.0);
-			}
+			//no messages received and proximity sensor not working
+			algorithmData.chosenAcceleration = 0;
 		}
 
-		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
-		algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+
 	}
 }
