@@ -119,12 +119,6 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			wheelLength
 		));
 
-		Line velocity = new Line(0, 0, 0, 0);
-		velocity.endXProperty().bind(velXProperty().multiply(Controller.UNITS_PER_METRE));
-		velocity.endYProperty().bind(velYProperty().multiply(Controller.UNITS_PER_METRE));
-		velocity.getStyleClass().add("debug");
-		getChildren().add(velocity);
-
 	}
 
 	/**
