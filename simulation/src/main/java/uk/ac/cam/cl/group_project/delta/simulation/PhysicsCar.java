@@ -6,12 +6,24 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 public class PhysicsCar extends PhysicsBody {
 
 	/**
-	 * The turn rate of the vehicle in radians/second
+	 * The angle of the wheels relative to the car, in radians
 	 *
 	 * A positive value means that it is turning to the right (clockwise), and
 	 * a negative value means that it is turning to the left (anticlockwise)
 	 */
-	private double turnRate = 0.0;
+	private double wheelAngle = 0.0;
+
+	/**
+	 * If not null, this means that we are trying to maintain a constant turn
+	 * rate rather than a constant wheel angle, so the wheel angle needs to be
+	 * updated in each simulation step
+	 */
+	private Double turnRate = null;
+
+	/**
+	 * The maximum permitted wheel angle, in radians
+	 */
+	private static final double MAX_WHEEL_ANGLE = Math.PI / 4;
 
 	/**
 	 * The angle at which the car body is currently facing. The cardinal axis of
@@ -32,9 +44,20 @@ public class PhysicsCar extends PhysicsBody {
 	private double wheelBase;
 
 	/**
-	 * Current power of the engine (equivalent to acceleration).
+	 * Current power of the engine (at low velocities, when resistance is
+	 * negligible, this is equivalent to acceleration)
 	 */
 	private double enginePower = 0.0;
+
+	/**
+	 * The coefficient used for acceleration = engineForce - c * speed^2 - friction
+	 */
+	private static final double AIR_RESISTANCE_COEFFICIENT = 0.7;
+
+	/**
+	 * A constant factor to reduce acceleration
+	 */
+	private static final double FRICTION = 0.1;
 
 	/**
 	 * Initialise physically simulated representation of a car.
@@ -55,8 +78,12 @@ public class PhysicsCar extends PhysicsBody {
 		Vector2D translation;
 		double distanceTravelled = speed * dt;
 
+		if (turnRate != null) {
+			setTurnRate(turnRate);
+		}
+
 		if (speed != 0.0) { // Prevent division by 0
-			if (turnRate == 0.0) {
+			if (wheelAngle == 0.0) {
 				// Straight line, with heading = 0 in y direction
 				translation = new Vector2D(
 					distanceTravelled * Math.sin(heading),
@@ -64,7 +91,7 @@ public class PhysicsCar extends PhysicsBody {
 				);
 			} else {
 				// The vehicle will travel around the circle with radius speed/turn rate
-				double radius = speed / turnRate;
+				double radius = speed / getTurnRate();
 				double angleMovedAroundCircle = distanceTravelled / radius; // angle measured clockwise
 
 				double startAngle = heading;
@@ -81,7 +108,7 @@ public class PhysicsCar extends PhysicsBody {
 		}
 
 		// Now update the velocity, making sure that we don't go backwards
-		speed = Math.max(speed + enginePower * dt, 0.0);
+		speed = Math.max(speed + getAcceleration() * dt, 0.0);
 
 		super.update(dt);
 	}
@@ -91,15 +118,54 @@ public class PhysicsCar extends PhysicsBody {
 	 * @return    Current turn rate
 	 */
 	public double getTurnRate() {
-		return turnRate;
+		if (wheelAngle == 0.0) {
+			return 0.0;
+		} else {
+			double radius = wheelBase / Math.tan(wheelAngle);
+			return speed / radius;
+		}
 	}
 
 	/**
-	 * Set the current turn rate
+	 * Set the current turn rate. The simulation will try to maintain this turn
+	 * rate in subsequent simulation steps by updating the wheel angle based on
+	 * the car's speed
 	 * @param turnRate    New turn rate
 	 */
 	public void setTurnRate(double turnRate) {
 		this.turnRate = turnRate;
+		if (turnRate == 0.0) {
+			setInternalWheelAngle(0.0);
+		} else {
+			double radius = speed / turnRate;
+			setInternalWheelAngle(Math.atan2(wheelBase, radius));
+		}
+	}
+
+	/**
+	 * Get the angle between the wheels and the vehicle
+	 * @return Wheel angle
+	 */
+	public double getWheelAngle() {
+		return wheelAngle;
+	}
+
+	/**
+	 * Set the angle between the wheels and the vehicle
+	 * @param angle New wheel angle
+	 */
+	public void setWheelAngle(double angle) {
+		// We set an angle, so stop trying to maintain a turn rate
+		this.turnRate = null;
+		setInternalWheelAngle(angle);
+	}
+
+	/**
+	 * Set the wheel angle without changing the target turn rate
+	 * @param angle The angle to use
+	 */
+	private void setInternalWheelAngle(double angle) {
+		wheelAngle = Math.max(Math.min(angle, MAX_WHEEL_ANGLE), -MAX_WHEEL_ANGLE);
 	}
 
 	/**
@@ -119,16 +185,25 @@ public class PhysicsCar extends PhysicsBody {
 	}
 
 	/**
-	 * Get the current acceleration
+	 * Get the rate of acceleration of the vehicle in the direction of motion
+	 * @return The acceleration value
+	 */
+	public double getAcceleration() {
+		double acceleration = enginePower - AIR_RESISTANCE_COEFFICIENT * speed * speed;
+		if (speed > 0) {
+			acceleration -= FRICTION;
+		}
+		return acceleration;
+	}
+
+	/**
+	 * Get the current acceleration parallel to the vehicle (ignores turning)
 	 * @return The acceleration vector
 	 */
-	public Vector2D getAcceleration() {
-		// Currently, engine power sets acceleration directly
-		// In future, this may take into account the turn rate and any limits
-		// on the speed that the vehicle can obtain (air resistance/friction)
+	public Vector2D getAccelerationVector() {
 		return new Vector2D(
-			enginePower * Math.cos(heading),
-			enginePower * Math.sin(heading)
+			getAcceleration() * Math.cos(heading),
+			getAcceleration() * Math.sin(heading)
 		);
 	}
 
@@ -189,32 +264,6 @@ public class PhysicsCar extends PhysicsBody {
 	 */
 	private void setWheelBase(double wheelBase) {
 		this.wheelBase = wheelBase;
-	}
-
-	/**
-	 * Get the angle between the wheels and the vehicle
-	 * @return Wheel angle
-	 */
-	public double getWheelAngle() {
-		if (turnRate == 0.0) {
-			return 0.0;
-		} else {
-			double radius = speed / turnRate;
-			return Math.atan2(wheelBase, radius);
-		}
-	}
-
-	/**
-	 * Set the angle between the wheels and the vehicle
-	 * @param angle New wheel angle
-	 */
-	public void setWheelAngle(double angle) {
-		if (angle == 0.0) {
-			turnRate = 0.0;
-		} else {
-			double radius = wheelBase / Math.tan(angle);
-			turnRate = speed / radius;
-		}
 	}
 
 }
