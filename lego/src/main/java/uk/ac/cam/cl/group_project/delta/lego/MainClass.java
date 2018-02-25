@@ -23,7 +23,6 @@ class MainClass {
 		try {
 			network = new Network(Thread.currentThread());
 			Algorithm algo = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, drive, sensor, network);
-			algo.initialise();
 			algo.run();
 		} finally {
 			if (network != null) {

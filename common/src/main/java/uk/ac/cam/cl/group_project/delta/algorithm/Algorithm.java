@@ -12,11 +12,13 @@ public abstract class Algorithm {
 	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
 
 	protected AlgorithmData algorithmData = new AlgorithmData();
+	protected FrontVehicleRoute frontVehicleRoute;
 
 	protected Algorithm(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		algorithmData.commsInterface = new Communications(new ControlLayer(networkInterface));
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
+		frontVehicleRoute = new FrontVehicleRoute(algorithmData);
 	}
 
 	/**
@@ -117,6 +119,8 @@ public abstract class Algorithm {
 
 		if(!algorithmData.commsInterface.isLeader()) {
 			makeDecision();
+		} else {
+			frontVehicleRoute.nextStep();
 		}
 
 		if (Thread.interrupted()) {
@@ -151,6 +155,8 @@ public abstract class Algorithm {
 
 			if(!algorithmData.commsInterface.isLeader()) {
 				makeDecision();
+			} else {
+				frontVehicleRoute.nextStep();
 			}
 
 			if (Thread.interrupted()) {
