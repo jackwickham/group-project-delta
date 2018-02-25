@@ -26,6 +26,7 @@ import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -118,7 +119,7 @@ public class Controller {
 		simulation = new SimulationThread();
 		simulatedNodes = new ArrayList<>();
 		cursorPosition = new Vector2D();
-		networkLogStore = FXCollections.observableArrayList();
+		networkLogStore = FXCollections.observableList(new LinkedList<>());
 
 		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -226,12 +227,19 @@ public class Controller {
 				break;
 		}
 
-		networkLogStore.add(String.format("[%d] %s", packet.vehicleId, msg));
+		networkLogStore.add(
+			0,
+			String.format(
+				"[@%d %d] %s",
+				message.getTime(),
+				packet.vehicleId,
+				msg
+			)
+		);
 		if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
 			// Range is start-inclusive, end-exclusive
-			networkLogStore.remove(0, networkLogStore.size() - NETWORK_LOG_CAPACITY);
+			networkLogStore.remove(NETWORK_LOG_CAPACITY, networkLogStore.size());
 		}
-		networkLog.scrollTo(networkLogStore.size() - 1);
 
 	}
 
