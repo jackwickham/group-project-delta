@@ -29,7 +29,7 @@ public class SimulatedDriveModule implements DriveInterface {
 	 * @param acceleration in m/s^2
 	 */
 	public void setAcceleration(double acceleration) {
-		car.setEnginePower(acceleration);
+		car.setAcceleration(acceleration);
 	}
 
 	/**
