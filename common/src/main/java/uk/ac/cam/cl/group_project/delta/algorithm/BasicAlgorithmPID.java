@@ -49,8 +49,6 @@ public class BasicAlgorithmPID extends Algorithm{
 
 		//calculate time since message received
 		//TODO: add something to take into account network delay
-		//TODO: recieveMessageData can be null
-		//TODO: sensorFrontProxmity can be null
 		double desired_dist;
 		Double weightedFrontProximity;
 		if(algorithmData.receiveMessageData != null) {
