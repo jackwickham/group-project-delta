@@ -37,9 +37,9 @@ public class SimulatedSensorModuleTest {
 
 	@Test
 	public void testFrontProximityWhenOffsetSlightly() {
-		addCar(new Vector2D(0.2, 2));
+		addCar(new Vector2D(0.5, 2));
 
-		assertEquals(Math.sqrt(0.2*0.2 + 2*2), classUnderTest.getFrontProximity(), 0.1);
+		assertEquals(Math.sqrt(0.5*0.5 + 2*2), classUnderTest.getFrontProximity(), 0.05);
 	}
 
 	@Test
@@ -50,9 +50,9 @@ public class SimulatedSensorModuleTest {
 
 	@Test
 	public void testFrontProximityWhenOffsetNegative() {
-		addCar(new Vector2D(-0.2, 2));
+		addCar(new Vector2D(-0.5, 2));
 
-		assertEquals(Math.sqrt(0.2*0.2 + 2*2), classUnderTest.getFrontProximity(), 0.1);
+		assertEquals(Math.sqrt(0.5*0.5 + 2*2), classUnderTest.getFrontProximity(), 0.05);
 	}
 
 	@Test
