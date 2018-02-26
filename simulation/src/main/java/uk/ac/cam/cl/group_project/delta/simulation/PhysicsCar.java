@@ -123,6 +123,7 @@ public class PhysicsCar extends PhysicsBody {
 				double startAngle = heading;
 				double endAngle = heading + angleMovedAroundCircle;
 
+				// nb. Sin and cos are swapped here because heading is perpendicular to motion around circle
 				double dx = radius * (Math.cos(startAngle) - Math.cos(endAngle));
 				double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
 
@@ -282,7 +283,7 @@ public class PhysicsCar extends PhysicsBody {
 	 * @return The acceleration vector
 	 */
 	public Vector2D getHeadingVector() {
-		return new Vector2D(Math.cos(heading), Math.sin(heading));
+		return new Vector2D(Math.sin(heading), Math.cos(heading));
 	}
 
 	/**
