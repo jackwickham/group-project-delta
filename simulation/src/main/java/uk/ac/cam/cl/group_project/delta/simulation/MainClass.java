@@ -72,7 +72,7 @@ class MainClass {
 
 			long time = 0;
 
-			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL) {
+			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL, network.incrementTime(UPDATE_INTERVAL)) {
 
 				// Update the positions of everything in the world
 				world.update(UPDATE_INTERVAL / 1E9); // ns to s
