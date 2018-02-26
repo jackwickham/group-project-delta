@@ -21,16 +21,6 @@ public class PhysicsCar extends PhysicsBody {
 	private Double turnRate = null;
 
 	/**
-	 * The maximum permitted wheel angle, in radians
-	 */
-	private static final double MAX_WHEEL_ANGLE = Math.PI / 4;
-
-	/**
-	 * The maximum velocity.
-	 */
-	private static final double MAX_VELOCITY = 5;
-
-	/**
 	 * The angle at which the car body is currently facing. The cardinal axis of
 	 * the car body faces this direction, relative to a global north.
 	 */
@@ -55,6 +45,24 @@ public class PhysicsCar extends PhysicsBody {
 	private double enginePower = 0.0;
 
 	/**
+	 * If not null, this means we are trying to maintain a constant acceleration
+	 * rather than a constant engine power, so we need to update the engine
+	 * power in each simulation step to account for the increase in air
+	 * resistance
+	 */
+	private Double targetAcceleration = null;
+
+	/**
+	 * The maximum permitted wheel angle, in radians
+	 */
+	private static final double MAX_WHEEL_ANGLE = Math.PI / 4;
+
+	/**
+	 * The maximum velocity.
+	 */
+	private static final double MAX_VELOCITY = 5;
+
+	/**
 	 * The coefficient used for acceleration = engineForce - c * speed^2 - friction
 	 */
 	private static final double AIR_RESISTANCE_COEFFICIENT = 0.7;
@@ -64,7 +72,12 @@ public class PhysicsCar extends PhysicsBody {
 	 */
 	private static final double FRICTION = 0.1;
 
-	private static final double MAX_ENGINE_POWER = AIR_RESISTANCE_COEFFICIENT * MAX_VELOCITY * MAX_VELOCITY - FRICTION;
+	/**
+	 * The maximum power output of the engine is the power output required to
+	 * maintain the maximum velocity
+	 */
+	private static final double MAX_ENGINE_POWER = AIR_RESISTANCE_COEFFICIENT *
+			MAX_VELOCITY * MAX_VELOCITY - FRICTION;
 
 	/**
 	 * Initialise physically simulated representation of a car.
@@ -188,7 +201,9 @@ public class PhysicsCar extends PhysicsBody {
 	 * @param enginePower    Engine power to set.
 	 */
 	public void setEnginePower(double enginePower) {
-		this.enginePower = Math.min(enginePower, MAX_ENGINE_POWER);
+		// We are now targeting an engine power rather than acceleration
+		this.targetAcceleration = null;
+		setEnginePowerInternal(enginePower);
 	}
 
 	/**
@@ -203,12 +218,22 @@ public class PhysicsCar extends PhysicsBody {
 		return acceleration;
 	}
 
+	/**
+	 * Set the acceleration. The engine power will be increased to achieve the
+	 * target acceleration while taking into account air resistance.
+	 * @param acceleration The new acceleration
+	 */
 	public void setAcceleration(double acceleration) {
+		this.targetAcceleration = acceleration;
 		double requiredEnginePower = acceleration + AIR_RESISTANCE_COEFFICIENT * speed * speed;
 		if (speed > 0 || acceleration > 0) {
 			requiredEnginePower += FRICTION;
 		}
-		setEnginePower(requiredEnginePower);
+		setEnginePowerInternal(requiredEnginePower);
+	}
+
+	private void setEnginePowerInternal(double enginePower) {
+		this.enginePower = Math.min(enginePower, MAX_ENGINE_POWER);
 	}
 
 	/**
