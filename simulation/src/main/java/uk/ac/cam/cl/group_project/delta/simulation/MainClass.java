@@ -35,7 +35,7 @@ class MainClass {
 
 		// Instantiate world and virtual network
 		World world = new World();
-		SimulatedNetwork network = new SimulatedNetwork();
+		SimulatedNetwork network = new SimulatedNetwork(true);
 
 		List<SimulatedCar> cars = new ArrayList<>(NUMBER_OF_VEHICLES);
 
