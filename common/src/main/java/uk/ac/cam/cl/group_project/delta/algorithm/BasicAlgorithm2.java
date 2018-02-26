@@ -18,24 +18,30 @@ public class BasicAlgorithm2 extends Algorithm{
 	@Override
 	protected void makeDecision() {
 	// decide on chosen acceleration, speed and turnRate
-		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
-		if (algorithmData.sensorFrontProximity < 5) {
-			if (algorithmData.chosenAcceleration >= 0) {
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.sensorFrontProximity
-						/ 5.0;
-			} else {
-				// if braking then divide by value so deceleration decreases if gap too small
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-						/ (algorithmData.sensorFrontProximity / 5.0);
-			}
+		if(algorithmData.receiveMessageData != null) {
+			algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
 		} else {
-			if (algorithmData.chosenAcceleration >= 0) {
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-						* (0.75 + algorithmData.sensorFrontProximity / 20.0);
+			algorithmData.chosenAcceleration = algorithmData.acceleration;
+		}
+		if(algorithmData.sensorFrontProximity != null) {
+			if (algorithmData.sensorFrontProximity < 5) {
+				if (algorithmData.chosenAcceleration >= 0) {
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.sensorFrontProximity
+							/ 5.0;
+				} else {
+					// if braking then divide by value so deceleration decreases if gap too small
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
+							/ (algorithmData.sensorFrontProximity / 5.0);
+				}
 			} else {
-				// if braking then divide by value so deceleration decreases if gap too small
-				algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-						/ (0.75 + algorithmData.sensorFrontProximity / 20.0);
+				if (algorithmData.chosenAcceleration >= 0) {
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
+							* (0.75 + algorithmData.sensorFrontProximity / 20.0);
+				} else {
+					// if braking then divide by value so deceleration decreases if gap too small
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
+							/ (0.75 + algorithmData.sensorFrontProximity / 20.0);
+				}
 			}
 		}
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
