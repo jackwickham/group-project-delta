@@ -43,25 +43,24 @@ public abstract class Algorithm {
 	}
 
 	private void readSensors() {
-		// if not leader read data from predecessor's message
-		if(!algorithmData.commsInterface.isLeader()) {
-			//try to get predecessors messages, trying next car infront if message null, upto the front of platoon
-			//TODO: use timestamp in message to decide which to use
-			//note: individual algorithms handle case in which no message ever received
-			for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
-				algorithmData.receiveMessageData = message;
-				if (algorithmData.receiveMessageData != null) {
-					algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
-					algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
-					algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
-					algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
-					algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
-					algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
-					//break if predecessor has a message otherwise loop to try one vehicle infront
-					break;
-				}
+		// try to get predecessors messages, trying next car infront if message null, upto the front of platoon
+		// note: leader check not needed as if leader then getPredecessorMessages() returns an empty list
+		//TODO: use timestamp in message to decide which to use
+		// note: individual algorithms handle case in which no message ever received
+		for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
+			algorithmData.receiveMessageData = message;
+			if (algorithmData.receiveMessageData != null) {
+				algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
+				algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
+				algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
+				algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
+				algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
+				algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
+				//break if predecessor has a message otherwise loop to try one vehicle infront
+				break;
 			}
 		}
+
 
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
