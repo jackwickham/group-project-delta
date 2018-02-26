@@ -15,7 +15,7 @@ public class FrontVehicleRoute {
 
 	public FrontVehicleRoute(AlgorithmData algorithmData) {
 		this.algorithmData = algorithmData;
-		initialiseRouteOne();
+		initialiseRouteTwo();
 		nextActionStep = moves.get(0).stepNum;
 	}
 
@@ -43,9 +43,9 @@ public class FrontVehicleRoute {
 
 	private void initialiseRouteOne() {
 		moves.add(new Move(0, moveType.ACCELERATION, 0.05));
-		moves.add(new Move(250, moveType.ACCELERATION, 0.05));
+		moves.add(new Move(250, moveType.ACCELERATION, -0.05));
 		moves.add(new Move(500, moveType.ACCELERATION, 0.05));
-		moves.add(new Move(750, moveType.ACCELERATION, 0.05));
+		moves.add(new Move(750, moveType.ACCELERATION, -0.05));
 	}
 
 	private void initialiseRouteTwo() {
