@@ -185,4 +185,4 @@ gradle/wrapper/*
 
 # Ignore the output from the simulation
 sim_*.csv
-out/*
+out/
