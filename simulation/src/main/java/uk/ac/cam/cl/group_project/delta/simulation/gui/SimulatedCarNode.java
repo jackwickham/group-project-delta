@@ -378,6 +378,25 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			controller.velocityY.textProperty().bind(
 				velYProperty().asString("%.2f")
 			);
+			controller.vehicleId.textProperty().bind(
+				vehicleId.asString()
+			);
+			controller.platoonId.textProperty().bind(
+				platoonId.asString()
+			);
+			controller.platoonPosition.textProperty().bind(
+				platoonPosition.asString()
+			);
+			controller.isLeader.selectedProperty().bind(
+				isLeader
+			);
+			controller.platoonLeaderId.textProperty().bind(
+				platoonLeaderId.asString()
+			);
+			controller.platoonColour.fillProperty().bind(
+				platoonColour
+			);
+			controller.platoonColour.setOpacity(PLATOON_CIRCLE_OPACITY);
 
 			return pane;
 
