@@ -109,7 +109,7 @@ public abstract class Algorithm {
 	 * @return time in nanoseconds, if using update method then return set time otherwise return system time
 	 */
 	protected long getTime() {
-		if(algorithmData.usingUpdate) {
+		if(algorithmData.notUsingRealTime) {
 			return algorithmData.time;
 		} else {
 			return System.nanoTime();
@@ -152,7 +152,7 @@ public abstract class Algorithm {
 	 * @param time -time in nanoseconds, algorithm assumes this is the current time
 	 */
 	public void update(long time) {
-		algorithmData.usingUpdate = true;
+		algorithmData.notUsingRealTime = true;
 		algorithmData.time = time;
 		runOneLoop();
 	}
@@ -160,7 +160,7 @@ public abstract class Algorithm {
 	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
 	 */
 	public void run() {
-		algorithmData.usingUpdate = false;
+		algorithmData.notUsingRealTime = false;
 		initialise();
 		long startTime = System.nanoTime();
 

@@ -53,5 +53,5 @@ public class AlgorithmData {
 	long time;
 
 	//flag which is true if update method in Algorithm is being used
-	boolean usingUpdate;
+	boolean notUsingRealTime;
 }
