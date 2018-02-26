@@ -23,8 +23,7 @@ public class AlgorithmTest {
 	private Double frontProximity;
 	private List<VehicleData> predecessorMessages;
 
-	public AlgorithmTest(Double frontProximity, Boolean Message, double speed, double acceleration, double turnRate, double chosenSpeed,
-						 double chosenAcceleration, double chosenTurnRate) {
+	public AlgorithmTest(Double frontProximity, Boolean Message, double speed, double acceleration, double turnRate, double chosenSpeed, double chosenAcceleration, double chosenTurnRate) {
 		this.frontProximity = frontProximity;
 		if(Message) {
 			this.predecessorMessages = Arrays.asList(new VehicleData[]{new VehicleData(speed, acceleration, turnRate, chosenSpeed,
