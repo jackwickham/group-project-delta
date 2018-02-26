@@ -103,7 +103,7 @@ public abstract class Algorithm {
 	private void sendInstruction() {
 		// send instructions to drive
 		algorithmData.driveInterface.setAcceleration(algorithmData.chosenAcceleration);
-		algorithmData.driveInterface.setTurnRate(algorithmData.chosenAcceleration);
+		algorithmData.driveInterface.setTurnRate(algorithmData.chosenTurnRate);
 	}
 
 	/**
