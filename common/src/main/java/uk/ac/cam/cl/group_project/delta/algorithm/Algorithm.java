@@ -18,7 +18,6 @@ public abstract class Algorithm {
 		algorithmData.commsInterface = new Communications(algorithmData.controlLayer);
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
-		algorithmData = new AlgorithmData();
 	}
 
 	/**
