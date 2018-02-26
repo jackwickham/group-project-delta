@@ -66,7 +66,7 @@ public abstract class Algorithm {
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
-		algorithmData. turnRate = algorithmData.sensorInterface.getTurnRate();
+		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
 		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
