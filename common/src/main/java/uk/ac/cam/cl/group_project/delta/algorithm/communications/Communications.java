@@ -45,47 +45,12 @@ public class Communications implements CommsInterface {
 	}
 
 	/**
-	 * Return the message last received by the leader
-	 *
-	 * @return the latest message from the leader
-	 */
-	/*@Override
-	public VehicleData getLeaderMessage() {
-		messageLayer.updateMessages();
-
-		if(messageLookup.containsKey(messageLayer.getCurrentPosition())) {
-			return messageLookup.get(messageLayer.getCurrentPosition());
-		} else {
-			return null;
-		}
-	}*/
-
-	/**
-	 * Return the latest message from the vehicle which is inFront ahead
-	 *
-	 * @param inFront - the relative position ahead to return
-	 * @throws IllegalArgumentException - if the inFront argument is negative or 0
-	 * @return the latest message for the requested vehicle, null if there is no data
-	 */
-	/*@Override
-	public VehicleData getPredecessorMessage(int inFront) {
-		messageLayer.updateMessages();
-		if(inFront <= 0) {
-			throw new IllegalArgumentException("Tried to get the message from vehicles behind.");
-		}
-		if(messageLookup.containsKey(inFront)) {
-			return messageLookup.get(inFront);
-		} else {
-			return null;
-		}
-	}*/
-
-	/**
 	 * Return the messages from vehicles in front of this one
 	 */
 	@Override
 	public List<VehicleData> getPredecessorMessages() {
-		List<VehicleData> data = new ArrayList<>();
+		messageLayer.updateMessages();
+		List<VehicleData> data = new ArrayList<>(messageLayer.getCurrentPosition());
 		for(int i = 1; i <= messageLayer.getCurrentPosition(); i++) {
 			if(messageLookup.containsKey(i)) {
 				data.add(messageLookup.get(i));
