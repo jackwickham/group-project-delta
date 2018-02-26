@@ -37,21 +37,37 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	@Override
 	public void makeDecision() {
-
-		//decide on chosen acceleration, speed and turnRate
-		if(algorithmData.sensorFrontProximity < EMER_DIST) {
-			emergencyStop();
+		double pTerm;
+		if(algorithmData.sensorFrontProximity != null) {
+			//decide on chosen acceleration, speed and turnRate
+			if (algorithmData.sensorFrontProximity < EMER_DIST) {
+				emergencyStop();
+			}
+			if(algorithmData.receiveMessageData != null) {
+				//This multiplies the error by a constant term PID_P
+				pTerm = PID_P * (algorithmData.sensorFrontProximity +
+						HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed) - BUFF_DIST);
+			} else {
+				//if no message received just use sensor data
+				pTerm = PID_P * algorithmData.sensorFrontProximity - BUFF_DIST;
+			}
+		} else {
+			//without front proximity reading p Term is not used
+			pTerm = 0;
 		}
-		//This multiplies the error by a constant term PID_P
-		double pTerm = PID_P*(algorithmData.sensorFrontProximity +
-				HEAD_TIME*(algorithmData.predecessorSpeed-algorithmData.speed) - BUFF_DIST);
-
-		//Multiplies the rate of change of error by a constant term PID_D
-		double dTerm = PID_D*(algorithmData.predecessorSpeed -
-				algorithmData.speed+HEAD_TIME*(algorithmData.predecessorChosenAcceleration-algorithmData.acceleration));
+		double dTerm;
+		if(algorithmData.receiveMessageData != null) {
+			//Multiplies the rate of change of error by a constant term PID_D
+			dTerm = PID_D * (algorithmData.predecessorSpeed -
+					algorithmData.speed + HEAD_TIME * (algorithmData.predecessorChosenAcceleration - algorithmData.acceleration));
+		} else {
+			//if no message has ever been received d Term not used
+			dTerm = 0;
+		}
 
 		//clamp chosen acceleration within range min and max acceleration
 		double chosenAcceleration = pTerm + dTerm;
+
 		if(chosenAcceleration > MAX_ACC) {
 			chosenAcceleration = MAX_ACC;
 		} else if(chosenAcceleration < MIN_ACC) {

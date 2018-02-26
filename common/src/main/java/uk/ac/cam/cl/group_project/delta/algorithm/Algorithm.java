@@ -14,7 +14,8 @@ public abstract class Algorithm {
 	protected AlgorithmData algorithmData = new AlgorithmData();
 
 	protected Algorithm(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		algorithmData.commsInterface = new Communications(new ControlLayer(networkInterface));
+		algorithmData.controlLayer = new ControlLayer(networkInterface);
+		algorithmData.commsInterface = new Communications(algorithmData.controlLayer);
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
 	}
@@ -42,25 +43,34 @@ public abstract class Algorithm {
 	}
 
 	private void readSensors() {
-		// read data from predecessor's message
-		algorithmData.receiveMessageData = algorithmData.commsInterface.getPredecessorMessage(1);
-		if (algorithmData.receiveMessageData != null) {
-			algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
-			algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
-			algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
-			algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
-			algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
-			algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
+		// try to get predecessors messages, trying next car infront if message null, upto the front of platoon
+		// note: leader check not needed as if leader then getPredecessorMessages() returns an empty list
+		//TODO: use timestamp in message to decide which to use
+		// note: individual algorithms handle case in which no message ever received
+		for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
+			algorithmData.receiveMessageData = message;
+			if (algorithmData.receiveMessageData != null) {
+				algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
+				algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
+				algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
+				algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
+				algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
+				algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
+				//break if predecessor has a message otherwise loop to try one vehicle infront
+				break;
+			}
 		}
 
-		// TODO: values could be null if no data available
+
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
+
+		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
 
-		// get initial distance reading from sensor
+		// get initial distance reading from sensor, distance null if no distance reading
 		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
@@ -94,20 +104,22 @@ public abstract class Algorithm {
 		algorithmData.driveInterface.setTurnRate(algorithmData.chosenTurnRate);
 	}
 
+	/**
+	 * @return time in nanoseconds, if using update method then return set time otherwise return system time
+	 */
 	protected long getTime() {
-		if(algorithmData.usingUpdate) {
+		if(algorithmData.notUsingRealTime) {
 			return algorithmData.time;
 		} else {
 			return System.nanoTime();
 		}
 	}
+
 	/**
-	 * Runs one loop of algorithm
-	 * @param time -time in nanoseconds, algorithm assumes this is the current time
+	 * Helper function, runs one loop of algorithm
+	 * Called by update and run
 	 */
-	public void update(long time) {
-		algorithmData.usingUpdate = true;
-		algorithmData.time = time;
+	private void runOneLoop() {
 		// read data from sensors into data class
 		readSensors();
 
@@ -134,42 +146,25 @@ public abstract class Algorithm {
 			emergencyStop();
 		}
 	}
+	/**
+	 * Runs one loop of algorithm
+	 * @param time -time in nanoseconds, algorithm assumes this is the current time
+	 */
+	public void update(long time) {
+		algorithmData.notUsingRealTime = true;
+		algorithmData.time = time;
+		runOneLoop();
+	}
 
+	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
+	 */
 	public void run() {
-		algorithmData.usingUpdate = false;
+		algorithmData.notUsingRealTime = false;
 		initialise();
 		long startTime = System.nanoTime();
 
 		while (!algorithmData.emergencyOccurred) {
-			// read data from sensors into data class
-			readSensors();
-
-			if (Thread.interrupted()) {
-				emergencyStop();
-				break;
-			}
-
-			if(!algorithmData.commsInterface.isLeader()) {
-				makeDecision();
-			}
-
-			if (Thread.interrupted()) {
-				emergencyStop();
-				break;
-			}
-
-			sendMessage();
-
-			// send instructions to drive if not leader
-			if(!algorithmData.commsInterface.isLeader()) {
-				sendInstruction();
-			}
-
-			if (Thread.interrupted()) {
-				emergencyStop();
-				break;
-			}
-
+			runOneLoop();
 			try {
 				long nanosToSleep = ALGORITHM_LOOP_DURATION - (System.nanoTime() - startTime);
 				if(nanosToSleep > 0) {
