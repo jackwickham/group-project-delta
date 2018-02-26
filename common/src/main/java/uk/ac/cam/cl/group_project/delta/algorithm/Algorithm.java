@@ -18,7 +18,7 @@ public abstract class Algorithm {
 		algorithmData.commsInterface = new Communications(new ControlLayer(networkInterface));
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
-		frontVehicleRoute = new FrontVehicleRoute(algorithmData);
+		frontVehicleRoute = new FrontVehicleRoute(algorithmData, ALGORITHM_LOOP_DURATION);
 	}
 
 	/**
