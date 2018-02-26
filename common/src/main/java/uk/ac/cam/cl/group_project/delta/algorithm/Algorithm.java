@@ -120,7 +120,7 @@ public abstract class Algorithm {
 	 * Helper function, runs one loop of algorithm
 	 * Called by update and run
 	 */
-	private void loop() {
+	private void runOneLoop() {
 		// read data from sensors into data class
 		readSensors();
 
@@ -154,7 +154,7 @@ public abstract class Algorithm {
 	public void update(long time) {
 		algorithmData.usingUpdate = true;
 		algorithmData.time = time;
-		loop();
+		runOneLoop();
 	}
 
 	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
@@ -165,7 +165,7 @@ public abstract class Algorithm {
 		long startTime = System.nanoTime();
 
 		while (!algorithmData.emergencyOccurred) {
-			loop();
+			runOneLoop();
 			try {
 				long nanosToSleep = ALGORITHM_LOOP_DURATION - (System.nanoTime() - startTime);
 				if(nanosToSleep > 0) {
