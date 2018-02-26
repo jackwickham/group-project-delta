@@ -93,6 +93,14 @@ public class SimulatedCar extends PhysicsCar {
 	}
 
 	/**
+	 * Get the current algorithm controller for this car.
+	 * @return    The current {@link Algorithm} that controls this car.
+	 */
+	public Algorithm getController() {
+		return controller;
+	}
+
+	/**
 	 * Call the algorithm to update this car's state and communicate it to the other vehicles
 	 * @param timeNanos The world time in nanoseconds
 	 */
