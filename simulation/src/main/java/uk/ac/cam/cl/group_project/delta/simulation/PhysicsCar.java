@@ -80,6 +80,12 @@ public class PhysicsCar extends PhysicsBody {
 			MAX_VELOCITY * MAX_VELOCITY - FRICTION;
 
 	/**
+	 * The maximum engine power for deceleration. Air resistance will mean
+	 * that the true deceleration is higher than this.
+	 */
+	private static final double MAX_DECELERATION = 5;
+
+	/**
 	 * Initialise physically simulated representation of a car.
 	 * @param wheelBase    Distance from rear to front axle.
 	 */
@@ -233,7 +239,7 @@ public class PhysicsCar extends PhysicsBody {
 	}
 
 	private void setEnginePowerInternal(double enginePower) {
-		this.enginePower = Math.min(enginePower, MAX_ENGINE_POWER);
+		this.enginePower = Math.max(Math.min(enginePower, MAX_ENGINE_POWER), -MAX_DECELERATION);
 	}
 
 	/**
