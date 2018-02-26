@@ -17,12 +17,19 @@ public class BasicAlgorithm3 extends Algorithm{
 		super(driveInterface, sensorInterface, networkInterface);
 	}
 
-	private static double weightFrontProximity(double predictedFrontProximity, Double sensorFrontProximity) {
-		if(sensorFrontProximity != null) {
+	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
+	//and the sensor proximity data
+	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
+		if (sensorFrontProximity != null && sensorFrontProximity != null) {
 			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
-		} else {
+		}
+		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
 		}
+		if(sensorFrontProximity != null) {
+			return sensorFrontProximity;
+		}
+		else return null;
 	}
 
 	@Override
@@ -31,7 +38,7 @@ public class BasicAlgorithm3 extends Algorithm{
 		// calculate the distance us and our predecessor have travelled in the previous
 		// time period
 		Double weightedFrontProximity;
-		if (algorithmData.receiveMessageData != null) {
+		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null) {
 			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 			//calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
@@ -41,23 +48,23 @@ public class BasicAlgorithm3 extends Algorithm{
 			algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
-			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-					algorithmData.sensorFrontProximity);
-
-			// update previous state variables so that they are correct in next time period
-			algorithmData.previousDistance = weightedFrontProximity;
-			algorithmData.previousSpeed = algorithmData.speed;
-			algorithmData.previousAcceleration = algorithmData.acceleration;
-
-			algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		} else {
-			algorithmData.chosenAcceleration = algorithmData.acceleration;
-			weightedFrontProximity = algorithmData.sensorFrontProximity;
+			//no message received
+			algorithmData.predictedFrontProximity = null;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
+
+		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
+				algorithmData.sensorFrontProximity);
+
+		// update previous state variables so that they are correct in next time period
+		algorithmData.previousDistance = weightedFrontProximity;
+		algorithmData.previousSpeed = algorithmData.speed;
+		algorithmData.previousAcceleration = algorithmData.acceleration;
+
 		if (weightedFrontProximity != null) {
 			if (weightedFrontProximity < 5) {
 				if (algorithmData.chosenAcceleration >= 0) {

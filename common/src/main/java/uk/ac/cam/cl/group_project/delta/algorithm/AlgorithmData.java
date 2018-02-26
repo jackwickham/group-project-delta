@@ -40,7 +40,7 @@ public class AlgorithmData {
 
 	double predictedPredecessorMovement;
 	double predictedMovement;
-	double predictedFrontProximity;
+	Double predictedFrontProximity;
 
 	//null if no previous distance reading
 	Double previousDistance;

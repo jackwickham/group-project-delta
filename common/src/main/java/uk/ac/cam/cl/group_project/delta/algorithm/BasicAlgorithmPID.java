@@ -28,14 +28,19 @@ public class BasicAlgorithmPID extends Algorithm{
 		super(driveInterface, sensorInterface, networkInterface);
 	}
 
-	//combine the front proximity predicted from the vehicle states at the beginning of the previous time preriod,
+	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
 	//and the sensor proximity data
-	private static double weightFrontProximity(double predictedFrontProximity, Double sensorFrontProximity) {
-		if (sensorFrontProximity != null) {
+	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
+		if (sensorFrontProximity != null && sensorFrontProximity != null) {
 			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
-		} else {
+		}
+		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
 		}
+		if(sensorFrontProximity != null) {
+			return sensorFrontProximity;
+		}
+		else return null;
 	}
 
 	public void initialise() {
@@ -44,6 +49,8 @@ public class BasicAlgorithmPID extends Algorithm{
 
 	}
 
+
+
 	public void makeDecision() {
 		//decide on chosen acceleration, speed and turnRate
 
@@ -51,7 +58,7 @@ public class BasicAlgorithmPID extends Algorithm{
 		//TODO: add something to take into account network delay
 		double desired_dist;
 		Double weightedFrontProximity;
-		if(algorithmData.receiveMessageData != null) {
+		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
 			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 			//calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
@@ -61,13 +68,6 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
-			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity, algorithmData.sensorFrontProximity);
-
-			//update previous state variables so that they are correct in next time period
-			algorithmData.previousDistance = weightedFrontProximity;
-			algorithmData.previousSpeed = algorithmData.speed;
-			algorithmData.previousAcceleration = algorithmData.acceleration;
-
 			//calculate desired distance
 			desired_dist = BUFF_DIST + HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed);
 
@@ -75,11 +75,20 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		} else {
 			//no message received
+			algorithmData.predictedFrontProximity = null;
 			desired_dist = BUFF_DIST;
-			weightedFrontProximity = algorithmData.sensorFrontProximity;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
+
+			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
+					algorithmData.sensorFrontProximity);
+
+			//update previous state variables so that they are correct in next time period
+			algorithmData.previousDistance = weightedFrontProximity;
+			algorithmData.previousSpeed = algorithmData.speed;
+			algorithmData.previousAcceleration = algorithmData.acceleration;
+
 		if(weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity
 			algorithmData.chosenAcceleration = algorithmData.miniPID.getOutput(desired_dist - weightedFrontProximity);
