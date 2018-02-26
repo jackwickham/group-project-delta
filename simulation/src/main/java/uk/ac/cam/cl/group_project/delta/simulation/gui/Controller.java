@@ -2,19 +2,29 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import uk.ac.cam.cl.group_project.delta.MessageReceipt;
+import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
+import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
+import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.*;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,6 +43,11 @@ public class Controller {
 	 * Number of GUI units per simulation metre.
 	 */
 	public static final double UNITS_PER_METRE = 30.0;
+
+	/**
+	 * Number of historic messages to show in the network log.
+	 */
+	public static final int NETWORK_LOG_CAPACITY = 100;
 
 	/**
 	 * Thread running this application's simulation.
@@ -64,6 +79,35 @@ public class Controller {
 	private AnchorPane propertiesPane;
 
 	/**
+	 * GUI element containing a log of network messages.
+	 */
+	@FXML
+	private ListView<String> networkLog;
+
+	/**
+	 * Backend store for network logs.
+	 */
+	private ObservableList<String> networkLogStore;
+
+	/**
+	 * Emergency messages filter button.
+	 */
+	@FXML
+	private CheckBox filterEmergency;
+
+	/**
+	 * Data messages filter button.
+	 */
+	@FXML
+	private CheckBox filterData;
+
+	/**
+	 * Merge coordination filter button.
+	 */
+	@FXML
+	private CheckBox filterMerges;
+
+	/**
 	 * The JavaFX GUI updater - an "animation".
 	 */
 	private Timeline timeline;
@@ -79,6 +123,11 @@ public class Controller {
 	private Vector2D cursorPosition;
 
 	/**
+	 * The currently user-selected car.
+	 */
+	private SimulatedCarNode currentSelection;
+
+	/**
 	 * Construct the application's simulation thread.
 	 */
 	public Controller() {
@@ -86,6 +135,7 @@ public class Controller {
 		simulation = new SimulationThread();
 		simulatedNodes = new ArrayList<>();
 		cursorPosition = new Vector2D();
+		networkLogStore = FXCollections.observableList(new LinkedList<>());
 
 		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -105,6 +155,11 @@ public class Controller {
 	 */
 	@FXML
 	public void initialize() {
+
+		networkLog.setItems(networkLogStore);
+		simulation.getNetwork().register(message ->
+			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(message)))
+		);
 
 		// Start background tasks
 		simulation.start();
@@ -128,6 +183,110 @@ public class Controller {
 	private void showProperties(Paneable obj) {
 		Pane root = obj.toPane();
 		propertiesPane.getChildren().setAll(root);
+	}
+
+	/**
+	 * Add a message to the network log tab.
+	 * @param message   Message to add.
+	 */
+	private void addToNetworkLog(MessageReceipt message) {
+
+		Packet packet = new Packet(message);
+		String msg = "UNKNOWN";
+
+		switch(packet.message.getType()) {
+			case Emergency:
+				if (filterEmergency.isSelected()) {
+					msg = "Emergency!";
+					break;
+				}
+				else {
+					return;
+				}
+			case Data:
+				if (filterData.isSelected()) {
+					VehicleData vd = (VehicleData) packet.message;
+					msg = String.format(
+						"Data: %f (%f) m/s, %f (%f) m/s², %f (%f) rad/s",
+						vd.getSpeed(),
+						vd.getChosenSpeed(),
+						vd.getAcceleration(),
+						vd.getChosenAcceleration(),
+						vd.getTurnRate(),
+						vd.getChosenTurnRate()
+					);
+					break;
+				}
+				else {
+					return;
+				}
+			case RequestToMerge:
+				if (filterMerges.isSelected()) {
+					RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
+					msg = String.format(
+						"Transaction %d: Requesting merge of platoon %d",
+						rtmm.getTransactionId(),
+						rtmm.getMergingPlatoonId()
+					);
+					break;
+				}
+				else {
+					return;
+				}
+			case AcceptToMerge:
+				if (filterMerges.isSelected()) {
+					AcceptToMergeMessage atmm = (AcceptToMergeMessage) packet.message;
+					String status = atmm.isAccepted() ? "Accepting" : "Rejecting";
+					msg = String.format(
+						"Transaction %d: %s merge",
+						atmm.getTransactionId(),
+						status
+					);
+					break;
+				}
+				else {
+					return;
+				}
+			case ConfirmMerge:
+				if (filterMerges.isSelected()) {
+					ConfirmMergeMessage cmm = (ConfirmMergeMessage) packet.message;
+					msg = String.format(
+						"Transaction %d: Merge approved",
+						cmm.getTransactionId()
+					);
+					break;
+				}
+				else {
+					return;
+				}
+			case MergeComplete:
+				if (filterMerges.isSelected()) {
+					MergeCompleteMessage mcm = (MergeCompleteMessage) packet.message;
+					msg = String.format(
+						"Transaction %d: Merge complete",
+						mcm.getTransactionId()
+					);
+					break;
+				}
+				else {
+					return;
+				}
+		}
+
+		networkLogStore.add(
+			0,
+			String.format(
+				"[@%d %d] %s",
+				message.getTime(),
+				packet.vehicleId,
+				msg
+			)
+		);
+		if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
+			// Range is start-inclusive, end-exclusive
+			networkLogStore.remove(NETWORK_LOG_CAPACITY, networkLogStore.size());
+		}
+
 	}
 
 	/**
@@ -168,6 +327,54 @@ public class Controller {
 	 */
 	private double fromWorldToViewPaneSpaceY(double y) {
 		return y * scene.getScaleY() * UNITS_PER_METRE + scene.getTranslateY();
+	}
+
+	/**
+	 * Handle a key press event.
+	 * @param keyEvent    Structure containing event information (e.g. key code)
+	 */
+	public void onKeyPressed(KeyEvent keyEvent) {
+		if (currentSelection != null) {
+			SimulatedCar car = currentSelection.getCar();
+			synchronized (car) {
+				switch (keyEvent.getCode()) {
+					case W:
+						car.setEnginePower(1.0);
+						break;
+					case S:
+						car.setEnginePower(-1000.0);
+						break;
+					case A:
+						car.setWheelAngle(-Math.PI / 8);
+						break;
+					case D:
+						car.setWheelAngle(Math.PI / 8);
+						break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Handle a key released event.
+	 * @param keyEvent    Structure containing event information (e.g. key code)
+	 */
+	public void onKeyReleased(KeyEvent keyEvent) {
+		if (currentSelection != null) {
+			SimulatedCar car = currentSelection.getCar();
+			synchronized (car) {
+				switch (keyEvent.getCode()) {
+					case W:
+					case S:
+						car.setEnginePower(0.0);
+						break;
+					case A:
+					case D:
+						car.setWheelAngle(0.0);
+						break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -248,17 +455,29 @@ public class Controller {
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
 			fromViewPaneToWorldSpaceX(cursorPosition.getX()),
 			fromViewPaneToWorldSpaceY(cursorPosition.getY()),
-			(wheelBase, posX, posY) -> {
+			(wheelBase, posX, posY, controller) -> {
 				SimulatedCar car = simulation.createCar(wheelBase);
+				AlgorithmEnum algo = controller.toAlgorithmEnum();
 				synchronized (car) {
 					car.getPosition().setX(posX);
 					car.getPosition().setY(posY);
+					if (algo != null) {
+						car.setController(
+							Algorithm.createAlgorithm(
+								algo,
+								car.getDriveInterface(),
+								car.getSensorInterface(),
+								car.getNetworkInterface()
+							)
+						);
+					}
 				}
 				SimulatedCarNode node = new SimulatedCarNode(car);
 				node.addEventFilter(
 					MouseEvent.MOUSE_CLICKED,
 					e -> {
 						showProperties(node);
+						currentSelection = node;
 						e.consume();
 					}
 				);
@@ -269,5 +488,4 @@ public class Controller {
 		dialog.show();
 
 	}
-
 }

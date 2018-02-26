@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
 <VBox AnchorPane.leftAnchor="0.0"
 	  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
 	  xmlns="http://javafx.com/javafx/8.0.112"
@@ -27,6 +28,68 @@
 								<Label text="UUID"/>
 								<Label fx:id="uuid" text="#VALUE"
 									   GridPane.columnIndex="1"/>
+							</children>
+						</GridPane>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
+		<TitledPane animated="false" text="Platooning">
+			<content>
+				<AnchorPane>
+					<children>
+						<GridPane AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES"/>
+								<ColumnConstraints halignment="RIGHT"/>
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+								<RowConstraints prefHeight="30.0"/>
+							</rowConstraints>
+							<children>
+								<Label text="controller"/>
+								<Label fx:id="controller" text="#VALUE"
+									   GridPane.columnIndex="1"/>
+								<Label text="vehicle ID"
+									   GridPane.rowIndex="1"/>
+								<Label fx:id="vehicleId" text="#VALUE"
+									   GridPane.rowIndex="1"
+									   GridPane.columnIndex="1"/>
+								<Label text="platoon ID"
+									   GridPane.rowIndex="2"/>
+								<Label fx:id="platoonId" text="#VALUE"
+									   GridPane.rowIndex="2"
+									   GridPane.columnIndex="1"/>
+								<Label text="platoon position"
+									   GridPane.rowIndex="3"/>
+								<Label fx:id="platoonPosition" text="#VALUE"
+									   GridPane.rowIndex="3"
+									   GridPane.columnIndex="1"/>
+								<Label text="is leader?"
+									   GridPane.rowIndex="4"/>
+								<Label fx:id="isLeader"
+									   GridPane.rowIndex="4"
+									   GridPane.columnIndex="1"/>
+								<Label text="platoon leader"
+									   GridPane.rowIndex="5"/>
+								<Label fx:id="platoonLeaderId" text="#VALUE"
+									   GridPane.rowIndex="5"
+									   GridPane.columnIndex="1"/>
+								<Label text="colour"
+									   GridPane.rowIndex="6"/>
+								<Rectangle fx:id="platoonColour"
+										   width="30" height="10"
+										   GridPane.rowIndex="6"
+										   GridPane.columnIndex="1"/>
 							</children>
 						</GridPane>
 					</children>

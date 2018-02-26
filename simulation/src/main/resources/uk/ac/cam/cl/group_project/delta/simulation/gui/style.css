@@ -1,4 +1,8 @@
 .debug {
 	-fx-stroke: green;
-	-fx-full: null;
+	-fx-fill: null;
+}
+
+*.list-cell {
+	-fx-background-color: white;
 }
