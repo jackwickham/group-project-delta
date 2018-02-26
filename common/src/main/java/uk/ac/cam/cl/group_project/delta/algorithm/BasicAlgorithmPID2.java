@@ -48,9 +48,11 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				pTerm = PID_P * (algorithmData.sensorFrontProximity +
 						HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed) - BUFF_DIST);
 			} else {
+				//if no message received just use sensor data
 				pTerm = PID_P * algorithmData.sensorFrontProximity - BUFF_DIST;
 			}
 		} else {
+			//without front proximity reading p Term is not used
 			pTerm = 0;
 		}
 		double dTerm;
@@ -59,6 +61,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 			dTerm = PID_D * (algorithmData.predecessorSpeed -
 					algorithmData.speed + HEAD_TIME * (algorithmData.predecessorChosenAcceleration - algorithmData.acceleration));
 		} else {
+			//if no message has ever been received d Term not used
 			dTerm = 0;
 		}
 
