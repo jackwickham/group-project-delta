@@ -65,3 +65,15 @@ Hovering over a car will provide information relevant to platooning.
 >	**Note**: a car with the manual control algorithm does not partake in any
 >	communication over the network, and hence will not merge with other
 >	platoons.
+
+#### Controlling vehicles
+
+The currently selected vehicle can be controlled using the W, A, S and D keys:
+-	`W`: accelerate forward
+-	`S`: brake
+-	`A`: turn left
+-	`D`: turn right
+
+>	**Note**: only the leader of a platoon is likely to be controllable, because
+>	the followers will make driving decisions based on their internal state
+>	which will override user input.
