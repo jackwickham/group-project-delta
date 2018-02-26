@@ -448,4 +448,23 @@ public class ControlLayer {
 		});
 		return list;
 	}
+
+	// Getters
+
+	public int getVehicleId() {
+		return vehicleId;
+	}
+
+	public int getPlatoonId() {
+		return platoonId;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public int getLeaderId() {
+		return leaderId;
+	}
+
 }
