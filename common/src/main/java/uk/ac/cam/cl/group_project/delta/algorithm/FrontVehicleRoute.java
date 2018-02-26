@@ -8,15 +8,21 @@ public class FrontVehicleRoute {
 	private int currentStep = 0;
 	private int nextActionStep;
 	private boolean stepsRemaining = true;
-	private List<Move> moves = new ArrayList<>();
+	private List<Move> moves;
 	private AlgorithmData algorithmData;
 
 	enum moveType {ACCELERATION, TURN_RATE}
 
 	public FrontVehicleRoute(AlgorithmData algorithmData) {
 		this.algorithmData = algorithmData;
-		initialiseRouteTwo();
-		nextActionStep = moves.get(0).stepNum;
+		this.moves = initialiseRouteTwo();
+		this.nextActionStep = moves.get(0).stepNum;
+	}
+
+	public FrontVehicleRoute(AlgorithmData algorithmData, List<Move> moves) {
+		this.algorithmData = algorithmData;
+		this.moves = moves;
+		this.nextActionStep = moves.get(0).stepNum;
 	}
 
 	public void nextStep() {
@@ -41,14 +47,17 @@ public class FrontVehicleRoute {
 		currentStep++;
 	}
 
-	private void initialiseRouteOne() {
+	private static List<Move> initialiseRouteOne() {
+		List<Move> moves = new ArrayList<>();
 		moves.add(new Move(0, moveType.ACCELERATION, 0.05));
 		moves.add(new Move(250, moveType.ACCELERATION, -0.05));
 		moves.add(new Move(500, moveType.ACCELERATION, 0.05));
 		moves.add(new Move(750, moveType.ACCELERATION, -0.05));
+		return moves;
 	}
 
-	private void initialiseRouteTwo() {
+	private static List<Move> initialiseRouteTwo() {
+		List<Move> moves = new ArrayList<>();
 		moves.add(new Move(0, moveType.ACCELERATION, 0.01));
 		moves.add(new Move(400, moveType.ACCELERATION, 0));
 		moves.add(new Move(500, moveType.TURN_RATE, 0.3));
@@ -56,9 +65,10 @@ public class FrontVehicleRoute {
 		moves.add(new Move(1100, moveType.TURN_RATE, 0.3));
 		moves.add(new Move(1400, moveType.TURN_RATE, 0));
 		moves.add(new Move(1500, moveType.ACCELERATION, -0.01));
+		return moves;
 	}
 
-	private class Move {
+	public static class Move {
 		int stepNum;
 		moveType move;
 		double amount;
