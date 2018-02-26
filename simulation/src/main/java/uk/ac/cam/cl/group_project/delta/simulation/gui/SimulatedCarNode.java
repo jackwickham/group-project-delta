@@ -387,8 +387,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			controller.platoonPosition.textProperty().bind(
 				platoonPosition.asString()
 			);
-			controller.isLeader.selectedProperty().bind(
-				isLeader
+			controller.isLeader.textProperty().bind(
+				isLeader.asString()
 			);
 			controller.platoonLeaderId.textProperty().bind(
 				platoonLeaderId.asString()

@@ -45,7 +45,7 @@ public class CarPropertiesController {
 	public Label platoonPosition;
 
 	@FXML
-	public CheckBox isLeader;
+	public Label isLeader;
 
 	@FXML
 	public Label platoonLeaderId;
