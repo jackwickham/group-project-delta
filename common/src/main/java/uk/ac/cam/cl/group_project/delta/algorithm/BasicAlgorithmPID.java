@@ -49,8 +49,6 @@ public class BasicAlgorithmPID extends Algorithm{
 
 	}
 
-
-
 	public void makeDecision() {
 		//decide on chosen acceleration, speed and turnRate
 
@@ -74,7 +72,7 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		} else {
-			//no message received
+			//no message received or no previous distance
 			algorithmData.predictedFrontProximity = null;
 			desired_dist = BUFF_DIST;
 			algorithmData.chosenSpeed = algorithmData.speed;

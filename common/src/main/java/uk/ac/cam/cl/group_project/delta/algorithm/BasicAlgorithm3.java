@@ -51,7 +51,7 @@ public class BasicAlgorithm3 extends Algorithm{
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		} else {
-			//no message received
+			//no message received or no previous distance
 			algorithmData.predictedFrontProximity = null;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
