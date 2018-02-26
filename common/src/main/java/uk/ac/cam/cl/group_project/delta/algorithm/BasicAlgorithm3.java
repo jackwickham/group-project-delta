@@ -20,7 +20,7 @@ public class BasicAlgorithm3 extends Algorithm{
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
 	//and the sensor proximity data
 	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
-		if (sensorFrontProximity != null && sensorFrontProximity != null) {
+		if (predictedFrontProximity != null && sensorFrontProximity != null) {
 			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
 		}
 		if(predictedFrontProximity != null){

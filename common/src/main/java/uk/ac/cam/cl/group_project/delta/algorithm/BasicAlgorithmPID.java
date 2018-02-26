@@ -31,7 +31,7 @@ public class BasicAlgorithmPID extends Algorithm{
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
 	//and the sensor proximity data
 	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
-		if (sensorFrontProximity != null && sensorFrontProximity != null) {
+		if (predictedFrontProximity != null && sensorFrontProximity != null) {
 			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
 		}
 		if(predictedFrontProximity != null){
@@ -46,7 +46,6 @@ public class BasicAlgorithmPID extends Algorithm{
 	public void initialise() {
 		algorithmData.miniPID = new MiniPID(PID_P, PID_I, PID_D);
 		algorithmData.miniPID.setOutputLimits(MIN_ACC, MAX_ACC);
-
 	}
 
 	public void makeDecision() {
