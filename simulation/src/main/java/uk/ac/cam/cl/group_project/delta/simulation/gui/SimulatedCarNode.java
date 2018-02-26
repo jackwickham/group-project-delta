@@ -4,6 +4,7 @@ import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -201,20 +202,20 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			platoonCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
 			platoonCircle.fillProperty().bind(platoonColour);
 
-			// Add text detail for car ID and platoon ID
-			Font font = Font.font("monospace", 11);
+			getChildren().addAll(leaderCircle, platoonCircle);
 
-			Text vid = new Text(base, base, null);
-			vid.setScaleY(-1);
-			vid.setFont(font);
-			vid.textProperty().bind(vehicleId.asString());
+			// Add tooltip for vehicle and platoon ID, and platoon position
+			Tooltip tooltip = new Tooltip();
+			tooltip.textProperty().bind(
+				(new SimpleStringProperty("Vehicle ID: "))
+					.concat(vehicleId.asString())
+					.concat("\nPlatoon ID: ")
+					.concat(platoonId.asString())
+					.concat("\nPlatoon position: ")
+					.concat(platoonPosition.asString())
+			);
+			Tooltip.install(this, tooltip);
 
-			Text pid = new Text(base, base - 11, null);
-			pid.setScaleY(-1);
-			pid.setFont(font);
-			pid.textProperty().bind(platoonId.asString().concat("[").concat(platoonPosition).concat("]"));
-
-			getChildren().addAll(leaderCircle, platoonCircle, vid, pid);
 
 		}
 		catch (IllegalAccessException | NoSuchFieldException e) {
