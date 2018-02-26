@@ -16,9 +16,16 @@ public class BasicAlgorithm extends Algorithm {
 
 	@Override
 	public void makeDecision() {
-		// decide on chosen acceleration, speed and turnRate
-		algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
-		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
-		algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+		if (algorithmData.receiveMessageData != null) {
+			// decide on chosen acceleration, speed and turnRate
+			algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
+			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+		} else {
+			//if no message ever received
+			algorithmData.chosenAcceleration = 0;
+			algorithmData.chosenSpeed = algorithmData.speed;
+			algorithmData.chosenTurnRate = algorithmData.turnRate;
+		}
 	}
 }
