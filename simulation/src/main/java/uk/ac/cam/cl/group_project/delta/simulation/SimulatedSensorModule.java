@@ -48,10 +48,7 @@ public class SimulatedSensorModule implements SensorInterface {
 
 		List<PhysicsBody> bodies = world.getBodies();
 
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		Vector2D vecHeading = car.getHeadingVector();
 
 		double distance = Double.POSITIVE_INFINITY;
 
@@ -86,10 +83,7 @@ public class SimulatedSensorModule implements SensorInterface {
 		List<Beacon> beacons = new ArrayList<>();
 		List<PhysicsBody> bodies = world.getBodies();
 
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		Vector2D vecHeading = car.getHeadingVector();
 
 		for (PhysicsBody body : bodies) {
 			if (body != car) {
