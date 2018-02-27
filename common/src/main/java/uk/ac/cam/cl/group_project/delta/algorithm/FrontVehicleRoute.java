@@ -112,7 +112,7 @@ public class FrontVehicleRoute {
 
 	/**
 	 * @return list of moves which makes the car accelerate at 0.01m/m/m for 3s,
-	 * then follow an S shape (right first), then decelerate to a stop.
+	 * curve out to the right, return to the original path, then decelerate to a stop.
 	 */
 	private static List<Move> routeTwo() {
 		List<Move> moves = new ArrayList<>();
