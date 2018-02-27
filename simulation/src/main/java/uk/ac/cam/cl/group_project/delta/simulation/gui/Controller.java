@@ -467,7 +467,8 @@ public class Controller {
 								algo,
 								car.getDriveInterface(),
 								car.getSensorInterface(),
-								car.getNetworkInterface()
+								car.getNetworkInterface(),
+								car
 							)
 						);
 					}
