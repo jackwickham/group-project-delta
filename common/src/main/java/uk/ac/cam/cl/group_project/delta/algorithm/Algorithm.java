@@ -139,6 +139,10 @@ public abstract class Algorithm {
 
 		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
+		//if sensor returns infinity set value to null so its not used
+		if(algorithmData.sensorFrontProximity == Double.POSITIVE_INFINITY) {
+			algorithmData.sensorFrontProximity = null;
+		}
 
 		//combines beacon distance lower bound and sensor front proximity
 		if (algorithmData.closestBeacon != null && algorithmData.sensorFrontProximity != null) {
