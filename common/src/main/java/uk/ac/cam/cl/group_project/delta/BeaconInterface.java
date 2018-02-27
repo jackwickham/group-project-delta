@@ -2,7 +2,7 @@ package uk.ac.cam.cl.group_project.delta;
 
 import java.util.List;
 
-public abstract class BeaconInterface {
+public interface BeaconInterface {
 
 	/**
 	 * Returns the beacon id of the current vehicle

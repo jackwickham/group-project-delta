@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
@@ -182,9 +183,10 @@ public class ControlLayer {
 					messageLookup.put(idToPositionLookup.get(packet.vehicleId),
 							(VehicleData) packet.message);
 				} else {
-					if(beaconInterface.getVisibleBeaconId() != null) {
+					Integer visibleId = getVisibleBeaconId();
+					if(visibleId != null) {
 						BeaconIdQuestion question = new BeaconIdQuestion(platoonId,
-								beaconInterface.getVisibleBeaconId());
+								visibleId);
 						network.sendData(Packet.createPacket(question, vehicleId, packet.platoonId));
 					}
 				}
@@ -199,7 +201,7 @@ public class ControlLayer {
 			} else if(packet.message instanceof BeaconIdAnswer) {
 				if(packet.platoonId == platoonId && position == 0) {
 					BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
-					if(answer.getBeaconId() == beaconInterface.getVisibleBeaconId()) {
+					if(answer.getBeaconId() == getVisibleBeaconId()) {
 						if(!containsRTM) {
 							beginMergeProtocol(packet);
 						}
@@ -418,6 +420,17 @@ public class ControlLayer {
 
 	}
 
+	private Integer getVisibleBeaconId() {
+		if(beaconInterface.getBeacons().isEmpty()) return null;
+		int closestId = 0;
+		int minDistance = Integer.MAX_VALUE;
+		for(Beacon b : beaconInterface.getBeacons()) {
+			if(b.getDistanceLowerBound() < minDistance) {
+				closestId = b.getBeaconIdentifier();
+			}
+		}
+		return closestId;
+	}
 	/**
 	 * Used during a merge commit to update the ids to the replaced ids to remove
 	 * conflicts
