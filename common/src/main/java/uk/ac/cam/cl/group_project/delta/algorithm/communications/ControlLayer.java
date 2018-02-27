@@ -440,6 +440,7 @@ public class ControlLayer {
 		for(Beacon b : beaconInterface.getBeacons()) {
 			if(b.getDistanceLowerBound() < minDistance) {
 				closestId = b.getBeaconIdentifier();
+				minDistance = b.getDistanceLowerBound();
 			}
 		}
 		if(minDistance == MAXIMUM_ID_DETECTION_RANGE)
