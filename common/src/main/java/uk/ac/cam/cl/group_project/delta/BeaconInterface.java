@@ -1,20 +1,24 @@
 package uk.ac.cam.cl.group_project.delta;
 
+import java.util.List;
+
 public abstract class BeaconInterface {
 
 	/**
 	 * Returns the beacon id of the current vehicle
 	 *
-	 * @return the vehichle's beacon id
+	 * @return the vehicle's beacon id
 	 */
 	public abstract int getCurrentBeaconId();
 
 	/**
-	 * Returns the beacon id which corresponds to the closest
-	 * vehicle which is visible to the beacon sensor. The value
-	 * is null if no beacon is visible to the sensors.
-	 * @return
+	 * Returns a list of objects that represent the visible beacons
+	 * and their positions relative to this vehicle. Beacons are installed
+	 * in all platooning vehicles, but are not exclusive to these vehicles.
+	 * Position accuracy may degrade with distance and have significant noise.
+	 *
+	 * @return list containing Beacons visible
 	 */
-	public abstract Integer getVisibleBeaconId();
+	public abstract List<Beacon> getBeacons();
 
 }
