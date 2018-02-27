@@ -46,6 +46,9 @@ public class SimulationThread extends Thread {
 	 * timeline and 1 is normal speed.
 	 */
 	private double timeDilationFactor;
+	private long time;
+	private long cumulative;
+	private long lastAlgorithmUpdate;
 
 	/**
 	 * Construct thread, and the world and network it will simulate.
@@ -65,11 +68,11 @@ public class SimulationThread extends Thread {
 	@Override
 	public void run() {
 
-		long start = System.nanoTime();
-		long time = start;
-		long cumulative = 0;
+		time = System.nanoTime();
+		cumulative = 0;
 
-		long lastAlgorithmUpdate = 0; // w.r.t. cumulative
+		// w.r.t. cumulative
+		lastAlgorithmUpdate = 0;
 
 		synchronized (this) {
 			running = true;
@@ -84,42 +87,49 @@ public class SimulationThread extends Thread {
 			}
 
 			long tmp = System.nanoTime();
-
-			if (tmp - time > UPDATE_INTERVAL) {
-
-				// Fetch bodies from world
-				List<PhysicsBody> bodies;
-				synchronized (world) {
-					bodies = new ArrayList<>(world.getBodies());
-				}
-
-				// Update world
-				long l_dt = (long) ((tmp - time) * timeDilationFactor);
-				double dt = l_dt / 1e9;
-				for (PhysicsBody body : bodies) {
-					synchronized (body) {
-						body.update(dt);
-					}
-				}
-
-				// Update cars
-				cumulative += l_dt;
-				if (cumulative - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
-					for (PhysicsBody body : bodies) {
-						if (body instanceof SimulatedCar) {
-							((SimulatedCar) body).updateControl(cumulative);
-						}
-					}
-					if ((cumulative - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
-						Log.warn("Simulation thread cannot keep algorithms up-to-date");
-					}
-					lastAlgorithmUpdate += CONTROLLER_INTERVAL;
-				}
-
-				time = tmp;
-
+			long dt = tmp - time;
+			if (dt > UPDATE_INTERVAL && getTimeDilationFactor() > 0) {
+				update((long)(dt * getTimeDilationFactor()));
 			}
+			time = tmp;
 
+		}
+
+	}
+
+	/**
+	 * Update the simulation state.
+	 * @param dt    True time delta, should have already been warped, in
+	 *                 nanoseconds.
+	 */
+	public synchronized void update(long dt) {
+
+		// Fetch bodies from world
+		List<PhysicsBody> bodies;
+		synchronized (world) {
+			bodies = new ArrayList<>(world.getBodies());
+		}
+
+		// Update world
+		double d_dt = dt / 1e9;
+		for (PhysicsBody body : bodies) {
+			synchronized (body) {
+				body.update(d_dt);
+			}
+		}
+
+		// Update cars
+		cumulative += dt;
+		if (cumulative - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
+			for (PhysicsBody body : bodies) {
+				if (body instanceof SimulatedCar) {
+					((SimulatedCar) body).updateControl(cumulative);
+				}
+			}
+			if ((cumulative - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
+				Log.warn("Simulation thread cannot keep algorithms up-to-date");
+			}
+			lastAlgorithmUpdate += CONTROLLER_INTERVAL;
 		}
 
 	}
@@ -174,7 +184,7 @@ public class SimulationThread extends Thread {
 	 * Set the time distortion.
 	 * @param timeDilationFactor    Factor by which to distort time.
 	 */
-	public void setTimeDilationFactor(double timeDilationFactor) {
+	public synchronized void setTimeDilationFactor(double timeDilationFactor) {
 		this.timeDilationFactor = timeDilationFactor;
 	}
 

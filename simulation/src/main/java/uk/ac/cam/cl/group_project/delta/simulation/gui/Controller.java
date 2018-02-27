@@ -54,18 +54,15 @@ public class Controller {
 	 * Thread running this application's simulation.
 	 */
 	private SimulationThread simulation;
-
 	/**
 	 * List of nodes representing objects in the simulated world.
 	 */
 	private List<SimulatedBodyNode> simulatedNodes;
-
 	/**
 	 * GUI element containing the current scene.
 	 */
 	@FXML
 	private Pane viewPane;
-
 	/**
 	 * The simulated world containing nodes representing the simulated objects.
 	 */
@@ -113,6 +110,24 @@ public class Controller {
 	 */
 	@FXML
 	public Pane paused;
+
+	/**
+	 * Pause button.
+	 */
+	@FXML
+	public ToggleButton pause;
+
+	/**
+	 * Simulation step button.
+	 */
+	@FXML
+	public Button step;
+
+	/**
+	 * Time dilation slider.
+	 */
+	@FXML
+	public Slider timeDilation;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -189,6 +204,12 @@ public class Controller {
 		// Start background tasks
 		simulation.start();
 		timeline.play();
+
+		paused.visibleProperty().bind(pause.selectedProperty());
+		timeDilation.valueProperty().addListener(
+			(observableValue, oldValue, newValue) ->
+				simulation.setTimeDilationFactor(newValue.doubleValue())
+		);
 
 	}
 
@@ -311,12 +332,12 @@ public class Controller {
 				case P:
 					if (simulation.getTimeDilationFactor() > 0) {
 						simulation.setTimeDilationFactor(0);
-						paused.setVisible(true);
+						pause.setSelected(true);
 					}
 					else {
 						simulation.setTimeDilationFactor(1);
 						viewPane.setOpacity(1.0);
-						paused.setVisible(false);
+						pause.setSelected(false);
 					}
 					break;
 			}
@@ -455,5 +476,14 @@ public class Controller {
 		);
 		dialog.show();
 
+	}
+
+	/**
+	 * Step once through the simulation, by a number of seconds defined by the
+	 * current time dilation slider. Each increment of the slider equates to
+	 * a second of stepping.
+	 */
+	public void step() {
+		simulation.update((long)(1e9 * timeDilation.getValue()));
 	}
 }

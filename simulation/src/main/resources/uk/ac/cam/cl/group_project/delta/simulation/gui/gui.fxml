@@ -6,6 +6,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0"
 			xmlns="http://javafx.com/javafx/8.0.112"
 			xmlns:fx="http://javafx.com/fxml/1"
@@ -91,30 +92,54 @@
 						</TabPane>
 					</children>
 				</AnchorPane>
-				<StackPane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick"
-					  onMouseDragged="#onViewPaneMouseDragged"
-					  onMousePressed="#onViewPaneMousePressed"
-					  onScroll="#onViewPaneScroll" scaleY="-1.0">
+				<VBox>
 					<children>
-						<Pane fx:id="scene">
+						<StackPane fx:id="viewPane"
+								   VBox.vgrow="ALWAYS"
+								   onMouseClicked="#onViewPaneMouseClick"
+								   onMouseDragged="#onViewPaneMouseDragged"
+								   onMousePressed="#onViewPaneMousePressed"
+								   onScroll="#onViewPaneScroll" scaleY="-1.0">
 							<children>
-								<Line endX="10.0" startX="-10.0"/>
-								<Line endY="10.0" startY="-10.0"/>
-							</children>
-						</Pane>
-						<AnchorPane mouseTransparent="true">
-							<children>
-								<Pane fx:id="paused" visible="false" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" opacity="0.3">
-									<Rectangle x="0" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
-									<Rectangle x="15" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+								<Pane fx:id="scene">
+									<children>
+										<Line endX="10.0" startX="-10.0"/>
+										<Line endY="10.0" startY="-10.0"/>
+									</children>
 								</Pane>
+								<AnchorPane mouseTransparent="true">
+									<children>
+										<Pane fx:id="paused" visible="false" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" opacity="0.3">
+											<Rectangle x="0" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+											<Rectangle x="15" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+										</Pane>
+									</children>
+								</AnchorPane>
 							</children>
-						</AnchorPane>
+							<cursor>
+								<Cursor fx:constant="OPEN_HAND"/>
+							</cursor>
+						</StackPane>
+						<HBox alignment="CENTER" style="-fx-background-color: #eee; -fx-border-color: #ccc; -fx-border-width: 1 0 0 0">
+							<padding>
+								<Insets top="5" bottom="5" left="5" right="5"/>
+							</padding>
+							<children>
+								<ToggleButton fx:id="pause" text="Pause"/>
+								<Button fx:id="step" text="Step" onMouseClicked="#step"/>
+								<Slider fx:id="timeDilation"
+										HBox.hgrow="ALWAYS"
+										value="1"
+										min="0"
+										max="10"
+										majorTickUnit="1"
+										minorTickCount="5"
+										snapToTicks="true"
+										showTickMarks="true"/>
+							</children>
+						</HBox>
 					</children>
-					<cursor>
-						<Cursor fx:constant="OPEN_HAND"/>
-					</cursor>
-				</StackPane>
+				</VBox>
 			</items>
 		</SplitPane>
 	</children>
