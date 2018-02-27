@@ -122,7 +122,6 @@ public class Merge {
 		// New platoon merging into this one
 		if(mainPlatoon == currentPlatoon) {
 			additionalIdLookups = msg.getNewPlatoon();
-			changePosition = additionalIdLookups.size();
 		}
 		lastUpdate = System.nanoTime();
 	}
@@ -185,6 +184,7 @@ public class Merge {
 			state = MergeState.Accepted;
 			if(mainPlatoonId != platoonId) {
 				additionalIdLookups = msg.getMainPlatoon();
+				changePosition = additionalIdLookups.size();
 				if(vehiclesToConfirm > 0) {
 					// This is a leader, so needs to track the number
 					// of vehicles to confirm.
