@@ -60,12 +60,14 @@ public class AlgorithmTest {
 	public void testBasicAlgorithm() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
-		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, driveInterface, sensorInterface, networkInterface);
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
 		CommsInterface mockCommsInterface = mock(CommsInterface.class);
 		when(mockCommsInterface.isLeader()).thenReturn(false);
@@ -81,12 +83,14 @@ public class AlgorithmTest {
 	public void testBasicAlgorithm2() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
-		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm2, driveInterface, sensorInterface, networkInterface);
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm2, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
 		CommsInterface mockCommsInterface = mock(CommsInterface.class);
 		when(mockCommsInterface.isLeader()).thenReturn(false);
@@ -102,12 +106,14 @@ public class AlgorithmTest {
 	public void testBasicAlgorithm3() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
-		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm3, driveInterface, sensorInterface, networkInterface);
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm3, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
 
 		CommsInterface mockCommsInterface = mock(CommsInterface.class);
@@ -124,12 +130,14 @@ public class AlgorithmTest {
 	public void testBasicAlgorithmPID() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
-		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID, driveInterface, sensorInterface, networkInterface);
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
 
 		CommsInterface mockCommsInterface = mock(CommsInterface.class);
@@ -146,12 +154,14 @@ public class AlgorithmTest {
 	public void testBasicAlgorithmPID2() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
-		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
-		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID2, driveInterface, sensorInterface, networkInterface);
+		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID2, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
 
 		CommsInterface mockCommsInterface = mock(CommsInterface.class);

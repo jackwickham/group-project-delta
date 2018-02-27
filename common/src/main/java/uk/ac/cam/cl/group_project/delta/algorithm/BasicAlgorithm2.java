@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
@@ -15,6 +16,12 @@ public class BasicAlgorithm2 extends Algorithm{
 
 	public BasicAlgorithm2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		super(driveInterface, sensorInterface, networkInterface);
+	public BasicAlgorithm2(DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	@Override
@@ -39,7 +46,7 @@ public class BasicAlgorithm2 extends Algorithm{
 
 	@Override
 	protected void makeDecision() {
-	// decide on chosen acceleration, speed and turnRate
+		// decide on chosen acceleration, speed and turnRate
 		if(algorithmData.receiveMessageData != null) {
 			algorithmData.chosenAcceleration = algorithmData.predecessorAcceleration;
 		} else {
