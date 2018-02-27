@@ -13,23 +13,30 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class BasicAlgorithm3 extends Algorithm{
 
+	private double BUFF_DIST = 0.3;
+
 	public BasicAlgorithm3(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		super(driveInterface, sensorInterface, networkInterface);
 	}
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
-
+		if(parameterEnum == parameterEnum.BufferDistance) {
+			BUFF_DIST = value;
+		}
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
+		if(parameterEnum == parameterEnum.BufferDistance) {
+			return BUFF_DIST;
+		}
 		return null;
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[0];
+		return new ParameterEnum[]{ParameterEnum.BufferDistance};
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
@@ -81,21 +88,21 @@ public class BasicAlgorithm3 extends Algorithm{
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 
 		if (weightedFrontProximity != null) {
-			if (weightedFrontProximity < 5) {
+			if (weightedFrontProximity < BUFF_DIST) {
 				if (algorithmData.chosenAcceleration >= 0) {
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / 5.0;
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / BUFF_DIST;
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / 5.0);
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / BUFF_DIST);
 				}
 			} else {
 				if (algorithmData.chosenAcceleration >= 0) {
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							* (0.75 + weightedFrontProximity / 20.0);
+							* (0.75 + weightedFrontProximity / (4*BUFF_DIST));
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (0.75 + weightedFrontProximity / 20.0);
+							/ (0.75 + weightedFrontProximity / (4*BUFF_DIST));
 				}
 			}
 		} else {

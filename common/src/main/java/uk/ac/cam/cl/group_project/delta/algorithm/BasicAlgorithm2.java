@@ -11,23 +11,30 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  */
 public class BasicAlgorithm2 extends Algorithm{
 
+	private double BUFF_DIST = 0.3;
+
 	public BasicAlgorithm2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		super(driveInterface, sensorInterface, networkInterface);
 	}
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
-
+		if(parameterEnum == parameterEnum.BufferDistance) {
+			BUFF_DIST = value;
+		}
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
+		if(parameterEnum == parameterEnum.BufferDistance) {
+			return BUFF_DIST;
+		}
 		return null;
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[0];
+		return new ParameterEnum[]{ParameterEnum.BufferDistance};
 	}
 
 	@Override
@@ -39,23 +46,23 @@ public class BasicAlgorithm2 extends Algorithm{
 			algorithmData.chosenAcceleration = algorithmData.acceleration;
 		}
 		if(algorithmData.frontProximity != null) {
-			if (algorithmData.frontProximity < 5) {
+			if (algorithmData.frontProximity < BUFF_DIST) {
 				if (algorithmData.chosenAcceleration >= 0) {
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.frontProximity
-							/ 5.0;
+							/ BUFF_DIST;
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (algorithmData.frontProximity / 5.0);
+							/ (algorithmData.frontProximity / BUFF_DIST);
 				}
 			} else {
 				if (algorithmData.chosenAcceleration >= 0) {
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							* (0.75 + algorithmData.frontProximity / 20.0);
+							* (0.75 + algorithmData.frontProximity / (4*BUFF_DIST));
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (0.75 + algorithmData.frontProximity / 20.0);
+							/ (0.75 + algorithmData.frontProximity / (4*BUFF_DIST));
 				}
 			}
 		}

@@ -15,9 +15,7 @@ public class BasicAlgorithm extends Algorithm {
 	}
 
 	@Override
-	public void setParameter(ParameterEnum parameterEnum, double value) {
-
-	}
+	public void setParameter(ParameterEnum parameterEnum, double value) {}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
