@@ -28,7 +28,7 @@ public class ControlLayer {
 	/**
 	 * The maximum range for which IDs can be picked up from beacons.
 	 */
-	private static double MAXIMUM_ID_DETECTION_RANGE = 4.0;
+	private static double MAXIMUM_ID_DETECTION_RANGE = 0.5;
 
 	/**
 	 * The current id of this vehicle.
