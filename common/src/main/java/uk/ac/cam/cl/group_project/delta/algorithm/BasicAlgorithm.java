@@ -20,16 +20,23 @@ public class BasicAlgorithm extends Algorithm {
 	}
 
 	@Override
-	public void setParameter(ParameterEnum parameterEnum, double value) {}
+	public void setParameter(ParameterEnum parameterEnum, double value) {
+		if(parameterEnum == ParameterEnum.MaxSensorDist) {
+			MAX_SENSOR_DIST = value;
+		}
+	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
+		if(parameterEnum == ParameterEnum.MaxSensorDist) {
+			return MAX_SENSOR_DIST;
+		}
 		return null;
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[0];
+		return new ParameterEnum[] {ParameterEnum.MaxSensorDist};
 	}
 
 	@Override

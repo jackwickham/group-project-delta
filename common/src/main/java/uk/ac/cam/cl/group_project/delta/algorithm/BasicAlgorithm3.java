@@ -26,6 +26,9 @@ public class BasicAlgorithm3 extends Algorithm{
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
+		if(parameterEnum == ParameterEnum.MaxSensorDist) {
+			MAX_SENSOR_DIST = value;
+		}
 		if(parameterEnum == ParameterEnum.BufferDistance) {
 			BUFF_DIST = value;
 		}
@@ -33,6 +36,9 @@ public class BasicAlgorithm3 extends Algorithm{
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
+		if(parameterEnum == ParameterEnum.MaxSensorDist) {
+			return MAX_SENSOR_DIST;
+		}
 		if(parameterEnum == ParameterEnum.BufferDistance) {
 			return BUFF_DIST;
 		}
@@ -41,7 +47,7 @@ public class BasicAlgorithm3 extends Algorithm{
 
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[]{ParameterEnum.BufferDistance};
+		return new ParameterEnum[]{ParameterEnum.BufferDistance, ParameterEnum.MaxSensorDist};
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,

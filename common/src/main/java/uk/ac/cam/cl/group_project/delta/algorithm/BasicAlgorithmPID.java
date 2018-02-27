@@ -56,6 +56,8 @@ public class BasicAlgorithmPID extends Algorithm{
 			case HeadTime:
 				HEAD_TIME = value;
 				break;
+			case MaxSensorDist:
+				MAX_SENSOR_DIST = value;
 		}
 	}
 
@@ -76,6 +78,8 @@ public class BasicAlgorithmPID extends Algorithm{
 				return BUFF_DIST;
 			case HeadTime:
 				return HEAD_TIME;
+			case MaxSensorDist:
+				return MAX_SENSOR_DIST;
 		}
 		return null;
 	}
@@ -83,7 +87,7 @@ public class BasicAlgorithmPID extends Algorithm{
 	@Override
 	public ParameterEnum[] getParameterList() {
 		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
-				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime};
+				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime, ParameterEnum.MaxSensorDist};
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,

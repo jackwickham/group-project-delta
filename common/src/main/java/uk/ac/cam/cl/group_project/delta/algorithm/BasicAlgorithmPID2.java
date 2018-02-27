@@ -66,6 +66,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				break;
 			case EmergencyDistance:
 				EMER_DIST = value;
+			case MaxSensorDist:
+				MAX_SENSOR_DIST = value;
 		}
 	}
 
@@ -88,6 +90,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				return HEAD_TIME;
 			case EmergencyDistance:
 				return EMER_DIST;
+			case MaxSensorDist:
+				return MAX_SENSOR_DIST;
 		}
 		return null;
 	}
@@ -95,7 +99,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	@Override
 	public ParameterEnum[] getParameterList() {
 		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
-				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime, ParameterEnum.EmergencyDistance};
+				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime,
+				ParameterEnum.EmergencyDistance, ParameterEnum.MaxSensorDist};
 	}
 
 	@Override

@@ -6,7 +6,8 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public abstract class Algorithm {
 
-	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	public static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	protected double MAX_SENSOR_DIST = 4;
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -141,7 +142,7 @@ public abstract class Algorithm {
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
 		//if sensor returns infinity set value to null so its not used
 		if(algorithmData.sensorFrontProximity != null) {
-			if (algorithmData.sensorFrontProximity == Double.POSITIVE_INFINITY) {
+			if (algorithmData.sensorFrontProximity < MAX_SENSOR_DIST) {
 				algorithmData.sensorFrontProximity = null;
 			}
 		}
