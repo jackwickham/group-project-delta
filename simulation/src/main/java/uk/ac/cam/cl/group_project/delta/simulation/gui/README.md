@@ -43,6 +43,9 @@ New objects can be added by right-clicking in the main view; the status of
 existing objects can be acquired by left-clicking on the object and navigating
 to the "Network" tab.
 
+Clicking `P` will toggle the simulation between paused and playing the
+simulation.
+
 #### Platoons
 
 Platooning information is indicated by lightly-coloured circles underneath the
