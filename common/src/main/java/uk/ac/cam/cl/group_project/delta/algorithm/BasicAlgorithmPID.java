@@ -26,10 +26,10 @@ public class BasicAlgorithmPID extends Algorithm{
 	public final static double HEAD_TIME = 2;
 
 	public BasicAlgorithmPID(DriveInterface driveInterface,
-							 SensorInterface sensorInterface,
-							 NetworkInterface networkInterface,
-							 BeaconInterface beacons,
-							 FrontVehicleRoute.RouteNumber routeNumber) {
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
