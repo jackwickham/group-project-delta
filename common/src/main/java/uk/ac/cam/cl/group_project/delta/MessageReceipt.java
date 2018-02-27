@@ -10,11 +10,21 @@ public class MessageReceipt {
 	/**
 	 * Timestamps a message as it arrives at the device
 	 *
-	 * @param the message which was received
+	 * @param data The message which was received
 	 */
 	public MessageReceipt(byte[] data) {
+		this(data, System.nanoTime());
+	}
+
+	/**
+	 * Timestamps a message as it arrives at the device
+	 *
+	 * @param data The message which was received
+	 * @param time The timestamp to assign to the message (in nanoseconds)
+	 */
+	public MessageReceipt(byte[] data, long time) {
 		this.data = data;
-		time = System.nanoTime();
+		this.time = time;
 	}
 
 	/**
@@ -34,7 +44,7 @@ public class MessageReceipt {
 	/**
 	 * Tests whether the data passed in contains an emergency message
 	 *
-	 * @param msg - the message to be tested
+	 * @param data - the message to be tested
 	 * @return whether the message is an emergency
 	 */
 	public static boolean isEmergencyMessage(byte[] data) {
