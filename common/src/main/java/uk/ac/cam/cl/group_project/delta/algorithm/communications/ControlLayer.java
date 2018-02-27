@@ -437,6 +437,8 @@ public class ControlLayer {
 				closestId = b.getBeaconIdentifier();
 			}
 		}
+		if(minDistance == Integer.MAX_VALUE)
+			return null;
 		return closestId;
 	}
 	/**
