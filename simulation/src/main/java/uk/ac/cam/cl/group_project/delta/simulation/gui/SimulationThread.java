@@ -211,9 +211,7 @@ public class SimulationThread extends Thread {
 		}
 
 		@Override
-		public void setParameter(ParameterEnum parameterEnum, double value) {
-			
-		}
+		public void setParameter(ParameterEnum parameterEnum, double value) {}
 
 		@Override
 		public Double getParameter(ParameterEnum parameterEnum) {
@@ -236,7 +234,6 @@ public class SimulationThread extends Thread {
 
 		@Override
 		protected void makeDecision() {}
-
 	}
 
 }
