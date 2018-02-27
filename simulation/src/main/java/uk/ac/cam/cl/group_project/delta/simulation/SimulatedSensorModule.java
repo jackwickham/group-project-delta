@@ -22,9 +22,9 @@ public class SimulatedSensorModule implements SensorInterface {
 	private PhysicsCar car;
 
 	/**
-	 * Maximum angle from view normal that the sensor can detect, in degrees.
+	 * Maximum angle from view normal that the sensor can detect, in radians.
 	 */
-	public static final double VIEW_HALF_ANGLE = 25.0;
+	public static final double VIEW_HALF_ANGLE = 0.44; // 25°
 
 	/**
 	 * Constructs a sensor module for given car in provided world.
@@ -48,10 +48,7 @@ public class SimulatedSensorModule implements SensorInterface {
 
 		List<PhysicsBody> bodies = world.getBodies();
 
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		Vector2D vecHeading = car.getHeadingVector();
 
 		double distance = Double.POSITIVE_INFINITY;
 
@@ -86,10 +83,7 @@ public class SimulatedSensorModule implements SensorInterface {
 		List<Beacon> beacons = new ArrayList<>();
 		List<PhysicsBody> bodies = world.getBodies();
 
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		Vector2D vecHeading = car.getHeadingVector();
 
 		for (PhysicsBody body : bodies) {
 			if (body != car) {

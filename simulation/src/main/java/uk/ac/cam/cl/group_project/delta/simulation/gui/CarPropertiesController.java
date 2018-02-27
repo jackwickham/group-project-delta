@@ -53,4 +53,7 @@ public class CarPropertiesController {
 	@FXML
 	public Rectangle platoonColour;
 
+	@FXML
+	public Label frontProximity;
+
 }

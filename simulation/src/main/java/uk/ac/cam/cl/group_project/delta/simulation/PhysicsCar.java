@@ -21,11 +21,6 @@ public class PhysicsCar extends PhysicsBody {
 	private Double turnRate = null;
 
 	/**
-	 * The maximum permitted wheel angle, in radians
-	 */
-	private static final double MAX_WHEEL_ANGLE = Math.PI / 4;
-
-	/**
 	 * The angle at which the car body is currently facing. The cardinal axis of
 	 * the car body faces this direction, relative to a global north.
 	 */
@@ -50,6 +45,24 @@ public class PhysicsCar extends PhysicsBody {
 	private double enginePower = 0.0;
 
 	/**
+	 * If not null, this means we are trying to maintain a constant acceleration
+	 * rather than a constant engine power, so we need to update the engine
+	 * power in each simulation step to account for the increase in air
+	 * resistance
+	 */
+	private Double targetAcceleration = null;
+
+	/**
+	 * The maximum permitted wheel angle, in radians
+	 */
+	private static final double MAX_WHEEL_ANGLE = Math.PI / 4;
+
+	/**
+	 * The maximum velocity.
+	 */
+	private static final double MAX_VELOCITY = 2;
+
+	/**
 	 * The coefficient used for acceleration = engineForce - c * speed^2 - friction
 	 */
 	private static final double AIR_RESISTANCE_COEFFICIENT = 0.7;
@@ -58,6 +71,19 @@ public class PhysicsCar extends PhysicsBody {
 	 * A constant factor to reduce acceleration
 	 */
 	private static final double FRICTION = 0.1;
+
+	/**
+	 * The maximum power output of the engine is the power output required to
+	 * maintain the maximum velocity
+	 */
+	private static final double MAX_ENGINE_POWER = AIR_RESISTANCE_COEFFICIENT *
+			MAX_VELOCITY * MAX_VELOCITY - FRICTION;
+
+	/**
+	 * The maximum engine power for deceleration. Air resistance will mean
+	 * that the true deceleration is higher than this.
+	 */
+	private static final double MAX_DECELERATION = 2;
 
 	/**
 	 * Initialise physically simulated representation of a car.
@@ -97,6 +123,7 @@ public class PhysicsCar extends PhysicsBody {
 				double startAngle = heading;
 				double endAngle = heading + angleMovedAroundCircle;
 
+				// nb. Sin and cos are swapped here because heading is perpendicular to motion around circle
 				double dx = radius * (Math.cos(startAngle) - Math.cos(endAngle));
 				double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
 
@@ -181,7 +208,9 @@ public class PhysicsCar extends PhysicsBody {
 	 * @param enginePower    Engine power to set.
 	 */
 	public void setEnginePower(double enginePower) {
-		this.enginePower = enginePower;
+		// We are now targeting an engine power rather than acceleration
+		this.targetAcceleration = null;
+		setEnginePowerInternal(enginePower);
 	}
 
 	/**
@@ -194,6 +223,24 @@ public class PhysicsCar extends PhysicsBody {
 			acceleration -= FRICTION;
 		}
 		return acceleration;
+	}
+
+	/**
+	 * Set the acceleration. The engine power will be increased to achieve the
+	 * target acceleration while taking into account air resistance.
+	 * @param acceleration The new acceleration
+	 */
+	public void setAcceleration(double acceleration) {
+		this.targetAcceleration = acceleration;
+		double requiredEnginePower = acceleration + AIR_RESISTANCE_COEFFICIENT * speed * speed;
+		if (speed > 0 || acceleration > 0) {
+			requiredEnginePower += FRICTION;
+		}
+		setEnginePowerInternal(requiredEnginePower);
+	}
+
+	private void setEnginePowerInternal(double enginePower) {
+		this.enginePower = Math.max(Math.min(enginePower, MAX_ENGINE_POWER), -MAX_DECELERATION);
 	}
 
 	/**
@@ -236,7 +283,7 @@ public class PhysicsCar extends PhysicsBody {
 	 * @return The acceleration vector
 	 */
 	public Vector2D getHeadingVector() {
-		return new Vector2D(Math.cos(heading), Math.sin(heading));
+		return new Vector2D(Math.sin(heading), Math.cos(heading));
 	}
 
 	/**

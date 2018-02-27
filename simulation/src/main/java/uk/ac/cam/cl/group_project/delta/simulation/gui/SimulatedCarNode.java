@@ -114,6 +114,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private final ObjectProperty<Paint> platoonColour;
 
+	private final DoubleProperty frontProximity;
+
 	/**
 	 * The communications layer for this car, if found, null otherwise.
 	 */
@@ -146,6 +148,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		platoonPosition = new SimpleIntegerProperty(0);
 		platoonLeaderId = new SimpleIntegerProperty(0);
 		platoonColour = new SimpleObjectProperty<>(Color.TRANSPARENT);
+		frontProximity = new SimpleDoubleProperty(Double.POSITIVE_INFINITY);
 
 		alignedGroup.rotateProperty().bind(headingProperty());
 
@@ -305,6 +308,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			heading.set(Math.toDegrees(-car.getHeading()));
 			wheelAngle.set(Math.toDegrees(-car.getWheelAngle()));
 			enginePower.set(car.getEnginePower());
+			frontProximity.set(car.getSensorInterface().getFrontProximity());
 			if (communications != null) {
 				isLeader.set(communications.isLeader());
 			}
@@ -399,6 +403,10 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			);
 			controller.platoonColour.setOpacity(PLATOON_CIRCLE_OPACITY);
 
+			controller.frontProximity.textProperty().bind(
+				frontProximity.asString("%.2f")
+			);
+
 			return pane;
 
 		}
@@ -425,5 +433,9 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
 	public DoubleProperty enginePowerProperty() {
 		return enginePower;
+	}
+
+	public DoubleProperty frontProximityProperty() {
+		return frontProximity;
 	}
 }
