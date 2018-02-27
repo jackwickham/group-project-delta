@@ -17,6 +17,21 @@ public class BasicAlgorithm3 extends Algorithm{
 		super(driveInterface, sensorInterface, networkInterface);
 	}
 
+	@Override
+	public void setParameter(ParameterEnum parameterEnum, double value) {
+
+	}
+
+	@Override
+	public Double getParameter(ParameterEnum parameterEnum) {
+		return null;
+	}
+
+	@Override
+	public ParameterEnum[] getParameterList() {
+		return new ParameterEnum[0];
+	}
+
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
 	//and the sensor proximity data
 	private static Double weightFrontProximity(Double predictedFrontProximity, Double frontProximity) {

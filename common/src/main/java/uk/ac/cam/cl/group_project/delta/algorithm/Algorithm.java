@@ -35,6 +35,21 @@ public abstract class Algorithm {
 		return AlgorithmEnum.values();
 	}
 
+	/** Sets an algorithms parameter.
+	 *  Will do nothing if that algorithm does not have the parameter **/
+	public abstract void setParameter(ParameterEnum parameterEnum, double value);
+
+	/**
+	 * @param parameterEnum enum for parameter
+	 * @return if algorithm uses parameter then its value otherwise null
+	 */
+	public abstract Double getParameter(ParameterEnum parameterEnum);
+
+	/**
+	 * @return Array of all parameters this algorithm uses
+	 */
+	public abstract ParameterEnum[] getParameterList();
+
 	public void initialise() {
 
 	}

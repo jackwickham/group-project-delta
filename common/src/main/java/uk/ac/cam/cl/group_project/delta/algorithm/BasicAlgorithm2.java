@@ -16,6 +16,21 @@ public class BasicAlgorithm2 extends Algorithm{
 	}
 
 	@Override
+	public void setParameter(ParameterEnum parameterEnum, double value) {
+
+	}
+
+	@Override
+	public Double getParameter(ParameterEnum parameterEnum) {
+		return null;
+	}
+
+	@Override
+	public ParameterEnum[] getParameterList() {
+		return new ParameterEnum[0];
+	}
+
+	@Override
 	protected void makeDecision() {
 	// decide on chosen acceleration, speed and turnRate
 		if(algorithmData.receiveMessageData != null) {
