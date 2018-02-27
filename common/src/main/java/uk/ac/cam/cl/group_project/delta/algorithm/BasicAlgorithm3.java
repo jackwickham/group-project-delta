@@ -66,7 +66,7 @@ public class BasicAlgorithm3 extends Algorithm{
 		// calculate the distance us and our predecessor have travelled in the previous
 		// time period
 		Double weightedFrontProximity;
-		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null) {
+		if (algorithmData.receiveMessageData != null && algorithmData.previousDistance != null) {
 			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 			//calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
@@ -84,11 +84,13 @@ public class BasicAlgorithm3 extends Algorithm{
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
-		if(algorithmData.frontProximity > maxSensorDist) {
-			algorithmData.frontProximity = null;
+		if (algorithmData.frontProximity != null) {
+			if (algorithmData.frontProximity > maxSensorDist) {
+				algorithmData.frontProximity = null;
+			}
 		}
-			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-					algorithmData.frontProximity);
+		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
+				algorithmData.frontProximity);
 
 		// update previous state variables so that they are correct in next time period
 		algorithmData.previousDistance = weightedFrontProximity;

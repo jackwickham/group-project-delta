@@ -136,8 +136,10 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
-		if(algorithmData.frontProximity > maxSensorDist) {
-			algorithmData.frontProximity = null;
+		if(algorithmData.frontProximity != null) {
+			if (algorithmData.frontProximity > maxSensorDist) {
+				algorithmData.frontProximity = null;
+			}
 		}
 		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
 				algorithmData.frontProximity);
