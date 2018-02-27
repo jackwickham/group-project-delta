@@ -47,6 +47,10 @@ public class FrontVehicleRoute {
 		currentStep++;
 	}
 
+	private List<Move> routeZero() {
+		return new ArrayList<>();
+	}
+
 	private List<Move> routeOne() {
 		List<Move> moves = new ArrayList<>();
 		moves.add(new Move(0, moveType.ACCELERATION, 0.05));
@@ -59,12 +63,12 @@ public class FrontVehicleRoute {
 	private List<Move> routeTwo() {
 		List<Move> moves = new ArrayList<>();
 		moves.add(new Move(0, moveType.ACCELERATION, 0.01));
-		moves.add(new Move(4, moveType.ACCELERATION, 0));
-		moves.add(new Move(5, moveType.TURN_RATE, 0.3));
-		moves.add(new Move(7, moveType.TURN_RATE, -0.3));
-		moves.add(new Move(11, moveType.TURN_RATE, 0.3));
-		moves.add(new Move(14, moveType.TURN_RATE, 0));
-		moves.add(new Move(15, moveType.ACCELERATION, -0.01));
+		moves.add(new Move(3, moveType.ACCELERATION, 0));
+		moves.add(new Move(4, moveType.TURN_RATE, 0.3));
+		moves.add(new Move(6, moveType.TURN_RATE, -0.3));
+		moves.add(new Move(10, moveType.TURN_RATE, 0.3));
+		moves.add(new Move(13, moveType.TURN_RATE, 0));
+		moves.add(new Move(14, moveType.ACCELERATION, -0.01));
 		return moves;
 	}
 
