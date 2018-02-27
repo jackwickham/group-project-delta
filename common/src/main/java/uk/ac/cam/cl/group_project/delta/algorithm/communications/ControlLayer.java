@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
@@ -69,6 +70,11 @@ public class ControlLayer {
 	private int leaderId;
 
 	/**
+	 * The beacon interface which allows for merging based on the real ordering.
+	 */
+	private BeaconInterface beaconInterface;
+
+	/**
 	 * Create a new platoon instance by making a new MessageReceiver Object
 	 *
 	 * @param network
@@ -76,9 +82,10 @@ public class ControlLayer {
 	 * @param map
 	 *            - the position to message map to be used
 	 */
-	public ControlLayer(NetworkInterface network) {
+	public ControlLayer(NetworkInterface network, BeaconInterface beacons) {
 		messageLookup = new PlatoonLookup();
 		this.network = network;
+		this.beaconInterface = beacons;
 		Random r = new Random();
 		vehicleId = r.nextInt();
 		platoonId = r.nextInt();
@@ -103,12 +110,13 @@ public class ControlLayer {
 	 *            - a list of the current platoon in terms of their ids
 	 */
 	public ControlLayer(NetworkInterface network, int vehicleId, int platoonId,
-			List<Integer> platoonOrder) {
+			List<Integer> platoonOrder, BeaconInterface beacons) {
 		this.vehicleId = vehicleId;
 		this.platoonId = platoonId;
 		this.network = network;
 		this.messageLookup = new PlatoonLookup();
 		this.leaderId = platoonOrder.get(0);
+		this.beaconInterface = beacons;
 		idToPositionLookup = new HashMap<>();
 
 		for (int i = 0; i < platoonOrder.size(); i++) {
