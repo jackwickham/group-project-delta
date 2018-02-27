@@ -109,7 +109,7 @@
 								</Pane>
 								<AnchorPane mouseTransparent="true">
 									<children>
-										<Pane fx:id="paused" visible="false" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" opacity="0.3">
+										<Pane fx:id="pausedPane" visible="false" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" opacity="0.3">
 											<Rectangle x="0" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
 											<Rectangle x="15" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
 										</Pane>
@@ -125,8 +125,8 @@
 								<Insets top="5" bottom="5" left="5" right="5"/>
 							</padding>
 							<children>
-								<ToggleButton fx:id="pause" text="Pause"/>
-								<Button fx:id="step" text="Step" onMouseClicked="#step"/>
+								<ToggleButton fx:id="pauseButton" text="Pause"/>
+								<Button fx:id="stepButton" text="Step" onMouseClicked="#step"/>
 								<Slider fx:id="timeDilation"
 										HBox.hgrow="ALWAYS"
 										value="1"

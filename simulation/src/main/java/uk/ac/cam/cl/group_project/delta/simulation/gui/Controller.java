@@ -109,19 +109,19 @@ public class Controller {
 	 * Indicator to show the simulation is paused.
 	 */
 	@FXML
-	public Pane paused;
+	public Pane pausedPane;
 
 	/**
 	 * Pause button.
 	 */
 	@FXML
-	public ToggleButton pause;
+	public ToggleButton pauseButton;
 
 	/**
 	 * Simulation step button.
 	 */
 	@FXML
-	public Button step;
+	public Button stepButton;
 
 	/**
 	 * Time dilation slider.
@@ -205,7 +205,7 @@ public class Controller {
 		simulation.start();
 		timeline.play();
 
-		paused.visibleProperty().bind(pause.selectedProperty());
+		pausedPane.visibleProperty().bind(pauseButton.selectedProperty());
 		timeDilation.valueProperty().addListener(
 			(observableValue, oldValue, newValue) ->
 				simulation.setTimeDilationFactor(newValue.doubleValue())
