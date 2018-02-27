@@ -79,7 +79,7 @@ public class FrontVehicleRoute {
 	/**
 	 * @return empty list, i.e. car does nothing
 	 */
-	private List<Move> routeZero() {
+	private static List<Move> routeZero() {
 		return new ArrayList<>();
 	}
 
@@ -87,7 +87,7 @@ public class FrontVehicleRoute {
 	 * @return list of moves which makes the car accelerate at 0.05m/s/s for 3s,
 	 * then decelerate at the same speed for 3s, then repeat.
 	 */
-	private List<Move> routeOne() {
+	private static List<Move> routeOne() {
 		List<Move> moves = new ArrayList<>();
 		moves.add(new Move(0, moveType.ACCELERATION, 0.05));
 		moves.add(new Move(3, moveType.ACCELERATION, -0.05));
@@ -100,7 +100,7 @@ public class FrontVehicleRoute {
 	 * @return list of moves which makes the car accelerate at 0.01m/m/m for 3s,
 	 * then follow an S shape (right first), then decelerate to a stop.
 	 */
-	private List<Move> routeTwo() {
+	private static List<Move> routeTwo() {
 		List<Move> moves = new ArrayList<>();
 		moves.add(new Move(0, moveType.ACCELERATION, 0.01));
 		moves.add(new Move(3, moveType.ACCELERATION, 0));
