@@ -38,7 +38,7 @@ public class FrontVehicleRoute {
 	/**
 	 * Possible different types of move
 	 */
-	enum moveType {ACCELERATION, TURN_RATE}
+	enum MoveType {ACCELERATION, TURN_RATE}
 
 	/**
 	 * Possible different routes for the front vehicle to follow
@@ -103,10 +103,10 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeOne() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, moveType.ACCELERATION, 0.05));
-		moves.add(new Move(3, moveType.ACCELERATION, -0.05));
-		moves.add(new Move(6, moveType.ACCELERATION, 0.05));
-		moves.add(new Move(9, moveType.ACCELERATION, -0.05));
+		moves.add(new Move(0, MoveType.ACCELERATION, 0.05));
+		moves.add(new Move(3, MoveType.ACCELERATION, -0.05));
+		moves.add(new Move(6, MoveType.ACCELERATION, 0.05));
+		moves.add(new Move(9, MoveType.ACCELERATION, -0.05));
 		return moves;
 	}
 
@@ -116,13 +116,13 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeTwo() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, moveType.ACCELERATION, 0.01));
-		moves.add(new Move(3, moveType.ACCELERATION, 0));
-		moves.add(new Move(4, moveType.TURN_RATE, 0.3));
-		moves.add(new Move(6, moveType.TURN_RATE, -0.3));
-		moves.add(new Move(10, moveType.TURN_RATE, 0.3));
-		moves.add(new Move(13, moveType.TURN_RATE, 0));
-		moves.add(new Move(14, moveType.ACCELERATION, -0.01));
+		moves.add(new Move(0, MoveType.ACCELERATION, 0.01));
+		moves.add(new Move(3, MoveType.ACCELERATION, 0));
+		moves.add(new Move(4, MoveType.TURN_RATE, 0.3));
+		moves.add(new Move(6, MoveType.TURN_RATE, -0.3));
+		moves.add(new Move(10, MoveType.TURN_RATE, 0.3));
+		moves.add(new Move(13, MoveType.TURN_RATE, 0));
+		moves.add(new Move(14, MoveType.ACCELERATION, -0.01));
 		return moves;
 	}
 
@@ -136,10 +136,10 @@ public class FrontVehicleRoute {
 		 * amount - the amount relevant to the move, e.g. the acceleration in m/s/s
 		 */
 		int seconds;
-		moveType move;
+		MoveType move;
 		double amount;
 
-		public Move(int seconds, moveType move, double amount) {
+		public Move(int seconds, MoveType move, double amount) {
 			this.seconds = seconds;
 			this.move = move;
 			this.amount = amount;
