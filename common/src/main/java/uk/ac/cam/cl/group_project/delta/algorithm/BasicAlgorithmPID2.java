@@ -28,7 +28,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//constant headway time in s
 	private double HEAD_TIME = 0.2;
 
-	//distance bellow which emergency stop happens
+	//distance below which emergency stop happens
 	private double EMER_DIST = 0.1;
 
 	public BasicAlgorithmPID2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
