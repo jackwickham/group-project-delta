@@ -5,6 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
 <?import java.net.URL?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.geometry.Insets?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0"
 			xmlns="http://javafx.com/javafx/8.0.112"
 			xmlns:fx="http://javafx.com/fxml/1"
@@ -90,7 +93,7 @@
 						</TabPane>
 					</children>
 				</AnchorPane>
-				<Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick"
+				<StackPane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick"
 					  onMouseDragged="#onViewPaneMouseDragged"
 					  onMousePressed="#onViewPaneMousePressed"
 					  onScroll="#onViewPaneScroll" scaleY="-1.0">
@@ -101,11 +104,19 @@
 								<Line endY="10.0" startY="-10.0"/>
 							</children>
 						</Pane>
+						<AnchorPane mouseTransparent="true">
+							<children>
+								<Pane fx:id="paused" visible="false" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" opacity="0.3">
+									<Rectangle x="0" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+									<Rectangle x="15" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+								</Pane>
+							</children>
+						</AnchorPane>
 					</children>
 					<cursor>
 						<Cursor fx:constant="OPEN_HAND"/>
 					</cursor>
-				</Pane>
+				</StackPane>
 			</items>
 		</SplitPane>
 	</children>

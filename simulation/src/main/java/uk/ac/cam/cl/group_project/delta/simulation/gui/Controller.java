@@ -13,8 +13,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
@@ -49,7 +50,6 @@ public class Controller {
 	 * Number of historic messages to show in the network log.
 	 */
 	public static final int NETWORK_LOG_CAPACITY = 100;
-
 	/**
 	 * Thread running this application's simulation.
 	 */
@@ -107,6 +107,12 @@ public class Controller {
 	 */
 	@FXML
 	private CheckBox filterMerges;
+
+	/**
+	 * Indicator to show the simulation is paused.
+	 */
+	@FXML
+	public Pane paused;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -281,21 +287,38 @@ public class Controller {
 	public void onKeyPressed(KeyEvent keyEvent) {
 		if (currentSelection != null) {
 			SimulatedCar car = currentSelection.getCar();
-			synchronized (car) {
-				switch (keyEvent.getCode()) {
-					case W:
+			switch (keyEvent.getCode()) {
+				case W:
+					synchronized (car) {
 						car.setEnginePower(0.5);
-						break;
-					case S:
+					}
+					break;
+				case S:
+					synchronized (car) {
 						car.setEnginePower(-1000.0);
-						break;
-					case A:
+					}
+					break;
+				case A:
+					synchronized (car) {
 						car.setWheelAngle(-Math.PI / 8);
-						break;
-					case D:
+					}
+					break;
+				case D:
+					synchronized (car) {
 						car.setWheelAngle(Math.PI / 8);
-						break;
-				}
+					}
+					break;
+				case P:
+					if (simulation.getTimeDilationFactor() > 0) {
+						simulation.setTimeDilationFactor(0);
+						paused.setVisible(true);
+					}
+					else {
+						simulation.setTimeDilationFactor(1);
+						viewPane.setOpacity(1.0);
+						paused.setVisible(false);
+					}
+					break;
 			}
 		}
 	}
