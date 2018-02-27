@@ -43,6 +43,12 @@ New objects can be added by right-clicking in the main view; the status of
 existing objects can be acquired by left-clicking on the object and navigating
 to the "Network" tab.
 
+The following shortcut keys are available:
+-	`P`: pause/unpause
+-	`;`: step
+-	`[`: reduce time warp factor
+-	`]`: increase time warp factor
+
 Clicking `P` will toggle the simulation between paused and playing the
 simulation.
 
