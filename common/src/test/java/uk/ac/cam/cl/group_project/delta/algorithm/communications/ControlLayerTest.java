@@ -27,7 +27,7 @@ public class ControlLayerTest {
 
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getVisibleBeaconId()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(null);
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 
@@ -62,7 +62,7 @@ public class ControlLayerTest {
 								Packet.createPacket(data, 100, 123))));
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getVisibleBeaconId()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(null);
 
 		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon, beaconInterface);
 
