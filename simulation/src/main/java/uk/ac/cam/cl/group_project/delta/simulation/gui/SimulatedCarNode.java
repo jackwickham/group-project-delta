@@ -3,6 +3,8 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -17,6 +19,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmData;
@@ -27,6 +30,8 @@ import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
@@ -122,6 +127,11 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	private final ObjectProperty<Double> frontProximity;
 
 	/**
+	 * The list of visible beacons
+	 */
+	private final ObservableList<String> beaconList;
+
+	/**
 	 * The communications layer for this car, if found, null otherwise.
 	 */
 	private CommsInterface communications = null;
@@ -154,6 +164,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		platoonLeaderId = new SimpleIntegerProperty(0);
 		platoonColour = new SimpleObjectProperty<>(Color.TRANSPARENT);
 		frontProximity = new SimpleObjectProperty<>(null);
+		beaconList = FXCollections.observableList(new ArrayList<>(4));
 
 		alignedGroup.rotateProperty().bind(headingProperty());
 
@@ -324,6 +335,16 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 				platoonLeaderId.set(controller.getLeaderId());
 				platoonColour.set(toPaint(platoonId.get()));
 			}
+			beaconList.clear();
+			for (Beacon beacon : car.getSensorInterface().getBeacons()) {
+				String distanceText;
+				if (beacon.getDistanceUpperBound() == beacon.getDistanceLowerBound()) {
+					distanceText = String.format("%.2f", beacon.getDistanceUpperBound());
+				} else {
+					distanceText = String.format("%.2f-%.2f", beacon.getDistanceLowerBound(), beacon.getDistanceUpperBound());
+				}
+				beaconList.add(String.format("%d:  %sm, %.2frad", beacon.getBeaconIdentifier(), distanceText, beacon.getAngle()));
+			}
 		}
 
 	}
@@ -417,6 +438,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			controller.frontProximity.textProperty().bind(
 				frontProximityString
 			);
+			controller.beaconList.setItems(beaconList);
 
 			return pane;
 
