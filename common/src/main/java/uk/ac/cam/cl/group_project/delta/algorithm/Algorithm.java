@@ -28,6 +28,20 @@ public abstract class Algorithm {
 	}
 
 	/**
+	 * Default constructor, uses ROUTE_ZERO
+	 */
+	protected Algorithm(DriveInterface driveInterface,
+						SensorInterface sensorInterface,
+						NetworkInterface networkInterface,
+						BeaconInterface beacons) {
+		this(driveInterface,
+				sensorInterface,
+				networkInterface,
+				beacons,
+				FrontVehicleRoute.RouteNumber.ROUTE_ZERO);
+	}
+
+	/**
 	 *Builds and returns algorithm of type specified by AlgorithmEnum input
 	 */
 	public static Algorithm createAlgorithm(
