@@ -50,11 +50,11 @@ class MainClass {
 					car.getSensorInterface(),
 					car.getNetworkInterface(),
 					car
-					));
+			));
 
 			car.setPosition(new Vector2D(
-					i * 0.3, 0
-					));
+				i * 0.3, 0
+			));
 
 			if (i == 1) {
 				// Make one of the cars drive forwards for the purpose of testing
@@ -66,7 +66,7 @@ class MainClass {
 
 		try (BufferedWriter writer = new BufferedWriter(
 				new FileWriter("sim_" + (new Date()).getTime() / 1000 + ".csv")
-				)) {
+		)) {
 
 			// Add headers
 			writer.write("time,uuid,x,y,class\n");
@@ -88,12 +88,12 @@ class MainClass {
 					for (PhysicsBody body : world.getBodies()) {
 						Vector2D pos = body.getPosition();
 						writer.write(
-								time + ","
-										+ body.getUuid() + ","
-										+ pos.getX() + ","
-										+ pos.getY() + ","
-										+ body.getClass().getSimpleName() + "\n"
-								);
+							time + ","
+									+ body.getUuid() + ","
+									+ pos.getX() + ","
+									+ pos.getY() + ","
+									+ body.getClass().getSimpleName() + "\n"
+						);
 					}
 
 				}

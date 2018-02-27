@@ -4,7 +4,14 @@ import java.nio.ByteBuffer;
 
 public class BeaconIdAnswer extends Message {
 
+	/**
+	 * The id of the platoon which was asked a question
+	 */
 	private final int askedPlatoonId;
+
+	/**
+	 * The beacon which was enquired about
+	 */
 	private final int beaconId;
 
 	public BeaconIdAnswer(ByteBuffer bytes) {
@@ -20,7 +27,8 @@ public class BeaconIdAnswer extends Message {
 	@Override
 	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
 		bytes.putInt(askedPlatoonId);
-		return bytes.putInt(beaconId);
+		bytes.putInt(beaconId);
+		return bytes;
 	}
 
 	@Override

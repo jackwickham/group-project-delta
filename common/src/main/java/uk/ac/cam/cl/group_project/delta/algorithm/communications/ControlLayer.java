@@ -184,7 +184,9 @@ public class ControlLayer {
 							(VehicleData) packet.message);
 				} else {
 					Integer visibleId = getVisibleBeaconId();
-					if(visibleId != null) {
+					if(visibleId != null && position == 0) {
+						// If there is a visible beacon, ask if they're in
+						// this platoon
 						BeaconIdQuestion question = new BeaconIdQuestion(platoonId,
 								visibleId);
 						network.sendData(Packet.createPacket(question, vehicleId, packet.platoonId));
@@ -194,6 +196,7 @@ public class ControlLayer {
 				BeaconIdQuestion question = (BeaconIdQuestion)(packet.message);
 				if(packet.platoonId == platoonId &&
 						question.getBeaconId() == beaconInterface.getCurrentBeaconId()) {
+					// Tell the platoon which asked the question that they were correct
 					BeaconIdAnswer answer = new BeaconIdAnswer(
 							platoonId, question.getBeaconId());
 					network.sendData(Packet.createPacket(answer, vehicleId, question.getReturnPlatoonId()));
@@ -202,6 +205,8 @@ public class ControlLayer {
 				if(packet.platoonId == platoonId && position == 0) {
 					BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
 					if(answer.getBeaconId() == getVisibleBeaconId()) {
+						// The visible beacon is known to be in a specific
+						// platoon now, try to merge with them
 						if(!containsRTM) {
 							beginMergeProtocol(packet);
 						}
@@ -421,6 +426,12 @@ public class ControlLayer {
 
 	}
 
+	/**
+	 * Returns the id of the closest visible beacon, or null if there is no
+	 * beacon visible.
+	 *
+	 * @return the id of the closest beacon
+	 */
 	private Integer getVisibleBeaconId() {
 		System.out.println(beaconInterface.getBeacons().size());
 		if(beaconInterface.getBeacons().isEmpty()) return null;
