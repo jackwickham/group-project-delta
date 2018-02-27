@@ -89,10 +89,10 @@ class MainClass {
 						Vector2D pos = body.getPosition();
 						writer.write(
 							time + ","
-									+ body.getUuid() + ","
-									+ pos.getX() + ","
-									+ pos.getY() + ","
-									+ body.getClass().getSimpleName() + "\n"
+								+ body.getUuid() + ","
+								+ pos.getX() + ","
+								+ pos.getY() + ","
+								+ body.getClass().getSimpleName() + "\n"
 						);
 					}
 
