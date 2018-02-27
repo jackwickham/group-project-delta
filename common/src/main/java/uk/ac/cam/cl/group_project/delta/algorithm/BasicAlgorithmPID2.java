@@ -104,10 +104,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	@Override
 	public void makeDecision() {
 		double pTerm;
-		if (algorithmData.frontProximity != null) {
-			if (algorithmData.frontProximity > maxSensorDist) {
-				algorithmData.frontProximity = null;
-			}
+		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
+			algorithmData.frontProximity = null;
 		}
 		if(algorithmData.frontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
