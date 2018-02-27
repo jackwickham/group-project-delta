@@ -26,7 +26,7 @@ public class CommunicationsTest {
 
 		Communications comms = new Communications(controlLayer);
 
-		assertEquals(comms.getLeaderMessage(), data);
+		assertEquals(comms.getPredecessorMessages().get(comms.getPredecessorMessages().size()-1), data);
 	}
 
 	@Test
@@ -43,29 +43,6 @@ public class CommunicationsTest {
 
 		Communications comms = new Communications(controlLayer);
 
-		assertEquals(comms.getPredecessorMessage(1), data);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getPredecessorMessageNegativeTest() {
-		ControlLayer controlLayer = mock(ControlLayer.class);
-		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		when(controlLayer.getPlatoonLookup()).thenReturn(new PlatoonLookup());
-
-		Communications comms = new Communications(controlLayer);
-
-		// Throws IllegalArgumentException
-		comms.getPredecessorMessage(-1);
-	}
-
-	@Test
-	public void getPredecessorMessageOutOfBoundsTest() {
-		ControlLayer controlLayer = mock(ControlLayer.class);
-		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		when(controlLayer.getPlatoonLookup()).thenReturn(new PlatoonLookup());
-
-		Communications comms = new Communications(controlLayer);
-
-		assertNull(comms.getPredecessorMessage(5));
+		assertEquals(comms.getPredecessorMessages().get(0), data);
 	}
 }

@@ -16,6 +16,11 @@ public class SimulatedNetwork {
 	private List<SimulatedNetworkModule> handlers;
 
 	/**
+	 * List of sniffer callbacks in the network.
+	 */
+	private List<Sniffer> sniffers;
+
+	/**
 	 * A modifier for the rate at which packets should be dropped.
 	 * @see #setMessageDeliveryModifier(double) for full details.
 	 */
@@ -25,11 +30,28 @@ public class SimulatedNetwork {
 	private Random random;
 
 	/**
+	 * The current network time, to put in message receipts if we are faking
+	 * time. null if we are using real time.
+	 */
+	private Long currentTime;
+
+	/**
 	 * Construct network.
 	 */
 	public SimulatedNetwork() {
+		this(false);
+	}
+
+	public SimulatedNetwork(boolean useFakeTime) {
 		handlers = new ArrayList<>();
+		sniffers = new ArrayList<>();
 		random = new Random();
+
+		if (useFakeTime) {
+			currentTime = 0L;
+		} else {
+			currentTime = null;
+		}
 	}
 
 	/**
@@ -50,11 +72,31 @@ public class SimulatedNetwork {
 	}
 
 	/**
+	 * Register a new network packet sniffer to this network, which will be
+	 * called for every packet sent on the network.
+	 * @param sniffer    Sniffer to add.
+	 */
+	public synchronized void register(Sniffer sniffer) {
+		this.sniffers.add(sniffer);
+	}
+
+	/**
+	 * Remove a sniffer.
+	 * @param sniffer    Sniffer to remove.
+	 */
+	public synchronized void deregister(Sniffer sniffer) {
+		this.sniffers.remove(sniffer);
+	}
+
+	/**
 	 * Broadcast a message from the given sender node.
 	 * @param sender     Node from which this message was sent.
 	 * @param message    Byte array to send as a message.
 	 */
 	public synchronized void broadcast(SimulatedNetworkModule sender, byte[] message) {
+		for (Sniffer sniffer : sniffers) {
+			sniffer.handleMessage(message);
+		}
 		for (SimulatedNetworkModule handler : handlers) {
 			double distance = sender.getPosition().subtract(handler.getPosition()).magnitude();
 			if (!shouldDropPacket(distance)) {
@@ -110,6 +152,44 @@ public class SimulatedNetwork {
 		// Generate a random value between 0 and 1
 		double randomValue = random.nextDouble();
 		return randomValue > valueFromDistribution;
+	}
+
+	/**
+	 * Increase time by `dt` nanoseconds
+	 * @param dt How much time we are claiming has elapsed
+	 */
+	public void incrementTime(long dt) {
+		if (currentTime == null) {
+			throw new IllegalStateException("Can't increment time when real " +
+				"time is being used (pass true into the constructor for fake time)");
+		}
+		currentTime += dt;
+	}
+
+	/**
+	 * Get the current time, suitable for putting in a message receipt
+	 * @return The current faked time if faking is being used, or real time otherwise
+	 */
+	public long getTime() {
+		if (currentTime == null) {
+			return System.nanoTime();
+		} else {
+			return currentTime;
+		}
+	}
+
+	/**
+	 * Functional interface for packet sniffing probes on the network.
+	 */
+	@FunctionalInterface
+	public interface Sniffer {
+
+		/**
+		 * Handle the broadcast of a packet.
+		 * @param message    Packet sent.
+		 */
+		void handleMessage(byte[] message);
+
 	}
 
 }

@@ -74,6 +74,6 @@ public class SimulatedNetworkModule implements NetworkInterface
 	 * @param message    The message received.
 	 */
 	public synchronized void handleMessage(byte[] message) {
-		this.messageBuffer.add(new MessageReceipt(message));
+		this.messageBuffer.add(new MessageReceipt(message, network.getTime()));
 	}
 }
