@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.Log;
@@ -12,26 +13,75 @@ public abstract class Algorithm {
 	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
 
 	protected AlgorithmData algorithmData = new AlgorithmData();
+	protected FrontVehicleRoute frontVehicleRoute;
 
-	protected Algorithm(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		algorithmData.controlLayer = new ControlLayer(networkInterface);
+	protected Algorithm(DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		algorithmData.controlLayer = new ControlLayer(networkInterface, beacons);
 		algorithmData.commsInterface = new Communications(algorithmData.controlLayer);
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
+		frontVehicleRoute = new FrontVehicleRoute(algorithmData, ALGORITHM_LOOP_DURATION, routeNumber);
+	}
+
+	/**
+	 * Default constructor, uses ROUTE_ZERO
+	 */
+	protected Algorithm(DriveInterface driveInterface,
+						SensorInterface sensorInterface,
+						NetworkInterface networkInterface,
+						BeaconInterface beacons) {
+		this(driveInterface,
+				sensorInterface,
+				networkInterface,
+				beacons,
+				FrontVehicleRoute.RouteNumber.ROUTE_ZERO);
 	}
 
 	/**
 	 *Builds and returns algorithm of type specified by AlgorithmEnum input
 	 */
-	public static Algorithm createAlgorithm(AlgorithmEnum algorithmEnum, DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
+	public static Algorithm createAlgorithm(
+			AlgorithmEnum algorithmEnum,
+			DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
 		switch (algorithmEnum) {
-			case BasicAlgorithm: return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface);
-			case BasicAlgorithm2: return new BasicAlgorithm2(driveInterface,sensorInterface,networkInterface);
-			case BasicAlgorithm3: return new BasicAlgorithm3(driveInterface,sensorInterface,networkInterface);
-			case BasicAlgorithmPID: return new BasicAlgorithmPID(driveInterface,sensorInterface,networkInterface);
-			case BasicAlgorithmPID2: return new BasicAlgorithmPID2(driveInterface,sensorInterface,networkInterface);
+		case BasicAlgorithm:
+			return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case BasicAlgorithm2:
+			return new BasicAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case BasicAlgorithm3:
+			return new BasicAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case BasicAlgorithmPID:
+			return new BasicAlgorithmPID(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case BasicAlgorithmPID2:
+			return new BasicAlgorithmPID2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		}
 		return null;
+	}
+
+	/**
+	 *Builds and returns algorithm of type specified by AlgorithmEnum input
+	 *By default, uses ROUTE_ZERO, which makes the front vehicle do nothing
+	 */
+	public static Algorithm createAlgorithm(
+			AlgorithmEnum algorithmEnum,
+			DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons) {
+		return createAlgorithm(algorithmEnum,
+				driveInterface,
+				sensorInterface,
+				networkInterface,
+				beacons,
+				FrontVehicleRoute.RouteNumber.ROUTE_ZERO);
 	}
 
 	public static AlgorithmEnum[] getAlgorithmList() {
@@ -129,6 +179,8 @@ public abstract class Algorithm {
 
 		if(!algorithmData.commsInterface.isLeader()) {
 			makeDecision();
+		} else {
+			frontVehicleRoute.nextStep();
 		}
 
 		if (Thread.interrupted()) {

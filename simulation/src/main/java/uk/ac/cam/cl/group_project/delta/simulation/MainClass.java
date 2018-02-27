@@ -48,7 +48,8 @@ class MainClass {
 					AlgorithmEnum.BasicAlgorithm,
 					car.getDriveInterface(),
 					car.getSensorInterface(),
-					car.getNetworkInterface()
+					car.getNetworkInterface(),
+					car
 			));
 
 			car.setPosition(new Vector2D(

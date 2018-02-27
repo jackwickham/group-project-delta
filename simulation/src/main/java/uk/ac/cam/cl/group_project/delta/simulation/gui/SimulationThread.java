@@ -202,7 +202,7 @@ public class SimulationThread extends Thread {
 		private static StubAlgorithm instance = new StubAlgorithm();
 
 		private StubAlgorithm() {
-			super(null, null, null);
+			super(null, null, null, null);
 		}
 
 		public static StubAlgorithm getInstance() {

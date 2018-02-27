@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
@@ -24,8 +25,12 @@ public class BasicAlgorithmPID extends Algorithm{
 	//constant headway time in s
 	public final static double HEAD_TIME = 2;
 
-	public BasicAlgorithmPID(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		super(driveInterface, sensorInterface, networkInterface);
+	public BasicAlgorithmPID(DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
@@ -78,13 +83,13 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
 
-			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-					algorithmData.sensorFrontProximity);
+		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
+				algorithmData.sensorFrontProximity);
 
-			//update previous state variables so that they are correct in next time period
-			algorithmData.previousDistance = weightedFrontProximity;
-			algorithmData.previousSpeed = algorithmData.speed;
-			algorithmData.previousAcceleration = algorithmData.acceleration;
+		//update previous state variables so that they are correct in next time period
+		algorithmData.previousDistance = weightedFrontProximity;
+		algorithmData.previousSpeed = algorithmData.speed;
+		algorithmData.previousAcceleration = algorithmData.acceleration;
 
 		if(weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity

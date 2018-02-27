@@ -1,15 +1,14 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
-import uk.ac.cam.cl.group_project.delta.Log;
-import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.*;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
+
+import java.util.List;
 
 /**
  * Encapsulation of simulated car object and its associated interface modules.
  */
-public class SimulatedCar extends PhysicsCar {
+public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 
 	/**
 	 * Network interface for this car.
@@ -117,4 +116,28 @@ public class SimulatedCar extends PhysicsCar {
 	public void stop() {
 		//controller.emergencyStop();
 	}
+
+	/**
+	 * Returns the beacon id of the current vehicle
+	 *
+	 * @return the vehicle's beacon id
+	 */
+	@Override
+	public int getCurrentBeaconId() {
+		return getUuid();
+	}
+
+	/**
+	 * Returns a list of objects that represent the visible beacons
+	 * and their positions relative to this vehicle. Beacons are installed
+	 * in all platooning vehicles, but are not exclusive to these vehicles.
+	 * Position accuracy may degrade with distance and have significant noise.
+	 *
+	 * @return list containing Beacons visible
+	 */
+	@Override
+	public List<Beacon> getBeacons() {
+		return getSensorInterface().getBeacons();
+	}
+
 }
