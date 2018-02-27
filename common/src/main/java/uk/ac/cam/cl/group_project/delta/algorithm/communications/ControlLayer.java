@@ -182,8 +182,27 @@ public class ControlLayer {
 					messageLookup.put(idToPositionLookup.get(packet.vehicleId),
 							(VehicleData) packet.message);
 				} else {
-					if(!containsRTM) {
-						beginMergeProtocol(packet);
+					if(beaconInterface.getVisibleBeaconId() != null) {
+						BeaconIdQuestion question = new BeaconIdQuestion(platoonId,
+								beaconInterface.getVisibleBeaconId());
+						network.sendData(Packet.createPacket(question, vehicleId, packet.platoonId));
+					}
+				}
+			} else if(packet.message instanceof BeaconIdQuestion) {
+				BeaconIdQuestion question = (BeaconIdQuestion)(packet.message);
+				if(packet.platoonId == platoonId &&
+						question.getBeaconId() == beaconInterface.getCurrentBeaconId()) {
+					BeaconIdAnswer answer = new BeaconIdAnswer(
+							question.getReturnPlatoonId(), question.getBeaconId());
+					network.sendData(Packet.createPacket(answer, vehicleId, platoonId));
+				}
+			} else if(packet.message instanceof BeaconIdAnswer) {
+				if(packet.platoonId == platoonId && position == 0) {
+					BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
+					if(answer.getBeaconId() == beaconInterface.getVisibleBeaconId()) {
+						if(!containsRTM) {
+							beginMergeProtocol(packet);
+						}
 					}
 				}
 			} else if(packet.message instanceof RequestToMergeMessage) {
