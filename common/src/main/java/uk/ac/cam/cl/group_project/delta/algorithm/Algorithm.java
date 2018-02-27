@@ -34,11 +34,16 @@ public abstract class Algorithm {
 			NetworkInterface networkInterface,
 			BeaconInterface beacons) {
 		switch (algorithmEnum) {
-		case BasicAlgorithm: return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons);
-		case BasicAlgorithm2: return new BasicAlgorithm2(driveInterface,sensorInterface,networkInterface, beacons);
-		case BasicAlgorithm3: return new BasicAlgorithm3(driveInterface,sensorInterface,networkInterface, beacons);
-		case BasicAlgorithmPID: return new BasicAlgorithmPID(driveInterface,sensorInterface,networkInterface, beacons);
-		case BasicAlgorithmPID2: return new BasicAlgorithmPID2(driveInterface,sensorInterface,networkInterface, beacons);
+		case BasicAlgorithm:
+			return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons);
+		case BasicAlgorithm2:
+			return new BasicAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons);
+		case BasicAlgorithm3:
+			return new BasicAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons);
+		case BasicAlgorithmPID:
+			return new BasicAlgorithmPID(driveInterface, sensorInterface, networkInterface, beacons);
+		case BasicAlgorithmPID2:
+			return new BasicAlgorithmPID2(driveInterface, sensorInterface, networkInterface, beacons);
 		}
 		return null;
 	}
