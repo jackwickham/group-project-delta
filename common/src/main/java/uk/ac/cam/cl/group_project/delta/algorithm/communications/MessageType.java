@@ -10,11 +10,11 @@ public enum MessageType {
 	private int value;
 	private static Map<Integer, MessageType> lookup = new HashMap<>();
 
-	private MessageType(int value) {
+	MessageType(int value) {
 		this.value = value;
 	}
 
-	/**
+	/*
 	 * Create the mapping from integer values to MessageTypes. Slightly hacky but
 	 * not much choice
 	 */

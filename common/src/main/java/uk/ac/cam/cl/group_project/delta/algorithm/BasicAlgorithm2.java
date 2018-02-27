@@ -14,8 +14,6 @@ public class BasicAlgorithm2 extends Algorithm{
 
 	private double BUFF_DIST = 0.3;
 
-	public BasicAlgorithm2(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		super(driveInterface, sensorInterface, networkInterface);
 	public BasicAlgorithm2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
@@ -26,14 +24,14 @@ public class BasicAlgorithm2 extends Algorithm{
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
-		if(parameterEnum == parameterEnum.BufferDistance) {
+		if(parameterEnum == ParameterEnum.BufferDistance) {
 			BUFF_DIST = value;
 		}
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
-		if(parameterEnum == parameterEnum.BufferDistance) {
+		if(parameterEnum == ParameterEnum.BufferDistance) {
 			return BUFF_DIST;
 		}
 		return null;
