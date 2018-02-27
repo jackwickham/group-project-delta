@@ -13,7 +13,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
@@ -423,6 +424,10 @@ public class Controller {
 	@FXML
 	public void onViewPaneMouseDragged(MouseEvent event) {
 
+		// Unbind follow view
+		scene.translateXProperty().unbind();
+		scene.translateYProperty().unbind();
+
 		// Calculate relative drag
 		scene.setTranslateX(scene.getTranslateX() + event.getX() - cursorPosition.getX());
 		scene.setTranslateY(scene.getTranslateY() + event.getY() - cursorPosition.getY());
@@ -446,8 +451,10 @@ public class Controller {
 		scene.setScaleX(scene.getScaleX() * scaling);
 		scene.setScaleY(scene.getScaleY() * scaling);
 
-		scene.setTranslateX(event.getX() - mouseWorldX * scene.getScaleX() * UNITS_PER_METRE);
-		scene.setTranslateY(event.getY() - mouseWorldY * scene.getScaleY() * UNITS_PER_METRE);
+		if (!scene.translateXProperty().isBound()) {
+			scene.setTranslateX(event.getX() - mouseWorldX * scene.getScaleX() * UNITS_PER_METRE);
+			scene.setTranslateY(event.getY() - mouseWorldY * scene.getScaleY() * UNITS_PER_METRE);
+		}
 
 	}
 
@@ -457,42 +464,101 @@ public class Controller {
 	 * @param event    Context menu event.
 	 */
 	private void addObject(ActionEvent event) {
-
 		SimulatedCarFormDialog dialog = new SimulatedCarFormDialog(
 			fromViewPaneToWorldSpaceX(cursorPosition.getX()),
 			fromViewPaneToWorldSpaceY(cursorPosition.getY()),
-			(wheelBase, posX, posY, controller) -> {
-				SimulatedCar car = simulation.createCar(wheelBase);
-				AlgorithmEnum algo = controller.toAlgorithmEnum();
-				synchronized (car) {
-					car.getPosition().setX(posX);
-					car.getPosition().setY(posY);
-					if (algo != null) {
-						car.setController(
-							Algorithm.createAlgorithm(
-								algo,
-								car.getDriveInterface(),
-								car.getSensorInterface(),
-								car.getNetworkInterface()
-							)
-						);
-					}
-				}
-				SimulatedCarNode node = new SimulatedCarNode(car);
-				node.addEventFilter(
-					MouseEvent.MOUSE_CLICKED,
-					e -> {
-						showProperties(node);
-						currentSelection = node;
-						e.consume();
-					}
-				);
-				scene.getChildren().add(node);
-				simulatedNodes.add(node);
-			}
+			this::onDialogConfirmed
 		);
 		dialog.show();
+	}
 
+	/**
+	 * Handle the user's confirmed input to the dialog form.
+	 * @param wheelBase
+	 * @param posX
+	 * @param posY
+	 * @param controller
+	 */
+	private void onDialogConfirmed(double wheelBase, double posX, double posY, SimulatedCarFormDialog.ControllerChoiceEnum controller) {
+
+		SimulatedCar car = simulation.createCar(wheelBase);
+		AlgorithmEnum algo = controller.toAlgorithmEnum();
+
+		synchronized (car) {
+			car.getPosition().setX(posX);
+			car.getPosition().setY(posY);
+			if (algo != null) {
+				car.setController(
+					Algorithm.createAlgorithm(
+						algo,
+						car.getDriveInterface(),
+						car.getSensorInterface(),
+						car.getNetworkInterface()
+					)
+				);
+			}
+		}
+
+		SimulatedCarNode node = new SimulatedCarNode(car);
+		node.addEventFilter(
+			MouseEvent.MOUSE_CLICKED,
+			e -> onCarClicked(e, node)
+		);
+
+		scene.getChildren().add(node);
+		simulatedNodes.add(node);
+
+	}
+
+	/**
+	 * If a car is left-clicked show its properties and control it (if we're not
+	 * following another car), and if it's right-clicked then show the context
+	 * menu.
+	 * @param e
+	 * @param node
+	 */
+	public void onCarClicked(MouseEvent e, SimulatedCarNode node) {
+
+		switch (e.getButton()) {
+
+			case PRIMARY:
+
+				// Display this car's properties in the sidebar
+				showProperties(node);
+
+				// If we're not following a car, control this one
+				if (!scene.translateXProperty().isBound()) {
+					currentSelection = node;
+				}
+
+				break;
+
+			case SECONDARY:
+
+				// Create a new context menu
+				MenuItem item = new MenuItem("Follow");
+				item.setOnAction(e2 -> {
+					currentSelection = node;
+					// (x, y) = (viewDimension / 2 - pos) * scale
+					scene.translateXProperty().bind(
+						viewPane.widthProperty()
+							.divide(2)
+							.subtract(node.translateXProperty())
+							.multiply(scene.scaleXProperty())
+					);
+					scene.translateYProperty().bind(
+						viewPane.heightProperty()
+							.divide(2)
+							.subtract(node.translateYProperty())
+							.multiply(scene.scaleYProperty())
+					);
+				});
+				(new ContextMenu(item)).show(node, e.getScreenX(), e.getScreenY());
+
+				break;
+
+		}
+		e.consume();
 	}
 
 	/**
