@@ -19,8 +19,8 @@ import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
-import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.*;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageType;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.Packet;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
@@ -209,12 +209,29 @@ public class Controller {
 	 * @param message   Message to add.
 	 */
 	private void addToNetworkLog(MessageReceipt message) {
-		NetworkLogMessage msg = new NetworkLogMessage(message.getTime(), new Packet(message));
-		networkLogStore.add(0, msg);
-		if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
-			// Range is start-inclusive, end-exclusive
-			networkLogStore.remove(NETWORK_LOG_CAPACITY, networkLogStore.size());
+
+		Packet packet = new Packet(message);
+		NetworkLogMessage msg = new NetworkLogMessage(message.getTime(), packet);
+
+		MessageType type = packet.message.getType();
+		boolean isMergeMessage =
+			type == MessageType.RequestToMerge
+			|| type == MessageType.AcceptToMerge
+			|| type == MessageType.ConfirmMerge
+			|| type == MessageType.MergeComplete;
+
+		if (
+			(type == MessageType.Emergency && filterEmergency.isSelected())
+			|| (type == MessageType.Data && filterData.isSelected())
+			|| (isMergeMessage && filterMerges.isSelected())
+		) {
+			networkLogStore.add(0, msg);
+			if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
+				// Range is start-inclusive, end-exclusive
+				networkLogStore.remove(NETWORK_LOG_CAPACITY, networkLogStore.size());
+			}
 		}
+
 	}
 
 	/**
