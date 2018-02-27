@@ -494,7 +494,19 @@ public class Controller {
 	 * current time dilation slider. Each increment of the slider equates to
 	 * a second of stepping.
 	 */
-	public void step() {
-		simulation.update((long)(1e9 * timeDilation.getValue()));
+	public void onStep() {
+		simulation.smoothUpdate((long)(1e9 * timeDilationSlider.getValue()));
+	}
+
+	/**
+	 * Toggle the simulation paused state.
+	 */
+	public void onPause() {
+		if (simulation.getTimeDilationFactor() > 0) {
+			simulation.setTimeDilationFactor(0);
+		}
+		else {
+			simulation.setTimeDilationFactor(timeDilationSlider.getValue());
+		}
 	}
 }

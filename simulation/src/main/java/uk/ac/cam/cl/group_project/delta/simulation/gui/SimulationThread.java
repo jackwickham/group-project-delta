@@ -46,8 +46,16 @@ public class SimulationThread extends Thread {
 	 * timeline and 1 is normal speed.
 	 */
 	private double timeDilationFactor;
-	private long time;
+
+	/**
+	 * Cumulative simulation time since start.
+	 */
 	private long cumulative;
+
+	/**
+	 * Last time algorithm instances were updated, with respect to the
+	 * cumulative time.
+	 */
 	private long lastAlgorithmUpdate;
 
 	/**
@@ -68,30 +76,30 @@ public class SimulationThread extends Thread {
 	@Override
 	public void run() {
 
-		time = System.nanoTime();
+		long time = System.nanoTime();
 		cumulative = 0;
-
-		// w.r.t. cumulative
 		lastAlgorithmUpdate = 0;
 
 		synchronized (this) {
 			running = true;
 		}
 
-		// For thread safety
-		boolean localRunning = true;
-
-		while (localRunning) {
-			synchronized (this) {
-				localRunning = running;
-			}
-
+		while (true) {
 			long tmp = System.nanoTime();
 			long dt = tmp - time;
-			if (dt > UPDATE_INTERVAL && getTimeDilationFactor() > 0) {
-				update((long)(dt * getTimeDilationFactor()));
+			if (dt > UPDATE_INTERVAL) {
+
+				if (getTimeDilationFactor() > 0) {
+					update((long) (dt * getTimeDilationFactor()));
+				}
+				time = tmp;
+
+				synchronized (this) {
+					if (!running) {
+						break;
+					}
+				}
 			}
-			time = tmp;
 
 		}
 
@@ -126,12 +134,28 @@ public class SimulationThread extends Thread {
 					((SimulatedCar) body).updateControl(cumulative);
 				}
 			}
-			if ((cumulative - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
+			if ((cumulative - lastAlgorithmUpdate) / CONTROLLER_INTERVAL > 1) {
 				Log.warn("Simulation thread cannot keep algorithms up-to-date");
 			}
-			lastAlgorithmUpdate += CONTROLLER_INTERVAL;
+			lastAlgorithmUpdate = (cumulative / CONTROLLER_INTERVAL) * CONTROLLER_INTERVAL;
 		}
 
+	}
+
+	/**
+	 * Update the simulation state in increments of UPDATE_INTERVAL, except the
+	 * last update which may be a different size if `dt` is not a multiple of
+	 * UPDATE_INTERVAL.
+	 * @param dt    Simulation delta-t in ns, should have already been warped.
+	 */
+	public void smoothUpdate(long dt) {
+		// TODO: aim for step size uniformity
+		for (int i = 0; i <= dt; i += UPDATE_INTERVAL) {
+			update(UPDATE_INTERVAL);
+		}
+		if (dt % UPDATE_INTERVAL != 0) {
+			update(dt % UPDATE_INTERVAL);
+		}
 	}
 
 	/**
@@ -176,7 +200,7 @@ public class SimulationThread extends Thread {
 	 * Get the current time dilation.
 	 * @return    Time distortion scale factor.
 	 */
-	public double getTimeDilationFactor() {
+	public synchronized double getTimeDilationFactor() {
 		return timeDilationFactor;
 	}
 
