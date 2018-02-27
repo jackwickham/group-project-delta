@@ -6,18 +6,33 @@ import java.util.List;
 public class FrontVehicleRoute {
 
 	/**
-	 * currentStep - number of times nextStep() has been called
-	 * nextActionStep - next value of currentStep at which an action takes place
-	 * stepsRemaining - are there any actions left to do
-	 * moves - list of moves to do
-	 * algorithmData - the algorithmData object for this vehicle
-	 * LOOP_LENGTH - number of milliseconds per algorithm loop
+	 * The number of times nextStep() has been called
 	 */
 	private int currentStep = 0;
+
+	/**
+	 * The next value of currentStep at which an action takes place
+	 */
 	private int nextActionStep;
+
+	/**
+	 * True if there are any actions left to do
+	 */
 	private boolean stepsRemaining = true;
+
+	/**
+	 * List of remaining moves to do
+	 */
 	private List<Move> moves;
+
+	/**
+	 * The algorithmData object for this vehicle
+	 */
 	private AlgorithmData algorithmData;
+
+	/**
+	 * The number of milliseconds per algorithm loop
+	 */
 	private final int LOOP_LENGTH;
 
 	/**
