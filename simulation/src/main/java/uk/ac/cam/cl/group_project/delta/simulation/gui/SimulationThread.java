@@ -2,6 +2,7 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
+import uk.ac.cam.cl.group_project.delta.algorithm.ParameterEnum;
 import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork;
@@ -210,6 +211,19 @@ public class SimulationThread extends Thread {
 		}
 
 		@Override
+		public void setParameter(ParameterEnum parameterEnum, double value) {}
+
+		@Override
+		public Double getParameter(ParameterEnum parameterEnum) {
+			return null;
+		}
+
+		@Override
+		public ParameterEnum[] getParameterList() {
+			return new ParameterEnum[0];
+		}
+
+		@Override
 		public void initialise() {}
 
 		@Override
@@ -220,7 +234,6 @@ public class SimulationThread extends Thread {
 
 		@Override
 		protected void makeDecision() {}
-
 	}
 
 }

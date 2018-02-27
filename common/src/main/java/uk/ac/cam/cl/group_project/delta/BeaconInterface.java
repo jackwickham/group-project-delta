@@ -9,7 +9,7 @@ public interface BeaconInterface {
 	 *
 	 * @return the vehicle's beacon id
 	 */
-	public abstract int getCurrentBeaconId();
+	int getCurrentBeaconId();
 
 	/**
 	 * Returns a list of objects that represent the visible beacons
@@ -19,6 +19,6 @@ public interface BeaconInterface {
 	 *
 	 * @return list containing Beacons visible
 	 */
-	public abstract List<Beacon> getBeacons();
+	List<Beacon> getBeacons();
 
 }

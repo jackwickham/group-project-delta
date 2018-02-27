@@ -22,24 +22,38 @@ public class AlgorithmTest {
 
 	private Double frontProximity;
 	private List<VehicleData> predecessorMessages;
+	private List<Beacon> beacons;
 
-	public AlgorithmTest(Double frontProximity, Boolean Message, double speed, double acceleration, double turnRate, double chosenSpeed, double chosenAcceleration, double chosenTurnRate) {
-		this.frontProximity = frontProximity;
-		if(Message) {
-			this.predecessorMessages = Arrays.asList(new VehicleData[]{new VehicleData(speed, acceleration, turnRate, chosenSpeed,
-					chosenAcceleration, chosenTurnRate)});
+	public AlgorithmTest(Double frontProximity, Double beaconDist, Double[] message) {
+	if(message != null) {
+			this.predecessorMessages = Arrays.asList(new VehicleData[]{new VehicleData(message[0], message[1], message[2], message[3],
+					message[4], message[5])});
 		} else {
 			this.predecessorMessages = new ArrayList<>();
 		}
+		if(beaconDist != null) {
+			this.beacons = Arrays.asList(new Beacon[]{new Beacon(0,beaconDist,beaconDist,0.0)});
+		} else {
+			this.beacons = new ArrayList<>();
+		}
+		this.frontProximity = frontProximity;
 	}
 
-	@Parameterized.Parameters(name = "{index}: Proximity: {0}, Predecessor Message: {1}: " +
-			"Speed: {2}, Acceleration:{3}, turnRate: {4}, ChosenSpeed: {5}, ChosenAcceleration: {6}, ChosenTurnRate: {7}")
+	@Parameterized.Parameters(name = "{index}: Proximity: {0}, Beacons:{1}, Message:{2}")
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] {
-			{null, false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, {20.0, false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-			{null, true, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, true, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, {20.0, true, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-			{null, true, 20.0, 2.0, 0.0, 20.0, 2.0, 0.0}, {0.0, true, 20.0, 2.0, 0.0, 20.0, 2.0, 0.0}, {20.0, true, 20.0, 2.0, 0.0, 20.0, 2.0, 0.0}});
+		Double[] proximities = new Double[] {null, 0.0, 20.0};
+		Double[] beacons = new Double[] {null, 0.0, 20.0};
+		Double[][] messages = {null, {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, {5.0, 2.0, 0.0, 5.0, 2.0, 0.0}};
+
+		ArrayList<Object[]> result = new ArrayList<>();
+		for(Double p : proximities) {
+			for(Double b : beacons) {
+				for(Double[] m : messages) {
+					result.add(new Object[]{p, b, m});
+				}
+			}
+		}
+		return result;
 	}
 
 	@Test
@@ -51,7 +65,7 @@ public class AlgorithmTest {
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getBeacons()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
 		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
@@ -74,7 +88,7 @@ public class AlgorithmTest {
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getBeacons()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
 		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm2, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
@@ -97,7 +111,7 @@ public class AlgorithmTest {
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getBeacons()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
 		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm3, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
@@ -121,7 +135,7 @@ public class AlgorithmTest {
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getBeacons()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
 		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
@@ -145,7 +159,7 @@ public class AlgorithmTest {
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
 		BeaconInterface beaconInterface = mock(BeaconInterface.class);
 		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
-		when(beaconInterface.getBeacons()).thenReturn(null);
+		when(beaconInterface.getBeacons()).thenReturn(beacons);
 
 		Algorithm algorithm = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithmPID2, driveInterface, sensorInterface, networkInterface, beaconInterface);
 
