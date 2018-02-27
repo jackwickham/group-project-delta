@@ -101,7 +101,6 @@ public class Merge {
 	 *
 	 * @param mainPlatoon - the platoon id of the main platoon
 	 * @param currentPlatoon - the platoon id of the current platoon
-	 * @param payload - the payload of a RequestToMerge packet
 	 */
 	public Merge(int mainPlatoon, int currentPlatoon, Message m) {
 		this.mainPlatoonId = mainPlatoon;

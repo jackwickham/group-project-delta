@@ -80,8 +80,6 @@ public class ControlLayer {
 	 *
 	 * @param network
 	 *            - the network interface to be used
-	 * @param map
-	 *            - the position to message map to be used
 	 */
 	public ControlLayer(NetworkInterface network, BeaconInterface beacons) {
 		messageLookup = new PlatoonLookup();
@@ -101,8 +99,6 @@ public class ControlLayer {
 	 *
 	 * @param network
 	 *            - the network interface to be used
-	 * @param map
-	 *            - the position to message map to be used
 	 * @param vehicleId
 	 *            - this vehicles initial id
 	 * @param platoonId

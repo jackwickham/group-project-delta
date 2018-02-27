@@ -10,20 +10,19 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  * Additionally, uses a PID to calculate the chosen acceleration
  */
 public class BasicAlgorithmPID extends Algorithm{
-
 	//ID parameters
-	public final static double PID_P = 0.5;
-	public final static double PID_I = 0;
-	public final static double PID_D = 1.8;
+	private double PID_P = 0.5;
+	private double PID_I = 0;
+	private double PID_D = 1.8;
 
 	//maximum and minimum acceleration in m/s
-	public final static double MAX_ACC = 2;
-	public final static double MIN_ACC = -2;
+	private double MAX_ACC = 2;
+	private double MIN_ACC = -2;
 
 	//constant buffer distance in m
-	public final static double BUFF_DIST = 2;
+	private double BUFF_DIST = 0.3;
 	//constant headway time in s
-	public final static double HEAD_TIME = 2;
+	private double HEAD_TIME = 0.2;
 
 	public BasicAlgorithmPID(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -31,6 +30,60 @@ public class BasicAlgorithmPID extends Algorithm{
 			BeaconInterface beacons,
 			FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+	}
+
+	@Override
+	public void setParameter(ParameterEnum parameterEnum, double value) {
+		switch (parameterEnum) {
+			case PID_P:
+				PID_P = value;
+				break;
+			case PID_I:
+				PID_I = value;
+				break;
+			case PID_D:
+				PID_D = value;
+				break;
+			case MaxAcc:
+				MAX_ACC = value;
+				break;
+			case MinAcc:
+				MIN_ACC = value;
+				break;
+			case BufferDistance:
+				BUFF_DIST = value;
+				break;
+			case HeadTime:
+				HEAD_TIME = value;
+				break;
+		}
+	}
+
+	@Override
+	public Double getParameter(ParameterEnum parameterEnum) {
+		switch (parameterEnum) {
+			case PID_P:
+				return PID_P;
+			case PID_I:
+				return PID_I;
+			case PID_D:
+				return PID_D;
+			case MaxAcc:
+				return MAX_ACC;
+			case MinAcc:
+				return MIN_ACC;
+			case BufferDistance:
+				return BUFF_DIST;
+			case HeadTime:
+				return HEAD_TIME;
+		}
+		return null;
+	}
+
+	@Override
+	public ParameterEnum[] getParameterList() {
+		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
+				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime};
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
