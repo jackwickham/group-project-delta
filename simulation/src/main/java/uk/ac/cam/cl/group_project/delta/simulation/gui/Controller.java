@@ -304,41 +304,50 @@ public class Controller {
 	 * @param keyEvent    Structure containing event information (e.g. key code)
 	 */
 	public void onKeyPressed(KeyEvent keyEvent) {
-		if (currentSelection != null) {
-			SimulatedCar car = currentSelection.getCar();
-			switch (keyEvent.getCode()) {
-				case W:
+		switch (keyEvent.getCode()) {
+			case W:
+				if (currentSelection != null) {
+					SimulatedCar car = currentSelection.getCar();
 					synchronized (car) {
 						car.setEnginePower(0.5);
 					}
-					break;
-				case S:
+				}
+				break;
+			case S:
+				if (currentSelection != null) {
+					SimulatedCar car = currentSelection.getCar();
 					synchronized (car) {
 						car.setEnginePower(-1000.0);
 					}
-					break;
-				case A:
+				}
+				break;
+			case A:
+				if (currentSelection != null) {
+					SimulatedCar car = currentSelection.getCar();
 					synchronized (car) {
 						car.setWheelAngle(-Math.PI / 8);
 					}
-					break;
-				case D:
+				}
+				break;
+			case D:
+				if (currentSelection != null) {
+					SimulatedCar car = currentSelection.getCar();
 					synchronized (car) {
 						car.setWheelAngle(Math.PI / 8);
 					}
-					break;
-				case P:
-					if (simulation.getTimeDilationFactor() > 0) {
-						simulation.setTimeDilationFactor(0);
-						pause.setSelected(true);
-					}
-					else {
-						simulation.setTimeDilationFactor(1);
-						viewPane.setOpacity(1.0);
-						pause.setSelected(false);
-					}
-					break;
-			}
+				}
+				break;
+			case P:
+				pauseButton.fire();
+				break;
+			case SEMICOLON:
+				stepButton.fire();
+				break;
+			case BRACELEFT:
+				timeDilation.adjustValue(-0.2);
+				break;
+			case BRACERIGHT:
+				timeDilation.adjustValue(+0.2);
 		}
 	}
 
