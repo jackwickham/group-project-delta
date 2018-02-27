@@ -32,8 +32,6 @@ The filters are:
 
 New messages will be added to the top of the list.
 
-Messages are of the format `[@<Time> <Vehicle ID>] <Message>`.
-
 ### Main View
 
 The main view shows the current simulation state. It can be navigated using
@@ -86,3 +84,13 @@ The currently selected vehicle can be controlled using the W, A, S and D keys:
 >	**Note**: only the leader of a platoon is likely to be controllable, because
 >	the followers will make driving decisions based on their internal state
 >	which will override user input.
+
+#### Following vehicles
+
+To follow a vehicle, right-click on it a select the "Follow" option from the
+context menu. The view will keep this vehicle centered.
+
+All user input will be directed to the followed vehicle regardless of the
+currently selected vehicle.
+
+Drag the view to release the control lock and view tracking.
