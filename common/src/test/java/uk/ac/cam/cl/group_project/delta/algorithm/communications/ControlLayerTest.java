@@ -74,9 +74,16 @@ public class ControlLayerTest {
 
 	}
 
-	@Test
+	/**
+	 * The test no longer makes as much sense.
+	 * Originally the RTM message was the first message sent
+	 * in a merge but now it's a BeaconIdQuestion.
+	 * I have left it here because some of the mocking it does
+	 * is useful code to copy to other tests.
+	 */
+	/*@Test
 	public void sendRequestToMergeMessageTest() {
-		/*NetworkInterface network = mock(NetworkInterface.class);
+		NetworkInterface network = mock(NetworkInterface.class);
 		List<Integer> initialPlatoon = Arrays.asList(100, 200);
 
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
@@ -102,8 +109,8 @@ public class ControlLayerTest {
 
 		RequestToMergeMessage rtm = (RequestToMergeMessage) p.message;
 		assertEquals(rtm.getMergingPlatoonId(), 123);
-		assertEquals(rtm.getNewPlatoon(), initialPlatoon);*/
-	}
+		assertEquals(rtm.getNewPlatoon(), initialPlatoon);
+	}*/
 
 	@Test
 	public void sortMapByValuesTest() {
