@@ -125,7 +125,7 @@ public class Controller {
 	 * Time dilation slider.
 	 */
 	@FXML
-	public Slider timeDilation;
+	public Slider timeDilationSlider;
 
 	/**
 	 * The JavaFX GUI updater - an "animation".
@@ -204,9 +204,12 @@ public class Controller {
 		timeline.play();
 
 		pausedPane.visibleProperty().bind(pauseButton.selectedProperty());
-		timeDilation.valueProperty().addListener(
-			(observableValue, oldValue, newValue) ->
-				simulation.setTimeDilationFactor(newValue.doubleValue())
+		timeDilationSlider.valueProperty().addListener(
+			(observableValue, oldValue, newValue) -> {
+				if (!pauseButton.isSelected()) {
+					simulation.setTimeDilationFactor(newValue.doubleValue());
+				}
+			}
 		);
 
 	}
@@ -344,10 +347,11 @@ public class Controller {
 				stepButton.fire();
 				break;
 			case BRACELEFT:
-				timeDilation.adjustValue(-0.2);
+				timeDilationSlider.adjustValue(-0.2);
 				break;
 			case BRACERIGHT:
-				timeDilation.adjustValue(+0.2);
+				timeDilationSlider.adjustValue(+0.2);
+				break;
 		}
 	}
 
