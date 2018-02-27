@@ -17,8 +17,9 @@ public class BasicAlgorithm3 extends Algorithm{
 	public BasicAlgorithm3(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
-			BeaconInterface beacons) {
-		super(driveInterface, sensorInterface, networkInterface, beacons);
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,

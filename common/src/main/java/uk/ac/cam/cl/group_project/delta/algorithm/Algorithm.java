@@ -18,12 +18,13 @@ public abstract class Algorithm {
 	protected Algorithm(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
-			BeaconInterface beacons) {
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
 		algorithmData.controlLayer = new ControlLayer(networkInterface, beacons);
 		algorithmData.commsInterface = new Communications(algorithmData.controlLayer);
 		algorithmData.driveInterface = driveInterface;
 		algorithmData.sensorInterface = sensorInterface;
-		frontVehicleRoute = new FrontVehicleRoute(algorithmData, ALGORITHM_LOOP_DURATION);
+		frontVehicleRoute = new FrontVehicleRoute(algorithmData, ALGORITHM_LOOP_DURATION, routeNumber);
 	}
 
 	/**
@@ -34,18 +35,19 @@ public abstract class Algorithm {
 			DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
-			BeaconInterface beacons) {
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
 		switch (algorithmEnum) {
 		case BasicAlgorithm:
-			return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons);
+			return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		case BasicAlgorithm2:
-			return new BasicAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons);
+			return new BasicAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		case BasicAlgorithm3:
-			return new BasicAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons);
+			return new BasicAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		case BasicAlgorithmPID:
-			return new BasicAlgorithmPID(driveInterface, sensorInterface, networkInterface, beacons);
+			return new BasicAlgorithmPID(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		case BasicAlgorithmPID2:
-			return new BasicAlgorithmPID2(driveInterface, sensorInterface, networkInterface, beacons);
+			return new BasicAlgorithmPID2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		}
 		return null;
 	}

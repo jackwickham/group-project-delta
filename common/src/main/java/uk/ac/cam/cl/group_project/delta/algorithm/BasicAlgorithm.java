@@ -14,8 +14,9 @@ public class BasicAlgorithm extends Algorithm {
 	public BasicAlgorithm(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
-			BeaconInterface beacons) {
-		super(driveInterface, sensorInterface, networkInterface, beacons);
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	@Override

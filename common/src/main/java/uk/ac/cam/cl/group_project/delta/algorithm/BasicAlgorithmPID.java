@@ -25,8 +25,12 @@ public class BasicAlgorithmPID extends Algorithm{
 	//constant headway time in s
 	public final static double HEAD_TIME = 2;
 
-	public BasicAlgorithmPID(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface, BeaconInterface beacons) {
-		super(driveInterface, sensorInterface, networkInterface, beacons);
+	public BasicAlgorithmPID(DriveInterface driveInterface,
+							 SensorInterface sensorInterface,
+							 NetworkInterface networkInterface,
+							 BeaconInterface beacons,
+							 FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,

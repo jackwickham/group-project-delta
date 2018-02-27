@@ -40,10 +40,24 @@ public class FrontVehicleRoute {
 	 */
 	enum moveType {ACCELERATION, TURN_RATE}
 
-	public FrontVehicleRoute(AlgorithmData algorithmData, int loopLength) {
+	/**
+	 * Possible different routes for the front vehicle to follow
+	 */
+	public enum RouteNumber {ROUTE_ZERO, ROUTE_ONE, ROUTE_TWO}
+
+	public FrontVehicleRoute(AlgorithmData algorithmData, int loopLength, RouteNumber routeNumber) {
 		this.algorithmData = algorithmData;
 		this.LOOP_LENGTH = loopLength;
-		this.moves = routeTwo();
+		switch (routeNumber) {
+			case ROUTE_ZERO:
+				this.moves = routeZero();
+			case ROUTE_ONE:
+				this.moves = routeOne();
+				break;
+			case ROUTE_TWO:
+				this.moves = routeTwo();
+				break;
+		}
 		if (moves.size() > 0) {
 			nextActionStep = moves.get(0).seconds * LOOP_LENGTH;
 		} else {
