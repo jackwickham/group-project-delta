@@ -32,7 +32,6 @@ class MainClass {
 					beacon,
 					FrontVehicleRoute.RouteNumber.ROUTE_TWO
 			);
-			algo.initialise();
 			algo.run();
 		} finally {
 			if (network != null) {
