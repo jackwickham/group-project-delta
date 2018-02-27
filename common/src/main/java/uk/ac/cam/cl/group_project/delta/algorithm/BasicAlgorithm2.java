@@ -23,24 +23,24 @@ public class BasicAlgorithm2 extends Algorithm{
 		} else {
 			algorithmData.chosenAcceleration = algorithmData.acceleration;
 		}
-		if(algorithmData.sensorFrontProximity != null) {
-			if (algorithmData.sensorFrontProximity < 5) {
+		if(algorithmData.frontProximity != null) {
+			if (algorithmData.frontProximity < 5) {
 				if (algorithmData.chosenAcceleration >= 0) {
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.sensorFrontProximity
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.frontProximity
 							/ 5.0;
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (algorithmData.sensorFrontProximity / 5.0);
+							/ (algorithmData.frontProximity / 5.0);
 				}
 			} else {
 				if (algorithmData.chosenAcceleration >= 0) {
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							* (0.75 + algorithmData.sensorFrontProximity / 20.0);
+							* (0.75 + algorithmData.frontProximity / 20.0);
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (0.75 + algorithmData.sensorFrontProximity / 20.0);
+							/ (0.75 + algorithmData.frontProximity / 20.0);
 				}
 			}
 		}

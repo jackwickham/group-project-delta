@@ -79,7 +79,7 @@ public class BasicAlgorithmPID extends Algorithm{
 		}
 
 			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-					algorithmData.sensorFrontProximity);
+					algorithmData.frontProximity);
 
 			//update previous state variables so that they are correct in next time period
 			algorithmData.previousDistance = weightedFrontProximity;

@@ -1,9 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
-import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import uk.ac.cam.cl.group_project.delta.Log;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.*;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
@@ -11,7 +8,7 @@ public abstract class Algorithm {
 
 	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
 
-	protected AlgorithmData algorithmData = new AlgorithmData();
+	public AlgorithmData algorithmData = new AlgorithmData();
 
 	protected Algorithm(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
 		algorithmData.controlLayer = new ControlLayer(networkInterface);
@@ -67,9 +64,28 @@ public abstract class Algorithm {
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
+		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
+		double min = Double.POSITIVE_INFINITY;
+		for (Beacon beacon : algorithmData.beacons) {
+			if (beacon.getDistanceLowerBound() < min) {
+				min = beacon.getDistanceLowerBound();
+				algorithmData.closestBeacon = beacon;
+			}
+		}
+
 		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
 
+		//combines beacon distance lower bound and sensor front proximity
+		if (algorithmData.closestBeacon != null && algorithmData.sensorFrontProximity != null) {
+			algorithmData.frontProximity = 0.5 * algorithmData.closestBeacon.getDistanceLowerBound() + 0.5 * algorithmData.sensorFrontProximity;
+		} else if (algorithmData.closestBeacon != null) {
+			algorithmData.frontProximity = algorithmData.closestBeacon.getDistanceLowerBound();
+		} else if (algorithmData.sensorFrontProximity != null) {
+			algorithmData.frontProximity = algorithmData.sensorFrontProximity;
+		} else {
+			algorithmData.frontProximity = null;
+		}
 		// get initial distance reading from sensor, distance null if no distance reading
 		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;

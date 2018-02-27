@@ -38,18 +38,18 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	@Override
 	public void makeDecision() {
 		double pTerm;
-		if(algorithmData.sensorFrontProximity != null) {
+		if(algorithmData.frontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
-			if (algorithmData.sensorFrontProximity < EMER_DIST) {
+			if (algorithmData.frontProximity < EMER_DIST) {
 				emergencyStop();
 			}
 			if(algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
-				pTerm = PID_P * (algorithmData.sensorFrontProximity +
+				pTerm = PID_P * (algorithmData.frontProximity +
 						HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed) - BUFF_DIST);
 			} else {
 				//if no message received just use sensor data
-				pTerm = PID_P * algorithmData.sensorFrontProximity - BUFF_DIST;
+				pTerm = PID_P * (algorithmData.frontProximity - BUFF_DIST);
 			}
 		} else {
 			//without front proximity reading p Term is not used

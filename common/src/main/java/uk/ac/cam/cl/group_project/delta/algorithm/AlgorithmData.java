@@ -1,57 +1,66 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
+import java.util.List;
+
 //class for storing and passing data used by algorithm
 public class AlgorithmData {
 
-	ControlLayer controlLayer;
-	CommsInterface commsInterface;
-	SensorInterface sensorInterface;
-	DriveInterface driveInterface;
+	public ControlLayer controlLayer;
+	public CommsInterface commsInterface;
+	public SensorInterface sensorInterface;
+	public DriveInterface driveInterface;
 
-	VehicleData receiveMessageData;
+	public VehicleData receiveMessageData;
 
 	// True when an emergency has occurred
-	boolean emergencyOccurred = false;
+	public boolean emergencyOccurred = false;
 
 	//current vehicle state
-	double acceleration;
-	double speed;
-	double turnRate;
+	public double acceleration;
+	public double speed;
+	public double turnRate;
 
 	//null if no reading
-	Double sensorFrontProximity;
+	public Double sensorFrontProximity;
 
-	double chosenSpeed;
-	double chosenAcceleration;
-	double chosenTurnRate;
+	public List<Beacon> beacons;
+	public Beacon closestBeacon;
+
+	//frontProximity derived from beacons and sensor front proximity
+	public Double frontProximity;
+
+	public double chosenSpeed;
+	public double chosenAcceleration;
+	public double chosenTurnRate;
 
 
 	//predecessor vehicle state
-	double predecessorAcceleration;
-	double predecessorSpeed;
-	double predecessorTurnRate;
-	double predecessorChosenAcceleration;
-	double predecessorChosenSpeed;
-	double predecessorChosenTurnRate;
+	public double predecessorAcceleration;
+	public double predecessorSpeed;
+	public double predecessorTurnRate;
+	public double predecessorChosenAcceleration;
+	public double predecessorChosenSpeed;
+	public double predecessorChosenTurnRate;
 
-	double predictedPredecessorMovement;
-	double predictedMovement;
-	Double predictedFrontProximity;
+	public double predictedPredecessorMovement;
+	public double predictedMovement;
+	public Double predictedFrontProximity;
 
 	//null if no previous distance reading
-	Double previousDistance;
-	double previousSpeed;
-	double previousAcceleration;
+	public Double previousDistance;
+	public double previousSpeed;
+	public double previousAcceleration;
 
-	MiniPID miniPID;
+	public MiniPID miniPID;
 
 	//only used if update method calls getTime
-	long time;
+	public long time;
 
 	//flag which is true if update method in Algorithm is being used
-	boolean notUsingRealTime;
+	public boolean notUsingRealTime;
 }
