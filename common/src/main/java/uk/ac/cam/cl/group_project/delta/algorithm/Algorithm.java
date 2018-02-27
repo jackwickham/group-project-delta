@@ -130,7 +130,8 @@ public abstract class Algorithm {
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
 		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
-		double min = Double.POSITIVE_INFINITY;
+		//find closest beacon within maximum sensor distance
+		double min = MAX_SENSOR_DIST;
 		for (Beacon beacon : algorithmData.beacons) {
 			if (beacon.getDistanceLowerBound() < min) {
 				min = beacon.getDistanceLowerBound();
