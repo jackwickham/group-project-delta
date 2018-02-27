@@ -30,12 +30,28 @@ public class SimulatedNetwork {
 	private Random random;
 
 	/**
+	 * The current network time, to put in message receipts if we are faking
+	 * time. null if we are using real time.
+	 */
+	private Long currentTime;
+
+	/**
 	 * Construct network.
 	 */
 	public SimulatedNetwork() {
+		this(false);
+	}
+
+	public SimulatedNetwork(boolean useFakeTime) {
 		handlers = new ArrayList<>();
 		sniffers = new ArrayList<>();
 		random = new Random();
+
+		if (useFakeTime) {
+			currentTime = 0L;
+		} else {
+			currentTime = null;
+		}
 	}
 
 	/**
@@ -136,6 +152,30 @@ public class SimulatedNetwork {
 		// Generate a random value between 0 and 1
 		double randomValue = random.nextDouble();
 		return randomValue > valueFromDistribution;
+	}
+
+	/**
+	 * Increase time by `dt` nanoseconds
+	 * @param dt How much time we are claiming has elapsed
+	 */
+	public void incrementTime(long dt) {
+		if (currentTime == null) {
+			throw new IllegalStateException("Can't increment time when real " +
+				"time is being used (pass true into the constructor for fake time)");
+		}
+		currentTime += dt;
+	}
+
+	/**
+	 * Get the current time, suitable for putting in a message receipt
+	 * @return The current faked time if faking is being used, or real time otherwise
+	 */
+	public long getTime() {
+		if (currentTime == null) {
+			return System.nanoTime();
+		} else {
+			return currentTime;
+		}
 	}
 
 	/**
