@@ -68,7 +68,7 @@ public class SimulatedCarFormDialog extends FormDialog {
 		grid.add(new Text("Position"), 0, 1);
 		grid.add(new Text("Algorithm"), 0, 2);
 
-		Spinner<Double> wheelBaseSpinner = new EditableSpinner<>(0.0, 10.0, 2.5, 0.5);
+		Spinner<Double> wheelBaseSpinner = new EditableSpinner<>(0.0, 10.0, 0.15, 0.5);
 		wheelBaseSpinner.setEditable(true);
 		this.wheelBaseInput = wheelBaseSpinner.valueProperty();
 		grid.add(wheelBaseSpinner, 1, 0, 2, 1);

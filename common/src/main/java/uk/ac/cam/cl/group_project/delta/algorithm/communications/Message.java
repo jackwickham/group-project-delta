@@ -31,6 +31,10 @@ public abstract class Message {
 			return new MergeCompleteMessage(bytes);
 		case RequestToMerge:
 			return new RequestToMergeMessage(bytes);
+		case BeaconIdAnswer:
+			return new BeaconIdAnswer(bytes);
+		case BeaconIdQuestion:
+			return new BeaconIdQuestion(bytes);
 		default:
 			// Log this error
 			return null;

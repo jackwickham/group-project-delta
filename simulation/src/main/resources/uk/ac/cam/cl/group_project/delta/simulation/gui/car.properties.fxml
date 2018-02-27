@@ -193,5 +193,32 @@
 				</AnchorPane>
 			</content>
 		</TitledPane>
+		<TitledPane animated="false" text="Sensors">
+			<content>
+				<AnchorPane>
+					<children>
+						<GridPane AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES"/>
+								<ColumnConstraints halignment="RIGHT"/>
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints prefHeight="30.0"/>
+							</rowConstraints>
+							<children>
+								<Label text="front proximity"
+									   GridPane.rowIndex="0"/>
+								<Label fx:id="frontProximity" text="#VALUE"
+									   GridPane.rowIndex="0"
+									   GridPane.columnIndex="1"/>
+							</children>
+						</GridPane>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
 	</children>
 </VBox>

@@ -4,6 +4,8 @@ import lejos.hardware.BrickFinder;
 import lejos.hardware.Keys;
 import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.TextLCD;
+import uk.ac.cam.cl.group_project.delta.Beacon;
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 
@@ -19,10 +21,18 @@ class MainClass {
 
 		Drive drive = new Drive(ev3);
 		Sensor sensor = new Sensor(drive, ev3);
+		LegoBeacon beacon = new LegoBeacon(sensor, ev3.getName());
 		Network network = null;
 		try {
 			network = new Network(Thread.currentThread());
-			Algorithm algo = Algorithm.createAlgorithm(AlgorithmEnum.BasicAlgorithm, drive, sensor, network);
+			Algorithm algo = Algorithm.createAlgorithm(
+					AlgorithmEnum.BasicAlgorithm,
+					drive,
+					sensor,
+					network,
+					beacon
+			);
+			algo.initialise();
 			algo.run();
 		} finally {
 			if (network != null) {

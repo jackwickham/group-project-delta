@@ -3,6 +3,7 @@ package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import java.util.Arrays;
@@ -24,9 +25,13 @@ public class ControlLayerTest {
 		List<Integer> initialPlatoon = Arrays.asList(100, 200);
 		NetworkInterface network = mock(NetworkInterface.class);
 
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(null);
+
 		VehicleData data = new VehicleData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
 
-		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
+		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon, beaconInterface);
 
 		control.sendMessage(data);
 
@@ -55,8 +60,11 @@ public class ControlLayerTest {
 				Arrays.asList(
 						new MessageReceipt(
 								Packet.createPacket(data, 100, 123))));
+		BeaconInterface beaconInterface = mock(BeaconInterface.class);
+		when(beaconInterface.getCurrentBeaconId()).thenReturn(0);
+		when(beaconInterface.getBeacons()).thenReturn(null);
 
-		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon);
+		ControlLayer control = new ControlLayer(network, 200, 123, initialPlatoon, beaconInterface);
 
 		control.updateMessages();
 
@@ -66,7 +74,14 @@ public class ControlLayerTest {
 
 	}
 
-	@Test
+	/**
+	 * The test no longer makes as much sense.
+	 * Originally the RTM message was the first message sent
+	 * in a merge but now it's a BeaconIdQuestion.
+	 * I have left it here because some of the mocking it does
+	 * is useful code to copy to other tests.
+	 */
+	/*@Test
 	public void sendRequestToMergeMessageTest() {
 		NetworkInterface network = mock(NetworkInterface.class);
 		List<Integer> initialPlatoon = Arrays.asList(100, 200);
@@ -95,7 +110,7 @@ public class ControlLayerTest {
 		RequestToMergeMessage rtm = (RequestToMergeMessage) p.message;
 		assertEquals(rtm.getMergingPlatoonId(), 123);
 		assertEquals(rtm.getNewPlatoon(), initialPlatoon);
-	}
+	}*/
 
 	@Test
 	public void sortMapByValuesTest() {
