@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -82,12 +83,12 @@ public class Controller {
 	 * GUI element containing a log of network messages.
 	 */
 	@FXML
-	private ListView<String> networkLog;
+	private TableView<NetworkLogMessage> networkLog;
 
 	/**
 	 * Backend store for network logs.
 	 */
-	private ObservableList<String> networkLogStore;
+	private ObservableList<NetworkLogMessage> networkLogStore;
 
 	/**
 	 * Emergency messages filter button.
@@ -157,8 +158,26 @@ public class Controller {
 	public void initialize() {
 
 		networkLog.setItems(networkLogStore);
-		simulation.getNetwork().register(message ->
-			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(message)))
+
+		// Construct table columns
+		TableColumn<NetworkLogMessage, String> time = new TableColumn<>("Time");
+		time.setCellValueFactory(new PropertyValueFactory<>("time"));
+		time.setPrefWidth(150);
+		networkLog.getColumns().add(time);
+
+		TableColumn<NetworkLogMessage, String> sender = new TableColumn<>("Sender");
+		sender.setCellValueFactory(new PropertyValueFactory<>("senderId"));
+		sender.setPrefWidth(110);
+		networkLog.getColumns().add(sender);
+
+		TableColumn<NetworkLogMessage, String> message = new TableColumn<>("Message");
+		message.setCellValueFactory(new PropertyValueFactory<>("message"));
+		message.setPrefWidth(600);
+		networkLog.getColumns().add(message);
+
+		// Register network packet sniffer
+		simulation.getNetwork().register(msg ->
+			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(msg)))
 		);
 
 		// Start background tasks
@@ -190,103 +209,12 @@ public class Controller {
 	 * @param message   Message to add.
 	 */
 	private void addToNetworkLog(MessageReceipt message) {
-
-		Packet packet = new Packet(message);
-		String msg = "UNKNOWN";
-
-		switch(packet.message.getType()) {
-			case Emergency:
-				if (filterEmergency.isSelected()) {
-					msg = "Emergency!";
-					break;
-				}
-				else {
-					return;
-				}
-			case Data:
-				if (filterData.isSelected()) {
-					VehicleData vd = (VehicleData) packet.message;
-					msg = String.format(
-						"Data: %f (%f) m/s, %f (%f) m/s², %f (%f) rad/s",
-						vd.getSpeed(),
-						vd.getChosenSpeed(),
-						vd.getAcceleration(),
-						vd.getChosenAcceleration(),
-						vd.getTurnRate(),
-						vd.getChosenTurnRate()
-					);
-					break;
-				}
-				else {
-					return;
-				}
-			case RequestToMerge:
-				if (filterMerges.isSelected()) {
-					RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
-					msg = String.format(
-						"Transaction %d: Requesting merge of platoon %d",
-						rtmm.getTransactionId(),
-						rtmm.getMergingPlatoonId()
-					);
-					break;
-				}
-				else {
-					return;
-				}
-			case AcceptToMerge:
-				if (filterMerges.isSelected()) {
-					AcceptToMergeMessage atmm = (AcceptToMergeMessage) packet.message;
-					String status = atmm.isAccepted() ? "Accepting" : "Rejecting";
-					msg = String.format(
-						"Transaction %d: %s merge",
-						atmm.getTransactionId(),
-						status
-					);
-					break;
-				}
-				else {
-					return;
-				}
-			case ConfirmMerge:
-				if (filterMerges.isSelected()) {
-					ConfirmMergeMessage cmm = (ConfirmMergeMessage) packet.message;
-					msg = String.format(
-						"Transaction %d: Merge approved",
-						cmm.getTransactionId()
-					);
-					break;
-				}
-				else {
-					return;
-				}
-			case MergeComplete:
-				if (filterMerges.isSelected()) {
-					MergeCompleteMessage mcm = (MergeCompleteMessage) packet.message;
-					msg = String.format(
-						"Transaction %d: Merge complete",
-						mcm.getTransactionId()
-					);
-					break;
-				}
-				else {
-					return;
-				}
-		}
-
-		networkLogStore.add(
-			0,
-			String.format(
-				"[@%d %d] %s",
-				message.getTime(),
-				packet.vehicleId,
-				msg
-			)
-		);
+		NetworkLogMessage msg = new NetworkLogMessage(message.getTime(), new Packet(message));
+		networkLogStore.add(0, msg);
 		if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
 			// Range is start-inclusive, end-exclusive
 			networkLogStore.remove(NETWORK_LOG_CAPACITY, networkLogStore.size());
 		}
-
 	}
 
 	/**

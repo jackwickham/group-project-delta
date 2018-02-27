@@ -79,7 +79,7 @@
 																<Tooltip text="Show data messages"/>
 															</tooltip>
 														</CheckBox>
-														<ListView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
 													</children>
 												</GridPane>
 											</children>
