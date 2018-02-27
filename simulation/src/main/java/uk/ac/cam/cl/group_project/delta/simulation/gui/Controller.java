@@ -479,18 +479,17 @@ public class Controller {
 	 * @param posY
 	 * @param controller
 	 */
-	private void onDialogConfirmed(double wheelBase, double posX, double posY, SimulatedCarFormDialog.ControllerChoiceEnum controller) {
+	private void onDialogConfirmed(double wheelBase, double posX, double posY, AlgorithmEnum controller) {
 
 		SimulatedCar car = simulation.createCar(wheelBase);
-		AlgorithmEnum algo = controller.toAlgorithmEnum();
 
 		synchronized (car) {
 			car.getPosition().setX(posX);
 			car.getPosition().setY(posY);
-			if (algo != null) {
+			if (controller != null) {
 				car.setController(
 					Algorithm.createAlgorithm(
-						algo,
+						controller,
 						car.getDriveInterface(),
 						car.getSensorInterface(),
 						car.getNetworkInterface()

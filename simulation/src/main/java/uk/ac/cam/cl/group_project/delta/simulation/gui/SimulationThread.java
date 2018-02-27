@@ -170,12 +170,11 @@ public class SimulationThread extends Thread {
 
 	/**
 	 * Create a {@link SimulatedCar} within this simulated world.
-	 * @param wheelBase    Distance from front- to rear-axle.
-	 * @return             The car created.
+	 * @param wheelBase     Distance from front- to rear-axle.
+	 * @return              The car created.
 	 */
 	public SimulatedCar createCar(double wheelBase) {
 		SimulatedCar car = new SimulatedCar(wheelBase, world, network);
-		car.setController(StubAlgorithm.getInstance());
 		add(car);
 		return car;
 	}
@@ -226,35 +225,6 @@ public class SimulationThread extends Thread {
 	 */
 	public synchronized SimulatedNetwork getNetwork() {
 		return network;
-	}
-
-	/**
-	 * A singleton implementation of {@link Algorithm} that does nothing.
-	 */
-	public static class StubAlgorithm extends Algorithm {
-
-		private static StubAlgorithm instance = new StubAlgorithm();
-
-		private StubAlgorithm() {
-			super(null, null, null);
-		}
-
-		public static StubAlgorithm getInstance() {
-			return instance;
-		}
-
-		@Override
-		public void initialise() {}
-
-		@Override
-		public void update(long time) {}
-
-		@Override
-		public void run() {}
-
-		@Override
-		protected void makeDecision() {}
-
 	}
 
 }

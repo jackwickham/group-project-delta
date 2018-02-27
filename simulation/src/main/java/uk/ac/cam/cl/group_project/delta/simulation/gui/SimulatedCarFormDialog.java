@@ -43,7 +43,7 @@ public class SimulatedCarFormDialog extends FormDialog {
 	/**
 	 * Property for algorithm selection box.
 	 */
-	private ObjectProperty<ControllerChoiceEnum> algorithmController;
+	private ObjectProperty<AlgorithmEnum> algorithmController;
 
 	/**
 	 * Construct a dialog for inputting the values required to construct a
@@ -83,8 +83,8 @@ public class SimulatedCarFormDialog extends FormDialog {
 		this.positionY = posYSpinner.valueProperty();
 		grid.add(posYSpinner, 2, 1);
 
-		ChoiceBox<ControllerChoiceEnum> choiceBox = new ChoiceBox<>();
-		choiceBox.getItems().addAll(ControllerChoiceEnum.values());
+		ChoiceBox<AlgorithmEnum> choiceBox = new ChoiceBox<>();
+		choiceBox.getItems().addAll(AlgorithmEnum.values());
 		choiceBox.getSelectionModel().selectFirst();
 		this.algorithmController = choiceBox.valueProperty();
 		grid.add(choiceBox, 1, 2, 2, 1);
@@ -118,32 +118,7 @@ public class SimulatedCarFormDialog extends FormDialog {
 		 * @param posY          Y-position input to the dialog.
 		 * @param controller    The selected controller.
 		 */
-		void call(double wheelBase, double posX, double posY, ControllerChoiceEnum controller);
-	}
-
-	/**
-	 * Allows selection of an algorithm or opt for manual control.
-	 */
-	public enum ControllerChoiceEnum {
-
-		ManualControl, BasicAlgorithm, BasicAlgorithm2, BasicAlgorithm3,
-		BasicAlgorithmPID, BasicAlgorithmPID2;
-
-		private AlgorithmEnum represents;
-
-		static {
-			ManualControl.represents = null;
-			BasicAlgorithm.represents = AlgorithmEnum.BasicAlgorithm;
-			BasicAlgorithm2.represents = AlgorithmEnum.BasicAlgorithm2;
-			BasicAlgorithm3.represents = AlgorithmEnum.BasicAlgorithm3;
-			BasicAlgorithmPID.represents = AlgorithmEnum.BasicAlgorithmPID;
-			BasicAlgorithmPID2.represents = AlgorithmEnum.BasicAlgorithmPID2;
-		}
-
-		public AlgorithmEnum toAlgorithmEnum() {
-			return represents;
-		}
-
+		void call(double wheelBase, double posX, double posY, AlgorithmEnum controller);
 	}
 
 }
