@@ -7,7 +7,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 public abstract class Algorithm {
 
 	public static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
-	protected double MAX_SENSOR_DIST = 4;
+	protected double MAX_SENSOR_DIST = 0.5;
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -141,7 +141,7 @@ public abstract class Algorithm {
 
 		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
-		//if sensor returns infinity set value to null so its not used
+		//if sensor returns infinity set value to null so it's not used
 		if(algorithmData.sensorFrontProximity != null) {
 			if (algorithmData.sensorFrontProximity < MAX_SENSOR_DIST) {
 				algorithmData.sensorFrontProximity = null;
