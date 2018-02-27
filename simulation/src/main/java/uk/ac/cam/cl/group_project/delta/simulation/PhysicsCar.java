@@ -60,7 +60,7 @@ public class PhysicsCar extends PhysicsBody {
 	/**
 	 * The maximum velocity.
 	 */
-	private static final double MAX_VELOCITY = 5;
+	private static final double MAX_VELOCITY = 2;
 
 	/**
 	 * The coefficient used for acceleration = engineForce - c * speed^2 - friction
@@ -83,7 +83,7 @@ public class PhysicsCar extends PhysicsBody {
 	 * The maximum engine power for deceleration. Air resistance will mean
 	 * that the true deceleration is higher than this.
 	 */
-	private static final double MAX_DECELERATION = 5;
+	private static final double MAX_DECELERATION = 2;
 
 	/**
 	 * Initialise physically simulated representation of a car.

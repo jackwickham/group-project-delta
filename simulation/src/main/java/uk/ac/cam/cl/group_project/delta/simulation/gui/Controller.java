@@ -42,7 +42,7 @@ public class Controller {
 	/**
 	 * Number of GUI units per simulation metre.
 	 */
-	public static final double UNITS_PER_METRE = 30.0;
+	public static final double UNITS_PER_METRE = 400.0;
 
 	/**
 	 * Number of historic messages to show in the network log.
@@ -339,7 +339,7 @@ public class Controller {
 			synchronized (car) {
 				switch (keyEvent.getCode()) {
 					case W:
-						car.setEnginePower(1.0);
+						car.setEnginePower(0.5);
 						break;
 					case S:
 						car.setEnginePower(-1000.0);
