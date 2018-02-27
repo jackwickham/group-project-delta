@@ -35,8 +35,9 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	public BasicAlgorithmPID2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
-			BeaconInterface beacons) {
-		super(driveInterface, sensorInterface, networkInterface, beacons);
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	@Override
