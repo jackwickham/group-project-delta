@@ -433,7 +433,6 @@ public class ControlLayer {
 	 * @return the id of the closest beacon
 	 */
 	private Integer getVisibleBeaconId() {
-		System.out.println(beaconInterface.getBeacons().size());
 		if(beaconInterface.getBeacons().isEmpty()) return null;
 		int closestId = 0;
 		int minDistance = Integer.MAX_VALUE;
