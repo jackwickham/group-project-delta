@@ -5,9 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import uk.ac.cam.cl.group_project.delta.simulation.*;
 
-import javax.swing.text.html.StyleSheet;
 import java.io.IOException;
 
 /**
