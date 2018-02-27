@@ -2,19 +2,14 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmData;
@@ -22,6 +17,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
+import uk.ac.cam.cl.group_project.delta.simulation.SimulatedSensorModule;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -47,12 +43,6 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 * Opacity of circles drawn to present platoons.
 	 */
 	public static final double PLATOON_CIRCLE_OPACITY = 0.2;
-
-	/**
-	 * An internal group that will be rotated to align with the heading of the
-	 * car.
-	 */
-	private Group alignedGroup;
 
 	/**
 	 * X-component of the car's velocity. Updated by a call to `update()`.
@@ -134,8 +124,6 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
 		super(car);
 
-		alignedGroup = new Group();
-
 		// Construct properties
 		velX = new SimpleDoubleProperty(car.getVelocity().getX());
 		velY = new SimpleDoubleProperty(car.getVelocity().getY());
@@ -150,12 +138,10 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		platoonColour = new SimpleObjectProperty<>(Color.TRANSPARENT);
 		frontProximity = new SimpleDoubleProperty(Double.POSITIVE_INFINITY);
 
-		alignedGroup.rotateProperty().bind(headingProperty());
+		rotateProperty().bind(headingProperty());
 
 		constructAlgorithmInstrumentation(car);
 		constructSimpleVisualRepresentation(car);
-
-		getChildren().add(alignedGroup);
 
 	}
 
@@ -244,7 +230,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 * @param car    Car to represent.
 	 */
 	private void constructSimpleVisualRepresentation(SimulatedCar car) {
-		// Create GUI representation
+
 		double length = car.getWheelBase() * Controller.UNITS_PER_METRE;
 		double width = length * ASPECT_RATIO;
 		double hw = width / 2.0;
@@ -256,7 +242,6 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			width * BODY_WIDTH_RATIO,
 			length * BODY_HEIGHT_RATIO
 		);
-		alignedGroup.getChildren().add(rect);
 
 		double wheelLength = length / 5.0;
 		double wheelWidth = wheelLength / 3.0;
@@ -273,23 +258,59 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			wheelWidth,
 			wheelLength
 		);
-		alignedGroup.getChildren().add(frontLeftWheel);
-		alignedGroup.getChildren().add(frontRightWheel);
 		frontLeftWheel.rotateProperty().bind(wheelAngle);
 		frontRightWheel.rotateProperty().bind(wheelAngle);
 
-		alignedGroup.getChildren().add(makeRect(
-			-hw,
-			-hl - 0.5 * wheelLength,
-			wheelWidth,
-			wheelLength
+		final double VIEW_ARC_DISTANCE = length * 5;
+		Arc viewArc = new Arc(
+			0,
+			0,
+			VIEW_ARC_DISTANCE,
+			VIEW_ARC_DISTANCE,
+			-90 - Math.toDegrees(SimulatedSensorModule.VIEW_HALF_ANGLE),
+			Math.toDegrees(SimulatedSensorModule.VIEW_HALF_ANGLE) * 2
+		);
+		viewArc.setFill(Color.TRANSPARENT);
+		viewArc.setOpacity(0.5);
+		viewArc.setStrokeWidth(2);
+		viewArc.setStroke(new RadialGradient(
+			0,
+			0,
+			0,
+			0,
+			VIEW_ARC_DISTANCE,
+			false,
+			CycleMethod.NO_CYCLE,
+			new Stop(0, Color.GREY),
+			new Stop(VIEW_ARC_DISTANCE, Color.TRANSPARENT)
 		));
-		alignedGroup.getChildren().add(makeRect(
-			hw - wheelWidth,
-			-hl - 0.5 * wheelLength,
-			wheelWidth,
-			wheelLength
-		));
+		viewArc.setType(ArcType.ROUND);
+		viewArc.setMouseTransparent(true);
+
+		Circle transformationCorrectionCircle = new Circle(VIEW_ARC_DISTANCE);
+		transformationCorrectionCircle.setOpacity(0);
+		transformationCorrectionCircle.setMouseTransparent(true);
+
+		getChildren().addAll(
+			transformationCorrectionCircle,
+			viewArc,
+			frontLeftWheel,
+			frontRightWheel,
+			makeRect(
+				-hw,
+				-hl - 0.5 * wheelLength,
+				wheelWidth,
+				wheelLength
+			),
+			makeRect(
+				hw - wheelWidth,
+				-hl - 0.5 * wheelLength,
+				wheelWidth,
+				wheelLength
+			),
+			rect
+		);
+
 	}
 
 	/**
@@ -341,7 +362,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private static Rectangle makeRect(double x, double y, double w, double h) {
 		Rectangle rect = new Rectangle(x, y, w, h);
-		rect.setFill(Color.TRANSPARENT);
+		rect.setFill(Color.WHITESMOKE);
 		rect.setStroke(Color.BLACK);
 		return rect;
 	}
