@@ -195,8 +195,8 @@ public class ControlLayer {
 				if(packet.platoonId == platoonId &&
 						question.getBeaconId() == beaconInterface.getCurrentBeaconId()) {
 					BeaconIdAnswer answer = new BeaconIdAnswer(
-							question.getReturnPlatoonId(), question.getBeaconId());
-					network.sendData(Packet.createPacket(answer, vehicleId, platoonId));
+							platoonId, question.getBeaconId());
+					network.sendData(Packet.createPacket(answer, vehicleId, question.getReturnPlatoonId()));
 				}
 			} else if(packet.message instanceof BeaconIdAnswer) {
 				if(packet.platoonId == platoonId && position == 0) {
@@ -239,16 +239,17 @@ public class ControlLayer {
 	 * Begin the merge protocol by sending a RequestToMerge to the other platoon
 	 *
 	 * @param packet
-	 *            - the data in Packet format
+	 *            - the data in Packet format of a BeaconIdAnswer
 	 */
 	private void beginMergeProtocol(Packet packet) {
+		BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
 		// Found a new platoon which we could merge with
 		if (position == 0 && (currentMerge == null || !currentMerge.isValid())) {
-			currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
+			currentMerge = new Merge(answer.getAskedPlatoonId(), platoonId, idToPositionLookup.size());
 
 			// Send an initial request to join
 			Message m = createNewMergeRequest(currentMerge.getTransactionId());
-			network.sendData(Packet.createPacket(m, vehicleId, packet.platoonId));
+			network.sendData(Packet.createPacket(m, vehicleId, answer.getAskedPlatoonId()));
 		}
 	}
 
@@ -421,6 +422,7 @@ public class ControlLayer {
 	}
 
 	private Integer getVisibleBeaconId() {
+		System.out.println(beaconInterface.getBeacons().size());
 		if(beaconInterface.getBeacons().isEmpty()) return null;
 		int closestId = 0;
 		int minDistance = Integer.MAX_VALUE;
