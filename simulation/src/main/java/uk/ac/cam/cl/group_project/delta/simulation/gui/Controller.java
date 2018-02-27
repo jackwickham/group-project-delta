@@ -346,11 +346,17 @@ public class Controller {
 			case SEMICOLON:
 				stepButton.fire();
 				break;
-			case BRACELEFT:
-				timeDilationSlider.adjustValue(-0.2);
+			case PLUS:
+			case EQUALS:
+				timeDilationSlider.adjustValue(
+					timeDilationSlider.getValue() + 0.1
+				);
 				break;
-			case BRACERIGHT:
-				timeDilationSlider.adjustValue(+0.2);
+			case MINUS:
+			case UNDERSCORE:
+				timeDilationSlider.adjustValue(
+					timeDilationSlider.getValue() - 0.1
+				);
 				break;
 		}
 	}

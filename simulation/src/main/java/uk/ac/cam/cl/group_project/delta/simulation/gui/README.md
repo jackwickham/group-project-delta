@@ -46,8 +46,8 @@ to the "Network" tab.
 The following shortcut keys are available:
 -	`P`: pause/unpause
 -	`;`: step
--	`[`: reduce time warp factor
--	`]`: increase time warp factor
+-	`+`/`=`: reduce time warp factor
+-	`-`/`_`: increase time warp factor
 
 Clicking `P` will toggle the simulation between paused and playing the
 simulation.
