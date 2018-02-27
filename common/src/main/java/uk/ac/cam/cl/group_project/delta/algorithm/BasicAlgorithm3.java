@@ -14,7 +14,7 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class BasicAlgorithm3 extends Algorithm{
 
-	private double BUFF_DIST = 0.3;
+	private double buffDist = 0.3;
 
 	public BasicAlgorithm3(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -26,23 +26,18 @@ public class BasicAlgorithm3 extends Algorithm{
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
-		if(parameterEnum == ParameterEnum.MaxSensorDist) {
-			MAX_SENSOR_DIST = value;
-		}
 		if(parameterEnum == ParameterEnum.BufferDistance) {
-			BUFF_DIST = value;
+			buffDist = value;
 		}
+		super.setParameter(parameterEnum, value);
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
-		if(parameterEnum == ParameterEnum.MaxSensorDist) {
-			return MAX_SENSOR_DIST;
-		}
 		if(parameterEnum == ParameterEnum.BufferDistance) {
-			return BUFF_DIST;
+			return buffDist;
 		}
-		return null;
+		return super.getParameter(parameterEnum);
 	}
 
 	@Override
@@ -52,9 +47,9 @@ public class BasicAlgorithm3 extends Algorithm{
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
 	//and the sensor proximity data
-	private static Double weightFrontProximity(Double predictedFrontProximity, Double frontProximity) {
+	private  Double weightFrontProximity(Double predictedFrontProximity, Double frontProximity) {
 		if (predictedFrontProximity != null && frontProximity != null) {
-			return 0.5 * predictedFrontProximity + 0.5 * frontProximity;
+				return 0.5 * predictedFrontProximity + 0.5 * frontProximity;
 		}
 		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
@@ -89,9 +84,11 @@ public class BasicAlgorithm3 extends Algorithm{
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
-
-		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-				algorithmData.frontProximity);
+		if(algorithmData.frontProximity > maxSensorDist) {
+			algorithmData.frontProximity = null;
+		}
+			weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
+					algorithmData.frontProximity);
 
 		// update previous state variables so that they are correct in next time period
 		algorithmData.previousDistance = weightedFrontProximity;
@@ -99,21 +96,21 @@ public class BasicAlgorithm3 extends Algorithm{
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 
 		if (weightedFrontProximity != null) {
-			if (weightedFrontProximity < BUFF_DIST) {
+			if (weightedFrontProximity < buffDist) {
 				if (algorithmData.chosenAcceleration >= 0) {
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / BUFF_DIST;
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / buffDist;
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / BUFF_DIST);
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / buffDist);
 				}
 			} else {
 				if (algorithmData.chosenAcceleration >= 0) {
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							* (0.75 + weightedFrontProximity / (4*BUFF_DIST));
+							* (0.75 + weightedFrontProximity / (4* buffDist));
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (0.75 + weightedFrontProximity / (4*BUFF_DIST));
+							/ (0.75 + weightedFrontProximity / (4* buffDist));
 				}
 			}
 		} else {

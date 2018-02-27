@@ -11,18 +11,18 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  */
 public class BasicAlgorithmPID extends Algorithm{
 	//ID parameters
-	private double PID_P = 0.5;
-	private double PID_I = 0;
-	private double PID_D = 1.8;
+	private double pidP = 0.5;
+	private double pidI = 0;
+	private double pidD = 1.8;
 
 	//maximum and minimum acceleration in m/s
-	private double MAX_ACC = 2;
-	private double MIN_ACC = -2;
+	private double maxAcc = 2;
+	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double BUFF_DIST = 0.3;
+	private double buffDist = 0.3;
 	//constant headway time in s
-	private double HEAD_TIME = 0.2;
+	private double headTime = 0.2;
 
 	public BasicAlgorithmPID(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -36,58 +36,55 @@ public class BasicAlgorithmPID extends Algorithm{
 	public void setParameter(ParameterEnum parameterEnum, double value) {
 		switch (parameterEnum) {
 			case PID_P:
-				PID_P = value;
+				pidP = value;
 				break;
 			case PID_I:
-				PID_I = value;
+				pidI = value;
 				break;
 			case PID_D:
-				PID_D = value;
+				pidD = value;
 				break;
 			case MaxAcc:
-				MAX_ACC = value;
+				maxAcc = value;
 				break;
 			case MinAcc:
-				MIN_ACC = value;
+				minAcc = value;
 				break;
 			case BufferDistance:
-				BUFF_DIST = value;
+				buffDist = value;
 				break;
 			case HeadTime:
-				HEAD_TIME = value;
+				headTime = value;
 				break;
-			case MaxSensorDist:
-				MAX_SENSOR_DIST = value;
 		}
+		super.setParameter(parameterEnum, value);
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
 		switch (parameterEnum) {
 			case PID_P:
-				return PID_P;
+				return pidP;
 			case PID_I:
-				return PID_I;
+				return pidI;
 			case PID_D:
-				return PID_D;
+				return pidD;
 			case MaxAcc:
-				return MAX_ACC;
+				return maxAcc;
 			case MinAcc:
-				return MIN_ACC;
+				return minAcc;
 			case BufferDistance:
-				return BUFF_DIST;
+				return buffDist;
 			case HeadTime:
-				return HEAD_TIME;
-			case MaxSensorDist:
-				return MAX_SENSOR_DIST;
+				return headTime;
 		}
-		return null;
+		return super.getParameter(parameterEnum);
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
 		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
-				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime, ParameterEnum.MaxSensorDist};
+				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime};
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
@@ -106,8 +103,8 @@ public class BasicAlgorithmPID extends Algorithm{
 	}
 
 	public void initialise() {
-		algorithmData.miniPID = new MiniPID(PID_P, PID_I, PID_D);
-		algorithmData.miniPID.setOutputLimits(MIN_ACC, MAX_ACC);
+		algorithmData.miniPID = new MiniPID(pidP, pidI, pidD);
+		algorithmData.miniPID.setOutputLimits(minAcc, maxAcc);
 	}
 
 	public void makeDecision() {
@@ -128,20 +125,22 @@ public class BasicAlgorithmPID extends Algorithm{
 					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
 			//calculate desired distance
-			desired_dist = BUFF_DIST + HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed);
+			desired_dist = buffDist + headTime * (algorithmData.predecessorSpeed - algorithmData.speed);
 
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		} else {
 			//no message received or no previous distance
 			algorithmData.predictedFrontProximity = null;
-			desired_dist = BUFF_DIST;
+			desired_dist = buffDist;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
-
+		if(algorithmData.frontProximity > maxSensorDist) {
+			algorithmData.frontProximity = null;
+		}
 		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-				algorithmData.sensorFrontProximity);
+				algorithmData.frontProximity);
 
 		//update previous state variables so that they are correct in next time period
 		algorithmData.previousDistance = weightedFrontProximity;

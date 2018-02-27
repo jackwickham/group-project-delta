@@ -7,7 +7,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 public abstract class Algorithm {
 
 	public static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
-	protected double MAX_SENSOR_DIST = 0.5;
+	protected double maxSensorDist = 0.5;
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -87,13 +87,22 @@ public abstract class Algorithm {
 
 	/** Sets an algorithms parameter.
 	 *  Will do nothing if that algorithm does not have the parameter **/
-	public abstract void setParameter(ParameterEnum parameterEnum, double value);
+	public void setParameter(ParameterEnum parameterEnum, double value) {
+		if(parameterEnum == ParameterEnum.MaxSensorDist) {
+			maxSensorDist = value;
+		}
+	}
 
 	/**
 	 * @param parameterEnum enum for parameter
 	 * @return if algorithm uses parameter then its value otherwise null
 	 */
-	public abstract Double getParameter(ParameterEnum parameterEnum);
+	public Double getParameter(ParameterEnum parameterEnum) {
+		if(parameterEnum == ParameterEnum.MaxSensorDist) {
+			return maxSensorDist;
+		}
+		return null;
+	}
 
 	/**
 	 * @return Array of all parameters this algorithm uses
@@ -131,9 +140,9 @@ public abstract class Algorithm {
 
 		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
 		//find closest beacon within maximum sensor distance
-		double min = MAX_SENSOR_DIST;
+		double min = Double.POSITIVE_INFINITY;
 		for (Beacon beacon : algorithmData.beacons) {
-			if (beacon.getDistanceLowerBound() < min) {
+			if (beacon.getDistanceLowerBound() <= min) {
 				min = beacon.getDistanceLowerBound();
 				algorithmData.closestBeacon = beacon;
 			}
@@ -141,12 +150,6 @@ public abstract class Algorithm {
 
 		//note this could be null
 		algorithmData.sensorFrontProximity = algorithmData.sensorInterface.getFrontProximity();
-		//if sensor returns infinity set value to null so it's not used
-		if(algorithmData.sensorFrontProximity != null) {
-			if (algorithmData.sensorFrontProximity < MAX_SENSOR_DIST) {
-				algorithmData.sensorFrontProximity = null;
-			}
-		}
 
 		//combines beacon distance lower bound and sensor front proximity
 		if (algorithmData.closestBeacon != null && algorithmData.sensorFrontProximity != null) {
