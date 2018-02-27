@@ -52,6 +52,24 @@ public abstract class Algorithm {
 		return null;
 	}
 
+	/**
+	 *Builds and returns algorithm of type specified by AlgorithmEnum input
+	 *By default, uses ROUTE_ZERO, which makes the front vehicle do nothing
+	 */
+	public static Algorithm createAlgorithm(
+			AlgorithmEnum algorithmEnum,
+			DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons) {
+		return createAlgorithm(algorithmEnum,
+				driveInterface,
+				sensorInterface,
+				networkInterface,
+				beacons,
+				FrontVehicleRoute.RouteNumber.ROUTE_ZERO);
+	}
+
 	public static AlgorithmEnum[] getAlgorithmList() {
 		return AlgorithmEnum.values();
 	}
