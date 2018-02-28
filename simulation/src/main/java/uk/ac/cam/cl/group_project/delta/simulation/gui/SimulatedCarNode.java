@@ -390,10 +390,10 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 				posYProperty().divide(Controller.UNITS_PER_METRE).asString("%.2f")
 			);
 			controller.heading.textProperty().bind(
-				headingProperty().asString("%.2f°")
+				headingProperty().negate().asString("%.2f°")
 			);
 			controller.wheelAngle.textProperty().bind(
-				wheelAngleProperty().asString("%.2f°")
+				wheelAngleProperty().negate().asString("%.2f°")
 			);
 			controller.enginePower.textProperty().bind(
 				enginePowerProperty().asString("%.2f")
