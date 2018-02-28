@@ -2,10 +2,7 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
-import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
-import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
-import uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork;
-import uk.ac.cam.cl.group_project.delta.simulation.World;
+import uk.ac.cam.cl.group_project.delta.simulation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +182,10 @@ public class SimulationThread extends Thread {
 	 */
 	public void remove(PhysicsBody body) {
 		synchronized (world) {
+			if (body instanceof SimulatedCar) {
+				SimulatedCar car = (SimulatedCar) body;
+				network.deregister((SimulatedNetworkModule)car.getNetworkInterface());
+			}
 			world.getBodies().remove(body);
 		}
 	}
