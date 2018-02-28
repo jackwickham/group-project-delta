@@ -92,6 +92,9 @@ public class SimulatedSensorModule implements SensorInterface {
 				double angle = Math.acos(
 					relPos.dot(vecHeading) / relDistance
 				);
+				if (relPos.leftOf(vecHeading)) {
+					angle *= -1;
+				}
 
 				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
 					beacons.add(new Beacon(
