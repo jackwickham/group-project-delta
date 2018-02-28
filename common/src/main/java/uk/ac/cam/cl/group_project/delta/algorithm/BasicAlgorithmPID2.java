@@ -119,7 +119,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 			if(algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
 				pTerm = PID_P * (algorithmData.frontProximity +
-						headTime * (algorithmData.predecessorSpeed - algorithmData.speed) - buffDist);
+						headTime *  algorithmData.speed - buffDist);
 			} else {
 				//if no message received just use sensor data
 				pTerm = PID_P * (algorithmData.frontProximity - buffDist);
@@ -132,7 +132,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if(algorithmData.receiveMessageData != null) {
 			//Multiplies the rate of change of error by a constant term PID_D
 			dTerm = PID_D * (algorithmData.predecessorSpeed -
-					algorithmData.speed + headTime * (algorithmData.predecessorChosenAcceleration - algorithmData.acceleration));
+					algorithmData.speed + headTime * algorithmData.acceleration);
 		} else {
 			//if no message has ever been received d Term not used
 			dTerm = 0;
