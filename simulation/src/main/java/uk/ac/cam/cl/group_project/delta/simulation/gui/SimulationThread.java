@@ -85,20 +85,32 @@ public class SimulationThread extends Thread {
 		}
 
 		while (true) {
+
+			synchronized (this) {
+				if (!running) {
+					break;
+				}
+			}
+
 			long tmp = System.nanoTime();
 			long dt = tmp - time;
 			if (dt > UPDATE_INTERVAL) {
+
 
 				if (getTimeDilationFactor() > 0) {
 					update((long) (dt * getTimeDilationFactor()));
 				}
 				time = tmp;
+			}
 
-				synchronized (this) {
-					if (!running) {
-						break;
-					}
-				}
+			try {
+				long sleep = UPDATE_INTERVAL - dt;
+				Thread.sleep(sleep / 1000000, (int)(sleep % 1000000));
+			}
+			catch (InterruptedException e) {
+				// Fired when another thread interrupts this, which is unlikely
+				// but may indicate that we should check that the simulation is
+				// still running, which we do on the next loop.
 			}
 
 		}
