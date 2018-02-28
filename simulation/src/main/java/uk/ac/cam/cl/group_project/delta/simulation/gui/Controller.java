@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
+import uk.ac.cam.cl.group_project.delta.algorithm.FrontVehicleRoute;
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.*;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
@@ -468,7 +469,8 @@ public class Controller {
 								car.getDriveInterface(),
 								car.getSensorInterface(),
 								car.getNetworkInterface(),
-								car
+								car,
+								FrontVehicleRoute.RouteNumber.ROUTE_ONE
 							)
 						);
 					}

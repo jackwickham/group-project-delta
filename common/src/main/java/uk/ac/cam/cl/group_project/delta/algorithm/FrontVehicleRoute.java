@@ -64,8 +64,8 @@ public class FrontVehicleRoute {
 	/**
 	 * Called in each algorithm loop, modifies algorithmData if necessary
 	 */
-	public void nextStep() {
-		if (!stepsRemaining) return;
+	public boolean nextStep() {
+		if (!stepsRemaining) return false;
 		if (currentStep == nextActionStep) {
 			Move thisMove = moves.get(0);
 			switch (thisMove.move) {
@@ -78,8 +78,10 @@ public class FrontVehicleRoute {
 			}
 			moves.remove(0);
 			updateNextActionStep();
+			return true;
 		}
 		currentStep++;
+		return false;
 	}
 
 	private void updateNextActionStep() {
@@ -103,10 +105,10 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeOne() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, MoveType.ACCELERATION, 0.05));
-		moves.add(new Move(3, MoveType.ACCELERATION, -0.05));
-		moves.add(new Move(6, MoveType.ACCELERATION, 0.05));
-		moves.add(new Move(9, MoveType.ACCELERATION, -0.05));
+		moves.add(new Move(0, MoveType.ACCELERATION, 0.1));
+		moves.add(new Move(3, MoveType.ACCELERATION, -0.1));
+		moves.add(new Move(6, MoveType.ACCELERATION, 0.1));
+		moves.add(new Move(9, MoveType.ACCELERATION, -0.1));
 		return moves;
 	}
 
