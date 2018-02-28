@@ -34,4 +34,16 @@ public class PhysicsCarTest {
 		classUnderTest.setTurnRate(-0.1);
 		assertEquals(-0.015, classUnderTest.getWheelAngle(), 0.005);
 	}
+
+	@Test
+	public void testSetTurnRateLargePositive() {
+		classUnderTest.setTurnRate(100);
+		assertEquals(Math.PI / 4, classUnderTest.getWheelAngle(), 0.02);
+	}
+
+	@Test
+	public void testSetTurnRateLargeNegative() {
+		classUnderTest.setTurnRate(-100);
+		assertEquals(-Math.PI / 4, classUnderTest.getWheelAngle(), 0.02);
+	}
 }
