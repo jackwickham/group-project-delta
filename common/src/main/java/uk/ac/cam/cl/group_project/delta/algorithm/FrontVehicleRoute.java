@@ -51,6 +51,7 @@ public class FrontVehicleRoute {
 		switch (routeNumber) {
 			case ROUTE_ZERO:
 				this.moves = routeZero();
+				break;
 			case ROUTE_ONE:
 				this.moves = routeOne();
 				break;
