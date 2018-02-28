@@ -24,6 +24,11 @@ public class NetworkLogMessage {
 	private IntegerProperty senderId = new SimpleIntegerProperty();
 
 	/**
+	 * Sender's platoon ID
+	 */
+	private IntegerProperty platoonId = new SimpleIntegerProperty();
+
+	/**
 	 * Type of the message.
 	 */
 	private ObjectProperty<MessageType> messageType = new SimpleObjectProperty<>();
@@ -42,6 +47,7 @@ public class NetworkLogMessage {
 
 		time.set(t);
 		senderId.set(packet.vehicleId);
+		platoonId.set(packet.platoonId);
 		messageType.set(packet.message.getType());
 
 		String msg = "UNKNOWN";
@@ -65,38 +71,38 @@ public class NetworkLogMessage {
 			case RequestToMerge:
 				RequestToMergeMessage rtmm = (RequestToMergeMessage) packet.message;
 				msg = String.format(
-					"Transaction %d: Requesting merge of platoon %d",
-					rtmm.getTransactionId(),
-					rtmm.getMergingPlatoonId()
+					"Requesting merge of platoon %d (Transaction %d)",
+					rtmm.getMergingPlatoonId(),
+					rtmm.getTransactionId()
 				);
 				break;
 			case AcceptToMerge:
 				AcceptToMergeMessage atmm = (AcceptToMergeMessage) packet.message;
 				String status = atmm.isAccepted() ? "Accepting" : "Rejecting";
 				msg = String.format(
-					"Transaction %d: %s merge",
-					atmm.getTransactionId(),
-					status
+					"%s merge (Transaction %d)",
+					status,
+					atmm.getTransactionId()
 				);
 				break;
 			case ConfirmMerge:
 				ConfirmMergeMessage cmm = (ConfirmMergeMessage) packet.message;
 				msg = String.format(
-					"Transaction %d: Merge approved",
+					"Merge approved (Transaction %d)",
 					cmm.getTransactionId()
 				);
 				break;
 			case MergeComplete:
 				MergeCompleteMessage mcm = (MergeCompleteMessage) packet.message;
 				msg = String.format(
-					"Transaction %d: Merge complete",
+					"Merge complete (Transaction %d)",
 					mcm.getTransactionId()
 				);
 				break;
 			case BeaconIdQuestion:
 				BeaconIdQuestion biq = (BeaconIdQuestion) packet.message;
 				msg = String.format(
-					"Who is Vehicle %d? Tell Platoon %d",
+					"Where is Vehicle %d? Tell Platoon %d",
 					biq.getBeaconId(),
 					biq.getReturnPlatoonId()
 				);
@@ -104,7 +110,7 @@ public class NetworkLogMessage {
 			case BeaconIdAnswer:
 				BeaconIdAnswer bia = (BeaconIdAnswer) packet.message;
 				msg = String.format(
-					"Tell Platoon %d that I have beacon %d",
+					"Platoon %d contains Vehicle %d",
 					bia.getAskedPlatoonId(),
 					bia.getBeaconId()
 				);
@@ -131,6 +137,14 @@ public class NetworkLogMessage {
 
 	public IntegerProperty senderIdProperty() {
 		return senderId;
+	}
+
+	public int getPlatoonId() {
+		return platoonId.get();
+	}
+
+	public IntegerProperty platoonIdProperty() {
+		return platoonId;
 	}
 
 	public MessageType getMessageType() {

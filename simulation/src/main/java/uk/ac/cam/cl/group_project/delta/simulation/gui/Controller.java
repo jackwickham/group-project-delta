@@ -190,10 +190,15 @@ public class Controller {
 		time.setPrefWidth(150);
 		networkLog.getColumns().add(time);
 
-		TableColumn<NetworkLogMessage, String> sender = new TableColumn<>("Sender");
-		sender.setCellValueFactory(new PropertyValueFactory<>("senderId"));
-		sender.setPrefWidth(110);
-		networkLog.getColumns().add(sender);
+		TableColumn<NetworkLogMessage, String> src = new TableColumn<>("From (VID)");
+		src.setCellValueFactory(new PropertyValueFactory<>("senderId"));
+		src.setPrefWidth(110);
+		networkLog.getColumns().add(src);
+
+		TableColumn<NetworkLogMessage, String> dst = new TableColumn<>("To (PID)");
+		dst.setCellValueFactory(new PropertyValueFactory<>("platoonId"));
+		dst.setPrefWidth(110);
+		networkLog.getColumns().add(dst);
 
 		TableColumn<NetworkLogMessage, String> message = new TableColumn<>("Message");
 		message.setCellValueFactory(new PropertyValueFactory<>("message"));
