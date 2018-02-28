@@ -220,5 +220,19 @@
 				</AnchorPane>
 			</content>
 		</TitledPane>
+		<TitledPane animated="false" text="Beacons">
+			<content>
+				<AnchorPane>
+					<children>
+						<ListView fx:id="beaconList"
+								  AnchorPane.bottomAnchor="0.0"
+								  AnchorPane.leftAnchor="0.0"
+								  AnchorPane.rightAnchor="0.0"
+								  AnchorPane.topAnchor="0.0"
+								  prefHeight="150"/>
+					</children>
+				</AnchorPane>
+			</content>
+		</TitledPane>
 	</children>
 </VBox>

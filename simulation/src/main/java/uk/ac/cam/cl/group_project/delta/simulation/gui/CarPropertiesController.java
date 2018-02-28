@@ -1,9 +1,8 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.shape.Rectangle;
 
 public class CarPropertiesController {
@@ -55,5 +54,8 @@ public class CarPropertiesController {
 
 	@FXML
 	public Label frontProximity;
+
+	@FXML
+	public ListView<String> beaconList;
 
 }
