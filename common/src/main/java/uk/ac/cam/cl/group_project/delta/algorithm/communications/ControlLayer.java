@@ -205,7 +205,8 @@ public class ControlLayer {
 			} else if(packet.message instanceof BeaconIdAnswer) {
 				if(packet.platoonId == platoonId && position == 0) {
 					BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
-					if(answer.getBeaconId() == getVisibleBeaconId()) {
+					Integer visibleBeacon = getVisibleBeaconId();
+					if(visibleBeacon != null && answer.getBeaconId() == visibleBeacon) {
 						// The visible beacon is known to be in a specific
 						// platoon now, try to merge with them
 						if(!containsRTM) {
