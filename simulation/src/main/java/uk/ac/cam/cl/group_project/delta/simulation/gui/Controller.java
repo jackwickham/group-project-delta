@@ -49,14 +49,23 @@ public class Controller {
 	 * Number of historic messages to show in the network log.
 	 */
 	public static final int NETWORK_LOG_CAPACITY = 100;
+
 	/**
 	 * Thread running this application's simulation.
 	 */
 	private SimulationThread simulation;
+
 	/**
 	 * List of nodes representing objects in the simulated world.
 	 */
 	private List<SimulatedBodyNode> simulatedNodes;
+
+	/**
+	 * Root GUI element.
+	 */
+	@FXML
+	public AnchorPane root;
+
 	/**
 	 * GUI element containing the current scene.
 	 */
@@ -182,6 +191,9 @@ public class Controller {
 	@FXML
 	public void initialize() {
 
+		root.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+		root.addEventFilter(KeyEvent.KEY_RELEASED, this::onKeyReleased);
+
 		networkLog.setItems(networkLogStore);
 
 		// Construct table columns
@@ -210,10 +222,6 @@ public class Controller {
 			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(msg)))
 		);
 
-		// Start background tasks
-		simulation.start();
-		timeline.play();
-
 		pausedPane.visibleProperty().bind(pauseButton.selectedProperty());
 		timeDilationSlider.valueProperty().addListener(
 			(observableValue, oldValue, newValue) -> {
@@ -222,6 +230,13 @@ public class Controller {
 				}
 			}
 		);
+
+		// Bind events
+
+
+		// Start background tasks
+		simulation.start();
+		timeline.play();
 
 	}
 
@@ -322,6 +337,9 @@ public class Controller {
 	 * @param keyEvent    Structure containing event information (e.g. key code)
 	 */
 	public void onKeyPressed(KeyEvent keyEvent) {
+
+		boolean consume = true;
+
 		switch (keyEvent.getCode()) {
 			case W:
 				if (currentSelection != null) {
@@ -355,7 +373,7 @@ public class Controller {
 					}
 				}
 				break;
-			case P:
+			case SPACE:
 				pauseButton.fire();
 				break;
 			case SEMICOLON:
@@ -373,7 +391,15 @@ public class Controller {
 					timeDilationSlider.getValue() - 0.1
 				);
 				break;
+			default:
+				consume = false;
+				break;
 		}
+
+		if (consume) {
+			keyEvent.consume();
+		}
+
 	}
 
 	/**
@@ -383,6 +409,7 @@ public class Controller {
 	public void onKeyReleased(KeyEvent keyEvent) {
 		if (currentSelection != null) {
 			SimulatedCar car = currentSelection.getCar();
+			boolean consume = true;
 			synchronized (car) {
 				switch (keyEvent.getCode()) {
 					case W:
@@ -393,7 +420,13 @@ public class Controller {
 					case D:
 						car.setWheelAngle(0.0);
 						break;
+					default:
+						consume = false;
+						break;
 				}
+			}
+			if (consume) {
+				keyEvent.consume();
 			}
 		}
 	}
