@@ -2,7 +2,6 @@ package uk.ac.cam.cl.group_project.delta.lego;
 
 import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.BeaconInterface;
-import uk.ac.cam.cl.group_project.delta.Log;
 
 import java.util.HashMap;
 import java.util.List;
