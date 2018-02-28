@@ -50,8 +50,7 @@ class MainClass {
 					car.getDriveInterface(),
 					car.getSensorInterface(),
 					car.getNetworkInterface(),
-					car,
-					FrontVehicleRoute.RouteNumber.ROUTE_ONE
+					car
 			));
 
 			car.setPosition(new Vector2D(
