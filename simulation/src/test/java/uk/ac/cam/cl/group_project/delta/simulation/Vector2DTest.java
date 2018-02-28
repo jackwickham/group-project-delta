@@ -111,7 +111,7 @@ public class Vector2DTest {
 	}
 
 	@Test
-	public void leftOfSame() {
+	public void leftOfTestSame() {
 		Vector2D a = new Vector2D(0, 1);
 
 		assertEquals(false, a.leftOf(a));
