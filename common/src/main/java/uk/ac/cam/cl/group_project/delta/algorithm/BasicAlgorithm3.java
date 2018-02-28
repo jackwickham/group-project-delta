@@ -15,6 +15,7 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 public class BasicAlgorithm3 extends Algorithm{
 
 	private double buffDist = 0.3;
+	private double maxSensorDist = 0.5;
 
 	public BasicAlgorithm3(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -26,18 +27,24 @@ public class BasicAlgorithm3 extends Algorithm{
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
-		if(parameterEnum == ParameterEnum.BufferDistance) {
-			buffDist = value;
+		switch(parameterEnum) {
+			case BufferDistance:
+				buffDist = value;
+				return;
+			case MaxSensorDist:
+				maxSensorDist = value;
 		}
-		super.setParameter(parameterEnum, value);
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
-		if(parameterEnum == ParameterEnum.BufferDistance) {
-			return buffDist;
+		switch(parameterEnum) {
+			case BufferDistance:
+				return buffDist;
+			case MaxSensorDist:
+				return maxSensorDist;
 		}
-		return super.getParameter(parameterEnum);
+		return null;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ public class BasicAlgorithm2 extends Algorithm{
 	//larger values will result in more deceleration/acceleration when distance is too low/high
 	private double breakingConstant = 4;
 	private double accelerationConstant = 4;
+	private double maxSensorDist = 0.5;
 
 	public BasicAlgorithm2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -37,8 +38,9 @@ public class BasicAlgorithm2 extends Algorithm{
 			case BreakingConst:
 				breakingConstant = value;
 				return;
+			case MaxSensorDist:
+				maxSensorDist = value;
 		}
-		super.setParameter(parameterEnum, value);
 	}
 
 	@Override
@@ -50,14 +52,16 @@ public class BasicAlgorithm2 extends Algorithm{
 				return accelerationConstant;
 			case BreakingConst:
 				return breakingConstant;
+			case MaxSensorDist:
+				return maxSensorDist;
 		}
-		return super.getParameter(parameterEnum);
+		return null;
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
 		return new ParameterEnum[]{ParameterEnum.BufferDistance, ParameterEnum.MaxSensorDist, ParameterEnum.BreakingConst,
-			ParameterEnum.AccConst};
+			ParameterEnum.AccConst, ParameterEnum.MaxSensorDist};
 	}
 
 	@Override

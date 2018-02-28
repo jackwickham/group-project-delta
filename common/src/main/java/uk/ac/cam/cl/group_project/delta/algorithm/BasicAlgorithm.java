@@ -20,18 +20,16 @@ public class BasicAlgorithm extends Algorithm {
 	}
 
 	@Override
-	public void setParameter(ParameterEnum parameterEnum, double value) {
-		super.setParameter(parameterEnum, value);
-	}
+	public void setParameter(ParameterEnum parameterEnum, double value) {}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
-		return super.getParameter(parameterEnum);
+		return null;
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[] {ParameterEnum.MaxSensorDist};
+		return new ParameterEnum[0];
 	}
 
 	@Override

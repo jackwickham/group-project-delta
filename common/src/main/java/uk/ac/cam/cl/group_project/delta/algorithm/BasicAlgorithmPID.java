@@ -24,6 +24,8 @@ public class BasicAlgorithmPID extends Algorithm{
 	//constant headway time in s
 	private double headTime = 0.2;
 
+	private double maxSensorDist = 0.5;
+
 	public BasicAlgorithmPID(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
@@ -56,8 +58,9 @@ public class BasicAlgorithmPID extends Algorithm{
 			case HeadTime:
 				headTime = value;
 				break;
+			case MaxSensorDist:
+				maxSensorDist = value;
 		}
-		super.setParameter(parameterEnum, value);
 	}
 
 	@Override
@@ -77,8 +80,10 @@ public class BasicAlgorithmPID extends Algorithm{
 				return buffDist;
 			case HeadTime:
 				return headTime;
+			case MaxSensorDist:
+				return maxSensorDist;
 		}
-		return super.getParameter(parameterEnum);
+		return null;
 	}
 
 	@Override

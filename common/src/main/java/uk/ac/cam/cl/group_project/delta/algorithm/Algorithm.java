@@ -6,8 +6,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public abstract class Algorithm {
 
-	public static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
-	protected double maxSensorDist = 0.5;
+	public static final int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -87,22 +86,13 @@ public abstract class Algorithm {
 
 	/** Sets an algorithms parameter.
 	 *  Will do nothing if that algorithm does not have the parameter **/
-	public void setParameter(ParameterEnum parameterEnum, double value) {
-		if(parameterEnum == ParameterEnum.MaxSensorDist) {
-			maxSensorDist = value;
-		}
-	}
+	public abstract void setParameter(ParameterEnum parameterEnum, double value);
 
 	/**
 	 * @param parameterEnum enum for parameter
 	 * @return if algorithm uses parameter then its value otherwise null
 	 */
-	public Double getParameter(ParameterEnum parameterEnum) {
-		if(parameterEnum == ParameterEnum.MaxSensorDist) {
-			return maxSensorDist;
-		}
-		return null;
-	}
+	public abstract Double getParameter(ParameterEnum parameterEnum);
 
 	/**
 	 * @return Array of all parameters this algorithm uses

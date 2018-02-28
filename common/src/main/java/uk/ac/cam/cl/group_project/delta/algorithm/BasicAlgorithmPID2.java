@@ -32,6 +32,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//distance below which emergency stop happens
 	private double emerDist = 0.1;
 
+	private double maxSensorDist = 0.5;
+
 	public BasicAlgorithmPID2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
@@ -90,8 +92,10 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				return headTime;
 			case EmergencyDistance:
 				return emerDist;
+			case MaxSensorDist:
+				return maxSensorDist;
 		}
-		return super.getParameter(parameterEnum);
+		return null;
 	}
 
 	@Override
