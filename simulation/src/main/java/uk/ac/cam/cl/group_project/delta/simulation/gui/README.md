@@ -47,9 +47,6 @@ The following shortcut keys are available:
 -	`+`/`=`: reduce time warp factor
 -	`-`/`_`: increase time warp factor
 
-Clicking `P` will toggle the simulation between paused and playing the
-simulation.
-
 #### Platoons
 
 Platooning information is indicated by lightly-coloured circles underneath the
