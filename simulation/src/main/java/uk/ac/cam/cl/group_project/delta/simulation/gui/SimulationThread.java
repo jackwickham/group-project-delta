@@ -104,8 +104,10 @@ public class SimulationThread extends Thread {
 			}
 
 			try {
-				long sleep = UPDATE_INTERVAL - dt;
-				Thread.sleep(sleep / 1000000, (int)(sleep % 1000000));
+				Thread.sleep(
+					UPDATE_INTERVAL / 1000000,
+					(int)(UPDATE_INTERVAL % 1000000)
+				);
 			}
 			catch (InterruptedException e) {
 				// Fired when another thread interrupts this, which is unlikely
