@@ -158,6 +158,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 
 		//basic turning PD
+		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
 			double p = turnP * (algorithmData.angle);
 			double d = turnD * (algorithmData.angle - algorithmData.angle);
