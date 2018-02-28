@@ -101,7 +101,6 @@ public class Merge {
 	 *
 	 * @param mainPlatoon - the platoon id of the main platoon
 	 * @param currentPlatoon - the platoon id of the current platoon
-	 * @param payload - the payload of a RequestToMerge packet
 	 */
 	public Merge(int mainPlatoon, int currentPlatoon, Message m) {
 		this.mainPlatoonId = mainPlatoon;
@@ -122,7 +121,6 @@ public class Merge {
 		// New platoon merging into this one
 		if(mainPlatoon == currentPlatoon) {
 			additionalIdLookups = msg.getNewPlatoon();
-			changePosition = additionalIdLookups.size();
 		}
 		lastUpdate = System.nanoTime();
 	}
@@ -185,6 +183,7 @@ public class Merge {
 			state = MergeState.Accepted;
 			if(mainPlatoonId != platoonId) {
 				additionalIdLookups = msg.getMainPlatoon();
+				changePosition = additionalIdLookups.size();
 				if(vehiclesToConfirm > 0) {
 					// This is a leader, so needs to track the number
 					// of vehicles to confirm.

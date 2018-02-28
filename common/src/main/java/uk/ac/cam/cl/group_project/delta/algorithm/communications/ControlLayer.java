@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import uk.ac.cam.cl.group_project.delta.Beacon;
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
@@ -22,6 +24,11 @@ import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
  *
  */
 public class ControlLayer {
+
+	/**
+	 * The maximum range for which IDs can be picked up from beacons.
+	 */
+	private static double MAXIMUM_ID_DETECTION_RANGE = 0.5;
 
 	/**
 	 * The current id of this vehicle.
@@ -69,16 +76,20 @@ public class ControlLayer {
 	private int leaderId;
 
 	/**
+	 * The beacon interface which allows for merging based on the real ordering.
+	 */
+	private BeaconInterface beaconInterface;
+
+	/**
 	 * Create a new platoon instance by making a new MessageReceiver Object
 	 *
 	 * @param network
 	 *            - the network interface to be used
-	 * @param map
-	 *            - the position to message map to be used
 	 */
-	public ControlLayer(NetworkInterface network) {
+	public ControlLayer(NetworkInterface network, BeaconInterface beacons) {
 		messageLookup = new PlatoonLookup();
 		this.network = network;
+		this.beaconInterface = beacons;
 		Random r = new Random();
 		vehicleId = r.nextInt();
 		platoonId = r.nextInt();
@@ -93,8 +104,6 @@ public class ControlLayer {
 	 *
 	 * @param network
 	 *            - the network interface to be used
-	 * @param map
-	 *            - the position to message map to be used
 	 * @param vehicleId
 	 *            - this vehicles initial id
 	 * @param platoonId
@@ -103,12 +112,13 @@ public class ControlLayer {
 	 *            - a list of the current platoon in terms of their ids
 	 */
 	public ControlLayer(NetworkInterface network, int vehicleId, int platoonId,
-			List<Integer> platoonOrder) {
+			List<Integer> platoonOrder, BeaconInterface beacons) {
 		this.vehicleId = vehicleId;
 		this.platoonId = platoonId;
 		this.network = network;
 		this.messageLookup = new PlatoonLookup();
 		this.leaderId = platoonOrder.get(0);
+		this.beaconInterface = beacons;
 		idToPositionLookup = new HashMap<>();
 
 		for (int i = 0; i < platoonOrder.size(); i++) {
@@ -174,8 +184,33 @@ public class ControlLayer {
 					messageLookup.put(idToPositionLookup.get(packet.vehicleId),
 							(VehicleData) packet.message);
 				} else {
-					if(!containsRTM) {
-						beginMergeProtocol(packet);
+					Integer visibleId = getVisibleBeaconId();
+					if(visibleId != null && position == 0) {
+						// If there is a visible beacon, ask if they're in
+						// this platoon
+						BeaconIdQuestion question = new BeaconIdQuestion(platoonId,
+								visibleId);
+						network.sendData(Packet.createPacket(question, vehicleId, packet.platoonId));
+					}
+				}
+			} else if(packet.message instanceof BeaconIdQuestion) {
+				BeaconIdQuestion question = (BeaconIdQuestion)(packet.message);
+				if(packet.platoonId == platoonId &&
+						question.getBeaconId() == beaconInterface.getCurrentBeaconId()) {
+					// Tell the platoon which asked the question that they were correct
+					BeaconIdAnswer answer = new BeaconIdAnswer(
+							platoonId, question.getBeaconId());
+					network.sendData(Packet.createPacket(answer, vehicleId, question.getReturnPlatoonId()));
+				}
+			} else if(packet.message instanceof BeaconIdAnswer) {
+				if(packet.platoonId == platoonId && position == 0) {
+					BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
+					if(answer.getBeaconId() == getVisibleBeaconId()) {
+						// The visible beacon is known to be in a specific
+						// platoon now, try to merge with them
+						if(!containsRTM) {
+							beginMergeProtocol(packet);
+						}
 					}
 				}
 			} else if(packet.message instanceof RequestToMergeMessage) {
@@ -210,16 +245,17 @@ public class ControlLayer {
 	 * Begin the merge protocol by sending a RequestToMerge to the other platoon
 	 *
 	 * @param packet
-	 *            - the data in Packet format
+	 *            - the data in Packet format of a BeaconIdAnswer
 	 */
 	private void beginMergeProtocol(Packet packet) {
+		BeaconIdAnswer answer = (BeaconIdAnswer) packet.message;
 		// Found a new platoon which we could merge with
 		if (position == 0 && (currentMerge == null || !currentMerge.isValid())) {
-			currentMerge = new Merge(packet.platoonId, platoonId, idToPositionLookup.size());
+			currentMerge = new Merge(answer.getAskedPlatoonId(), platoonId, idToPositionLookup.size());
 
 			// Send an initial request to join
 			Message m = createNewMergeRequest(currentMerge.getTransactionId());
-			network.sendData(Packet.createPacket(m, vehicleId, packet.platoonId));
+			network.sendData(Packet.createPacket(m, vehicleId, answer.getAskedPlatoonId()));
 		}
 	}
 
@@ -389,6 +425,27 @@ public class ControlLayer {
 
 		currentMerge = null;
 
+	}
+
+	/**
+	 * Returns the id of the closest visible beacon, or null if there is no
+	 * beacon visible.
+	 *
+	 * @return the id of the closest beacon
+	 */
+	private Integer getVisibleBeaconId() {
+		if(beaconInterface.getBeacons().isEmpty()) return null;
+		int closestId = 0;
+		double minDistance = MAXIMUM_ID_DETECTION_RANGE;
+		for(Beacon b : beaconInterface.getBeacons()) {
+			if(b.getDistanceLowerBound() < minDistance) {
+				closestId = b.getBeaconIdentifier();
+				minDistance = b.getDistanceLowerBound();
+			}
+		}
+		if(minDistance == MAXIMUM_ID_DETECTION_RANGE)
+			return null;
+		return closestId;
 	}
 
 	/**

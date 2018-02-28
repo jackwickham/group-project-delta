@@ -4,16 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MessageType {
-	Emergency(0), Data(1), RequestToMerge(2), AcceptToMerge(3), ConfirmMerge(4), MergeComplete(5);
+	Emergency(0), Data(1), RequestToMerge(2), AcceptToMerge(3), ConfirmMerge(4), MergeComplete(5),
+	BeaconIdQuestion(6), BeaconIdAnswer(7);
 
 	private int value;
 	private static Map<Integer, MessageType> lookup = new HashMap<>();
 
-	private MessageType(int value) {
+	MessageType(int value) {
 		this.value = value;
 	}
 
-	/**
+	/*
 	 * Create the mapping from integer values to MessageTypes. Slightly hacky but
 	 * not much choice
 	 */

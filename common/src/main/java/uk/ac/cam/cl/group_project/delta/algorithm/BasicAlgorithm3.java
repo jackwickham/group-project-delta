@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
@@ -13,21 +14,47 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class BasicAlgorithm3 extends Algorithm{
 
-	public BasicAlgorithm3(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		super(driveInterface, sensorInterface, networkInterface);
+	private double BUFF_DIST = 0.3;
+
+	public BasicAlgorithm3(DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+	}
+
+	@Override
+	public void setParameter(ParameterEnum parameterEnum, double value) {
+		if(parameterEnum == ParameterEnum.BufferDistance) {
+			BUFF_DIST = value;
+		}
+	}
+
+	@Override
+	public Double getParameter(ParameterEnum parameterEnum) {
+		if(parameterEnum == ParameterEnum.BufferDistance) {
+			return BUFF_DIST;
+		}
+		return null;
+	}
+
+	@Override
+	public ParameterEnum[] getParameterList() {
+		return new ParameterEnum[]{ParameterEnum.BufferDistance};
 	}
 
 	//combine the front proximity predicted from the vehicle states at the beginning of the previous time period,
 	//and the sensor proximity data
-	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
-		if (predictedFrontProximity != null && sensorFrontProximity != null) {
-			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
+	private static Double weightFrontProximity(Double predictedFrontProximity, Double frontProximity) {
+		if (predictedFrontProximity != null && frontProximity != null) {
+			return 0.5 * predictedFrontProximity + 0.5 * frontProximity;
 		}
 		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
 		}
-		if(sensorFrontProximity != null) {
-			return sensorFrontProximity;
+		if(frontProximity != null) {
+			return frontProximity;
 		}
 		else return null;
 	}
@@ -58,7 +85,7 @@ public class BasicAlgorithm3 extends Algorithm{
 		}
 
 		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-				algorithmData.sensorFrontProximity);
+				algorithmData.frontProximity);
 
 		// update previous state variables so that they are correct in next time period
 		algorithmData.previousDistance = weightedFrontProximity;
@@ -66,21 +93,21 @@ public class BasicAlgorithm3 extends Algorithm{
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 
 		if (weightedFrontProximity != null) {
-			if (weightedFrontProximity < 5) {
+			if (weightedFrontProximity < BUFF_DIST) {
 				if (algorithmData.chosenAcceleration >= 0) {
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / 5.0;
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * weightedFrontProximity / BUFF_DIST;
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
-					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / 5.0);
+					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration / (weightedFrontProximity / BUFF_DIST);
 				}
 			} else {
 				if (algorithmData.chosenAcceleration >= 0) {
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							* (0.75 + weightedFrontProximity / 20.0);
+							* (0.75 + weightedFrontProximity / (4*BUFF_DIST));
 				} else {
 					// if braking then divide by value so deceleration decreases if gap too small
 					algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-							/ (0.75 + weightedFrontProximity / 20.0);
+							/ (0.75 + weightedFrontProximity / (4*BUFF_DIST));
 				}
 			}
 		} else {

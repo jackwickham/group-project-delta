@@ -492,7 +492,8 @@ public class Controller {
 						controller,
 						car.getDriveInterface(),
 						car.getSensorInterface(),
-						car.getNetworkInterface()
+						car.getNetworkInterface(),
+						car
 					)
 				);
 			}

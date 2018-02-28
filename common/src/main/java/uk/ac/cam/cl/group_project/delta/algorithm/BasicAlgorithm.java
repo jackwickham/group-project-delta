@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
@@ -10,8 +11,25 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  */
 public class BasicAlgorithm extends Algorithm {
 
-	public BasicAlgorithm(DriveInterface driveInterface, SensorInterface sensorInterface, NetworkInterface networkInterface) {
-		super(driveInterface, sensorInterface, networkInterface);
+	public BasicAlgorithm(DriveInterface driveInterface,
+			SensorInterface sensorInterface,
+			NetworkInterface networkInterface,
+			BeaconInterface beacons,
+			FrontVehicleRoute.RouteNumber routeNumber) {
+		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+	}
+
+	@Override
+	public void setParameter(ParameterEnum parameterEnum, double value) {}
+
+	@Override
+	public Double getParameter(ParameterEnum parameterEnum) {
+		return null;
+	}
+
+	@Override
+	public ParameterEnum[] getParameterList() {
+		return new ParameterEnum[0];
 	}
 
 	@Override
