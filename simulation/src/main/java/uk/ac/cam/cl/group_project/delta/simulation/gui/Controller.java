@@ -550,8 +550,8 @@ public class Controller {
 			case SECONDARY:
 
 				// Create a new context menu
-				MenuItem item = new MenuItem("Follow");
-				item.setOnAction(e2 -> {
+				MenuItem follow = new MenuItem("Follow");
+				follow.setOnAction(e2 -> {
 					currentSelection = node;
 					// (x, y) = (viewDimension / 2 - pos) * scale
 					scene.translateXProperty().bind(
@@ -567,7 +567,18 @@ public class Controller {
 							.multiply(scene.scaleYProperty())
 					);
 				});
-				(new ContextMenu(item)).show(node, e.getScreenX(), e.getScreenY());
+
+				MenuItem delete = new MenuItem("Delete");
+				delete.setOnAction(e2 -> {
+					if (currentSelection == node) {
+						currentSelection = null;
+					}
+					simulation.remove(node.getCar());
+					scene.getChildren().remove(node);
+				});
+
+				ContextMenu menu = new ContextMenu(follow, delete);
+				menu.show(node, e.getScreenX(), e.getScreenY());
 
 				break;
 

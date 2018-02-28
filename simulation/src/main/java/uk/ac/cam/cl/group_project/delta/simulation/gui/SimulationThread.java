@@ -169,6 +169,15 @@ public class SimulationThread extends Thread {
 	}
 
 	/**
+	 * Remove a physics body from the simulated world.
+	 */
+	public void remove(PhysicsBody body) {
+		synchronized (world) {
+			world.getBodies().remove(body);
+		}
+	}
+
+	/**
 	 * Create a {@link SimulatedCar} within this simulated world.
 	 * @param wheelBase     Distance from front- to rear-axle.
 	 * @return              The car created.
