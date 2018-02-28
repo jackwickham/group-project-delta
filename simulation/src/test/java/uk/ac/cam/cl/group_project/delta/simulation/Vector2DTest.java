@@ -94,4 +94,27 @@ public class Vector2DTest {
 
 	}
 
+	@Test
+	public void leftOfTestTrue() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(1, 0);
+
+		assertEquals(true, a.leftOf(b));
+	}
+
+	@Test
+	public void leftOfTestFalse() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(-0.1, -1);
+
+		assertEquals(false, a.leftOf(b));
+	}
+
+	@Test
+	public void leftOfTestSame() {
+		Vector2D a = new Vector2D(0, 1);
+
+		assertEquals(false, a.leftOf(a));
+	}
+
 }
