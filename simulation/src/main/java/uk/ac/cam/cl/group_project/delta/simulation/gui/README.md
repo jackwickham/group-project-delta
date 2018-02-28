@@ -42,10 +42,11 @@ existing objects can be acquired by left-clicking on the object and navigating
 to the "Network" tab.
 
 The following shortcut keys are available:
--	`P`: pause/unpause
+-	`<space>`: pause/unpause
 -	`;`: step
 -	`+`/`=`: reduce time warp factor
 -	`-`/`_`: increase time warp factor
+-	`0`: reset time warp factor to `1.0`
 
 #### Platoons
 
