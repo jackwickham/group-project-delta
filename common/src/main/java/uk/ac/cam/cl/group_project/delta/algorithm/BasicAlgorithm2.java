@@ -73,7 +73,7 @@ public class BasicAlgorithm2 extends Algorithm{
 			algorithmData.chosenAcceleration = algorithmData.acceleration;
 		}
 		if(algorithmData.frontProximity != null) {
-			if (algorithmData.sensorFrontProximity < maxSensorDist) {
+			if (algorithmData.frontProximity < maxSensorDist) {
 				if (algorithmData.frontProximity < buffDist) {
 					if (algorithmData.chosenAcceleration >= 0) {
 						algorithmData.chosenAcceleration = algorithmData.chosenAcceleration * algorithmData.frontProximity
