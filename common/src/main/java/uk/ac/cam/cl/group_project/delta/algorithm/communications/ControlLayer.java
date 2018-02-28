@@ -26,6 +26,11 @@ import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 public class ControlLayer {
 
 	/**
+	 * The maximum range for which IDs can be picked up from beacons.
+	 */
+	private static double MAXIMUM_ID_DETECTION_RANGE = 0.5;
+
+	/**
 	 * The current id of this vehicle.
 	 */
 	private int vehicleId;
@@ -431,14 +436,18 @@ public class ControlLayer {
 	private Integer getVisibleBeaconId() {
 		if(beaconInterface.getBeacons().isEmpty()) return null;
 		int closestId = 0;
-		int minDistance = Integer.MAX_VALUE;
+		double minDistance = MAXIMUM_ID_DETECTION_RANGE;
 		for(Beacon b : beaconInterface.getBeacons()) {
 			if(b.getDistanceLowerBound() < minDistance) {
 				closestId = b.getBeaconIdentifier();
+				minDistance = b.getDistanceLowerBound();
 			}
 		}
+		if(minDistance == MAXIMUM_ID_DETECTION_RANGE)
+			return null;
 		return closestId;
 	}
+
 	/**
 	 * Used during a merge commit to update the ids to the replaced ids to remove
 	 * conflicts
