@@ -30,6 +30,7 @@ public class AlgorithmData {
 
 	public List<Beacon> beacons;
 	public Beacon closestBeacon;
+	public Double angle;
 
 	//frontProximity derived from beacons and sensor front proximity
 	public Double frontProximity;
@@ -55,6 +56,7 @@ public class AlgorithmData {
 	public Double previousDistance;
 	public double previousSpeed;
 	public double previousAcceleration;
+	public Double previousAngle;
 
 	public MiniPID miniPID;
 

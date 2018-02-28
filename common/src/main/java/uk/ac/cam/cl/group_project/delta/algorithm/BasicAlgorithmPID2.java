@@ -12,27 +12,32 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 
 public class BasicAlgorithmPID2 extends Algorithm {
 
+	//not these defaults are not well configured
 	//ID parameters
 	//increases response time
-	private double PID_P = 0.5;
+	private double pidP = 0.5;
 	//helps prevent steady-state errors
 	private double pidI = 0;
 	//helps prevent overshoot
-	private double PID_D = 1.8;
+	private double pidD= 1.8;
+
+	//turning PD parameters
+	private double turnP = 10;
+	private double turnD = 0;
 
 	//maximum and minimum acceleration in m/s
 	private double maxAcc = 2;
 	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double buffDist = 0.3;
+	private double buffDist = 0.5;
 	//constant headway time in s
 	private double headTime = 0.2;
 
 	//distance below which emergency stop happens
-	private double emerDist = 0.1;
+	private double emerDist = 0;
 
-	private double maxSensorDist = 0.5;
+	private double maxSensorDist = 2;
 
 	public BasicAlgorithmPID2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -46,13 +51,13 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	public void setParameter(ParameterEnum parameterEnum, double value) {
 		switch (parameterEnum) {
 			case PID_P:
-				PID_P = value;
+				pidP = value;
 				break;
 			case PID_I:
 				pidI = value;
 				break;
 			case PID_D:
-				PID_D = value;
+				pidD = value;
 				break;
 			case MaxAcc:
 				maxAcc = value;
@@ -77,11 +82,11 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	public Double getParameter(ParameterEnum parameterEnum) {
 		switch (parameterEnum) {
 			case PID_P:
-				return PID_P;
+				return pidP;
 			case PID_I:
 				return pidI;
 			case PID_D:
-				return PID_D;
+				return pidD;
 			case MaxAcc:
 				return maxAcc;
 			case MinAcc:
@@ -111,27 +116,27 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
-		if(algorithmData.frontProximity != null) {
+		if (algorithmData.frontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
 			if (algorithmData.frontProximity < emerDist) {
 				emergencyStop();
 			}
-			if(algorithmData.receiveMessageData != null) {
+			if (algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
-				pTerm = PID_P * (algorithmData.frontProximity +
-						headTime *  algorithmData.speed - buffDist);
+				pTerm = pidP * (algorithmData.frontProximity +
+						headTime * algorithmData.speed - buffDist);
 			} else {
 				//if no message received just use sensor data
-				pTerm = PID_P * (algorithmData.frontProximity - buffDist);
+				pTerm = pidP * (algorithmData.frontProximity - buffDist);
 			}
 		} else {
 			//without front proximity reading p Term is not used
 			pTerm = 0;
 		}
 		double dTerm;
-		if(algorithmData.receiveMessageData != null) {
+		if (algorithmData.receiveMessageData != null) {
 			//Multiplies the rate of change of error by a constant term PID_D
-			dTerm = PID_D * (algorithmData.predecessorSpeed -
+			dTerm = pidD * (algorithmData.predecessorSpeed -
 					algorithmData.speed + headTime * algorithmData.acceleration);
 		} else {
 			//if no message has ever been received d Term not used
@@ -141,9 +146,9 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//clamp chosen acceleration within range min and max acceleration
 		double chosenAcceleration = pTerm + dTerm;
 
-		if(chosenAcceleration > maxAcc) {
+		if (chosenAcceleration > maxAcc) {
 			chosenAcceleration = maxAcc;
-		} else if(chosenAcceleration < minAcc) {
+		} else if (chosenAcceleration < minAcc) {
 			chosenAcceleration = minAcc;
 		}
 
@@ -151,6 +156,16 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 		//TODO: This is not calculated
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
-		algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+
+		//basic turning PD
+		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
+			double p = turnP * (algorithmData.angle);
+			double d = turnD * (algorithmData.angle - algorithmData.angle);
+			algorithmData.chosenTurnRate = p + d;
+		} else {
+			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+		}
+
+		//algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 	}
 }
