@@ -54,7 +54,7 @@ public class NetworkLogMessage {
 
 		switch (packet.message.getType()) {
 			case Emergency:
-				msg = "N/A";
+				msg = "Emergency!";
 				break;
 			case Data:
 				VehicleData vd = (VehicleData) packet.message;
