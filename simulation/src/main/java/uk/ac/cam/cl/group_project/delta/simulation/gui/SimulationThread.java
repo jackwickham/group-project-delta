@@ -164,7 +164,7 @@ public class SimulationThread extends Thread {
 	 */
 	public void smoothUpdate(long dt) {
 		// TODO: aim for step size uniformity
-		for (int i = 0; i <= dt; i += UPDATE_INTERVAL) {
+		for (long i = 0; i <= dt; i += UPDATE_INTERVAL) {
 			update(UPDATE_INTERVAL);
 		}
 		if (dt % UPDATE_INTERVAL != 0) {
