@@ -2,6 +2,7 @@ package uk.ac.cam.cl.group_project.delta.lego;
 
 import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.BeaconInterface;
+import uk.ac.cam.cl.group_project.delta.Log;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,8 @@ public class LegoBeacon implements BeaconInterface {
 	 * Map from vehicle names to beacon IDs.
 	 */
 	private static final Map<String, Integer> nameToID = new HashMap<>();
-	{
-		nameToID.put("Delorian", 1);
+	static {
+		nameToID.put("DeLorian", 1);
 		nameToID.put("SpaceTesla", 2);
 		nameToID.put("Batmobile", 3);
 	}
