@@ -18,7 +18,7 @@ public class SimulationThread extends Thread {
 	/**
 	 * Minimum number of real nanoseconds between simulation updates.
 	 */
-	private static final long UPDATE_INTERVAL = 1000000; // 0.1 sec
+	private static final long UPDATE_INTERVAL = 1000000; // 1ms
 
 	/**
 	 * Target number of simulation nanoseconds between algorithm controller
