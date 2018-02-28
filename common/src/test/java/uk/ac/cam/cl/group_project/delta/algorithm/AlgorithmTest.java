@@ -26,13 +26,13 @@ public class AlgorithmTest {
 
 	public AlgorithmTest(Double frontProximity, Double beaconDist, Double[] message) {
 	if(message != null) {
-			this.predecessorMessages = Arrays.asList(new VehicleData[]{new VehicleData(message[0], message[1], message[2], message[3],
-					message[4], message[5])});
+			this.predecessorMessages = Arrays.asList(new VehicleData(message[0], message[1], message[2], message[3],
+					message[4], message[5]));
 		} else {
 			this.predecessorMessages = new ArrayList<>();
 		}
 		if(beaconDist != null) {
-			this.beacons = Arrays.asList(new Beacon[]{new Beacon(0,beaconDist,beaconDist,0.0)});
+			this.beacons = Arrays.asList(new Beacon(0,beaconDist,beaconDist,0.0));
 		} else {
 			this.beacons = new ArrayList<>();
 		}
@@ -60,6 +60,7 @@ public class AlgorithmTest {
 	public void testBasicAlgorithm() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
+		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
@@ -83,6 +84,7 @@ public class AlgorithmTest {
 	public void testBasicAlgorithm2() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
+		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
@@ -106,6 +108,7 @@ public class AlgorithmTest {
 	public void testBasicAlgorithm3() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
+		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
@@ -130,6 +133,7 @@ public class AlgorithmTest {
 	public void testBasicAlgorithmPID() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
+		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
@@ -154,6 +158,7 @@ public class AlgorithmTest {
 	public void testBasicAlgorithmPID2() {
 		SensorInterface sensorInterface = mock(SensorInterface.class);
 		when(sensorInterface.getFrontProximity()).thenReturn(frontProximity);
+		when(sensorInterface.getBeacons()).thenReturn(beacons);
 
 		DriveInterface driveInterface = mock(DriveInterface.class);
 		NetworkInterface networkInterface = mock(NetworkInterface.class);
