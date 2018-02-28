@@ -15,7 +15,7 @@ public class LegoBeacon implements BeaconInterface {
 	 */
 	private static final Map<String, Integer> nameToID = new HashMap<>();
 	static {
-		nameToID.put("DeLorian", 1);
+		nameToID.put("DeLorean", 1);
 		nameToID.put("SpaceTesla", 2);
 		nameToID.put("Batmobile", 3);
 	}
