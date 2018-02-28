@@ -93,6 +93,22 @@ public class NetworkLogMessage {
 					mcm.getTransactionId()
 				);
 				break;
+			case BeaconIdQuestion:
+				BeaconIdQuestion biq = (BeaconIdQuestion) packet.message;
+				msg = String.format(
+					"Who is Vehicle %d? Tell Platoon %d",
+					biq.getBeaconId(),
+					biq.getReturnPlatoonId()
+				);
+				break;
+			case BeaconIdAnswer:
+				BeaconIdAnswer bia = (BeaconIdAnswer) packet.message;
+				msg = String.format(
+					"Tell Platoon %d that I have beacon %d",
+					bia.getAskedPlatoonId(),
+					bia.getBeaconId()
+				);
+				break;
 		}
 
 		message.set(msg);

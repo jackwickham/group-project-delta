@@ -60,6 +60,7 @@
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 													</columnConstraints>
 													<rowConstraints>
 														<RowConstraints vgrow="NEVER" prefHeight="30"/>
@@ -71,17 +72,22 @@
 																<Tooltip text="Show emergency messages"/>
 															</tooltip>
 														</CheckBox>
-														<CheckBox fx:id="filterMerges" text="Merges" selected="true"  GridPane.columnIndex="2">
-															<tooltip>
-																<Tooltip text="Show platoon merging communication"/>
-															</tooltip>
-														</CheckBox>
 														<CheckBox fx:id="filterData" text="Data" selected="false"  GridPane.columnIndex="1">
 															<tooltip>
 																<Tooltip text="Show data messages"/>
 															</tooltip>
 														</CheckBox>
-														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+														<CheckBox fx:id="filterMerges" text="Merges" selected="true"  GridPane.columnIndex="2">
+															<tooltip>
+																<Tooltip text="Show platoon merging communication"/>
+															</tooltip>
+														</CheckBox>
+														<CheckBox fx:id="filterQueries" text="Queries" selected="true" GridPane.columnIndex="3">
+															<tooltip>
+																<Tooltip text="Show beacon query communication"/>
+															</tooltip>
+														</CheckBox>
+														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="4"/>
 													</children>
 												</GridPane>
 											</children>

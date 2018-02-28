@@ -67,7 +67,6 @@ public class Controller {
 	 */
 	@FXML
 	private Pane scene;
-
 	/**
 	 * GUI element containing the hierarchical information for a selected
 	 * object.
@@ -103,6 +102,12 @@ public class Controller {
 	 */
 	@FXML
 	private CheckBox filterMerges;
+
+	/**
+	 * Beacon query filter button.
+	 */
+	@FXML
+	public CheckBox filterQueries;
 
 	/**
 	 * Indicator to show the simulation is paused.
@@ -248,11 +253,15 @@ public class Controller {
 			|| type == MessageType.AcceptToMerge
 			|| type == MessageType.ConfirmMerge
 			|| type == MessageType.MergeComplete;
+		boolean isQuery =
+			type == MessageType.BeaconIdQuestion
+			|| type == MessageType.BeaconIdAnswer;
 
 		if (
 			(type == MessageType.Emergency && filterEmergency.isSelected())
 			|| (type == MessageType.Data && filterData.isSelected())
 			|| (isMergeMessage && filterMerges.isSelected())
+			|| (isQuery && filterQueries.isSelected())
 		) {
 			networkLogStore.add(0, msg);
 			if (networkLogStore.size() > NETWORK_LOG_CAPACITY) {
