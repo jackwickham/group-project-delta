@@ -13,6 +13,9 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 public class BasicAlgorithm2 extends Algorithm{
 
 	private double buffDist = 0.3;
+	//larger values will result in more deceleration/acceleration when distance is too low/high
+	private double breakingConstant = 4;
+	private double accelerationConstant = 4;
 
 	public BasicAlgorithm2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -24,26 +27,37 @@ public class BasicAlgorithm2 extends Algorithm{
 
 	@Override
 	public void setParameter(ParameterEnum parameterEnum, double value) {
-		if(parameterEnum == ParameterEnum.BufferDistance) {
-			buffDist = value;
+		switch(parameterEnum) {
+			case BufferDistance:
+				buffDist = value;
+				return;
+			case AccConst:
+				accelerationConstant = value;
+				return;
+			case BreakingConst:
+				breakingConstant = value;
+				return;
 		}
 		super.setParameter(parameterEnum, value);
 	}
 
 	@Override
 	public Double getParameter(ParameterEnum parameterEnum) {
-		if(parameterEnum == ParameterEnum.MaxSensorDist) {
-			return maxSensorDist;
-		}
-		if(parameterEnum == ParameterEnum.BufferDistance) {
-			return buffDist;
+		switch(parameterEnum) {
+			case BufferDistance:
+				return buffDist;
+			case AccConst:
+				return accelerationConstant;
+			case BreakingConst:
+				return breakingConstant;
 		}
 		return super.getParameter(parameterEnum);
 	}
 
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[]{ParameterEnum.BufferDistance, ParameterEnum.MaxSensorDist};
+		return new ParameterEnum[]{ParameterEnum.BufferDistance, ParameterEnum.MaxSensorDist, ParameterEnum.BreakingConst,
+			ParameterEnum.AccConst};
 	}
 
 	@Override
@@ -68,11 +82,11 @@ public class BasicAlgorithm2 extends Algorithm{
 				} else {
 					if (algorithmData.chosenAcceleration >= 0) {
 						algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-								* (0.75 + algorithmData.frontProximity / (4 * buffDist));
+								* ((1/accelerationConstant) + algorithmData.frontProximity / (accelerationConstant * buffDist));
 					} else {
 						// if braking then divide by value so deceleration decreases if gap too small
 						algorithmData.chosenAcceleration = algorithmData.chosenAcceleration
-								/ (0.75 + algorithmData.frontProximity / (4 * buffDist));
+								/ ((1/breakingConstant) + algorithmData.frontProximity / (breakingConstant * buffDist));
 					}
 				}
 			}
