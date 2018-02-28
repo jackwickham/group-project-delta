@@ -604,16 +604,16 @@ public class Controller {
 					);
 				});
 
-				MenuItem delete = new MenuItem("Delete");
+				/*MenuItem delete = new MenuItem("Delete");
 				delete.setOnAction(e2 -> {
 					if (currentSelection == node) {
 						currentSelection = null;
 					}
 					simulation.remove(node.getCar());
 					scene.getChildren().remove(node);
-				});
+				});*/
 
-				ContextMenu menu = new ContextMenu(follow, delete);
+				ContextMenu menu = new ContextMenu(follow/*, delete*/);
 				menu.show(node, e.getScreenX(), e.getScreenY());
 
 				break;
