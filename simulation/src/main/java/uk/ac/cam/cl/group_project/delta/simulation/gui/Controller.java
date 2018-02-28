@@ -379,6 +379,9 @@ public class Controller {
 			case SEMICOLON:
 				stepButton.fire();
 				break;
+			case DIGIT0:
+				timeDilationSlider.adjustValue(1.0);
+				break;
 			case PLUS:
 			case EQUALS:
 				timeDilationSlider.adjustValue(
