@@ -95,8 +95,6 @@ public class SimulationThread extends Thread {
 			long tmp = System.nanoTime();
 			long dt = tmp - time;
 			if (dt > UPDATE_INTERVAL) {
-
-
 				if (getTimeDilationFactor() > 0) {
 					update((long) (dt * getTimeDilationFactor()));
 				}
