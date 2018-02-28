@@ -12,21 +12,23 @@ public class LegoBeacon implements BeaconInterface {
 	/**
 	 * Map from vehicle names to beacon IDs.
 	 */
-	private static final Map<String, Integer> nameToID = new HashMap<String, Integer>() {{
+	private static final Map<String, Integer> nameToID = new HashMap<>();
+	{
 		nameToID.put("Delorian", 1);
 		nameToID.put("SpaceTesla", 2);
 		nameToID.put("Batmobile", 3);
-	}};
+	}
 
 	private Sensor sensor;
 	private int beaconID;
 
 	public LegoBeacon(Sensor sensor, String name) {
 		this.sensor = sensor;
-		if (nameToID.containsKey(name))
-			this.beaconID = -1;
-		else
+		if (nameToID.containsKey(name)) {
 			this.beaconID = nameToID.get(name);
+		} else {
+			this.beaconID = -1;
+		}
 	}
 
 	/**

@@ -31,9 +31,9 @@ public class FrontVehicleRoute {
 	private AlgorithmData algorithmData;
 
 	/**
-	 * The number of milliseconds per algorithm loop
+	 * The number of seconds per algorithm loop
 	 */
-	private final int LOOP_LENGTH;
+	private final double LOOP_LENGTH;
 
 	/**
 	 * Possible different types of move
@@ -45,9 +45,9 @@ public class FrontVehicleRoute {
 	 */
 	public enum RouteNumber {ROUTE_ZERO, ROUTE_ONE, ROUTE_TWO}
 
-	public FrontVehicleRoute(AlgorithmData algorithmData, int loopLength, RouteNumber routeNumber) {
+	public FrontVehicleRoute(AlgorithmData algorithmData, double algoLoopLength, RouteNumber routeNumber) {
 		this.algorithmData = algorithmData;
-		this.LOOP_LENGTH = loopLength;
+		this.LOOP_LENGTH = algoLoopLength / 1000000000;
 		switch (routeNumber) {
 			case ROUTE_ZERO:
 				this.moves = routeZero();
@@ -58,11 +58,7 @@ public class FrontVehicleRoute {
 				this.moves = routeTwo();
 				break;
 		}
-		if (moves.size() > 0) {
-			nextActionStep = moves.get(0).seconds * LOOP_LENGTH;
-		} else {
-			stepsRemaining = false;
-		}
+		updateNextActionStep();
 	}
 
 	/**
@@ -81,13 +77,17 @@ public class FrontVehicleRoute {
 					break;
 			}
 			moves.remove(0);
-			if (moves.size() > 0) {
-				nextActionStep = moves.get(0).seconds * LOOP_LENGTH;
-			} else {
-				stepsRemaining = false;
-			}
+			updateNextActionStep();
 		}
 		currentStep++;
+	}
+
+	private void updateNextActionStep() {
+		if (moves.size() > 0) {
+			nextActionStep = (int) (moves.get(0).seconds / LOOP_LENGTH);
+		} else {
+			stepsRemaining = false;
+		}
 	}
 
 	/**

@@ -25,12 +25,12 @@ class MainClass {
 		try {
 			network = new Network(Thread.currentThread());
 			Algorithm algo = Algorithm.createAlgorithm(
-					AlgorithmEnum.BasicAlgorithm,
+					AlgorithmEnum.BasicAlgorithmPID2,
 					drive,
 					sensor,
 					network,
 					beacon,
-					FrontVehicleRoute.RouteNumber.ROUTE_TWO
+					FrontVehicleRoute.RouteNumber.ROUTE_ONE
 			);
 			algo.run();
 		} finally {

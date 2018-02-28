@@ -6,7 +6,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public abstract class Algorithm {
 
-	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	public final static int ALGORITHM_LOOP_DURATION = 500000000; // 500ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
