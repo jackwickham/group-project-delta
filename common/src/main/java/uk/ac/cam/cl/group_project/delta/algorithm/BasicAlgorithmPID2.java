@@ -30,12 +30,12 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double buffDist = 0.5;
+	private double buffDist = 0.3;
 	//constant headway time in s
-	private double headTime = 0.2;
+	private double headTime = 0.1;
 
 	//distance below which emergency stop happens
-	private double emerDist = 0;
+	private double emerDist = 0.1;
 
 	private double maxSensorDist = 2;
 
@@ -123,8 +123,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 			}
 			if (algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
-				pTerm = pidP * (algorithmData.frontProximity +
-						headTime * algorithmData.speed - buffDist);
+				pTerm = pidP * (algorithmData.frontProximity -
+						(headTime * algorithmData.speed + buffDist));
 			} else {
 				//if no message received just use sensor data
 				pTerm = pidP * (algorithmData.frontProximity - buffDist);
@@ -137,15 +137,16 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if (algorithmData.receiveMessageData != null) {
 			//Multiplies the rate of change of error by a constant term PID_D
 			dTerm = pidD * (algorithmData.predecessorSpeed -
-					algorithmData.speed + headTime * algorithmData.acceleration);
+					algorithmData.speed - headTime * algorithmData.acceleration);
 		} else {
 			//if no message has ever been received d Term not used
 			dTerm = 0;
 		}
 
-		//clamp chosen acceleration within range min and max acceleration
-		double chosenAcceleration = pTerm + dTerm;
+		//use predecessors acceleration as feedforward
+		double chosenAcceleration = pTerm + dTerm + algorithmData.predecessorAcceleration;
 
+		//clamp chosen acceleration within range min and max acceleration
 		if (chosenAcceleration > maxAcc) {
 			chosenAcceleration = maxAcc;
 		} else if (chosenAcceleration < minAcc) {
@@ -160,13 +161,11 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//basic turning PD
 		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
-			double p = turnP * (algorithmData.angle);
+			double p = turnP * algorithmData.angle;
 			double d = turnD * (algorithmData.angle - algorithmData.angle);
 			algorithmData.chosenTurnRate = p + d;
 		} else {
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		}
-
-		//algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 	}
 }
