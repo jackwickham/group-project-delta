@@ -165,7 +165,7 @@ public class PhysicsCar extends PhysicsBody {
 			setWheelAngleInternal(0.0);
 		} else {
 			double radius = speed / turnRate;
-			setWheelAngleInternal(Math.atan2(wheelBase, radius));
+			setWheelAngleInternal(Math.signum(radius) * Math.atan2(wheelBase, Math.abs(radius)));
 		}
 	}
 
