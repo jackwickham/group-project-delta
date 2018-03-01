@@ -65,4 +65,7 @@ public class AlgorithmData {
 
 	//flag which is true if update method in Algorithm is being used
 	public boolean notUsingRealTime;
+
+	//sum of errors used by PID
+	public Double errorSum;
 }

@@ -15,11 +15,11 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//not these defaults are not well configured
 	//ID parameters
 	//increases response time
-	private double pidP = 0.5;
+	private double pidP = 1.5;
 	//helps prevent steady-state errors
 	private double pidI = 0;
 	//helps prevent overshoot
-	private double pidD= 1.8;
+	private double pidD= 3;
 
 	//turning PD parameters
 	private double turnP = 10;
@@ -113,6 +113,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	@Override
 	public void makeDecision() {
 		double pTerm;
+		double iTerm =0;
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
@@ -123,8 +124,16 @@ public class BasicAlgorithmPID2 extends Algorithm {
 			}
 			if (algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
-				pTerm = pidP * (algorithmData.frontProximity -
+				double error = (algorithmData.frontProximity -
 						(headTime * algorithmData.speed + buffDist));
+				pTerm = pidP * error;
+				if(algorithmData.errorSum != null && error < 2 && error > -10) {
+					algorithmData.errorSum += error;
+				} else {
+					algorithmData.errorSum = error;
+				}
+				iTerm = pidI * algorithmData.errorSum;
+
 			} else {
 				//if no message received just use sensor data
 				pTerm = pidP * (algorithmData.frontProximity - buffDist);
@@ -132,8 +141,9 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		} else {
 			//without front proximity reading p Term is not used
 			pTerm = 0;
+			iTerm = 0;
 		}
-		double dTerm;
+		double dTerm = 0;
 		if (algorithmData.receiveMessageData != null) {
 			//Multiplies the rate of change of error by a constant term PID_D
 			dTerm = pidD * (algorithmData.predecessorSpeed -
@@ -144,7 +154,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		}
 
 		//use predecessors acceleration as feedforward
-		double chosenAcceleration = pTerm + dTerm + algorithmData.predecessorAcceleration;
+		double chosenAcceleration = pTerm + dTerm + iTerm + algorithmData.predecessorAcceleration;
 
 		//clamp chosen acceleration within range min and max acceleration
 		if (chosenAcceleration > maxAcc) {
