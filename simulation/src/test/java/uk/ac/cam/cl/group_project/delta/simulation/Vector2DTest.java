@@ -117,4 +117,44 @@ public class Vector2DTest {
 		assertEquals(false, a.leftOf(a));
 	}
 
+	@Test
+	public void angleToTestSame() {
+		Vector2D a = new Vector2D(0, 1);
+
+		assertEquals(0.0, a.angleTo(a), 0.005);
+	}
+
+	@Test
+	public void angleToTestPositive() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(1, 1);
+		assertEquals(Math.PI / 4, a.angleTo(b), 0.01);
+	}
+
+	@Test
+	public void angleToTestNegative() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(-1, 1);
+		assertEquals(-Math.PI / 4, a.angleTo(b), 0.01);
+	}
+
+	@Test
+	public void angleToTestLarge() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(1, -1);
+		assertEquals(3 * Math.PI / 4, a.angleTo(b), 0.01);
+	}
+
+	@Test
+	public void angleToTestPathologicalCase() {
+		// Floating point inaccuracies would cause the standard method of using
+		// a.dot(b) / (a.magnitude() * b.magnitude()) to be >1, resulting in
+		// acos giving NaN. This test ensures that this case is handled
+		// correctly.
+		Vector2D a = new Vector2D(0.6884487660618247, 0.7252849760666155);
+		Vector2D b = new Vector2D(0.2017642660869896, 0.21255988469024656);
+
+		assertEquals("Floating point inaccuracies aren't corrected for", 0.0, a.angleTo(b), 0.01);
+	}
+
 }
