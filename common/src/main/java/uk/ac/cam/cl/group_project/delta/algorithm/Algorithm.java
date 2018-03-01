@@ -173,7 +173,8 @@ public abstract class Algorithm {
 		algorithmData.commsInterface.sendMessage(sendMessageData);
 	}
 
-	protected void emergencyStop() {
+	public void emergencyStop() {
+		algorithmData.emergencyOccurred = true;
 		algorithmData.driveInterface.stop();
 		algorithmData.commsInterface.notifyEmergency();
 	}
@@ -235,7 +236,9 @@ public abstract class Algorithm {
 	public void update(long time) {
 		algorithmData.notUsingRealTime = true;
 		algorithmData.time = time;
-		runOneLoop();
+		if (!algorithmData.emergencyOccurred) {
+			runOneLoop();
+		}
 	}
 
 	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs

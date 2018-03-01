@@ -2,6 +2,7 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,11 @@ public class SimulatedNetworkModule implements NetworkInterface
 	 * Buffer of messages received since last call to `pollData`.
 	 */
 	private List<MessageReceipt> messageBuffer;
+
+	/**
+	 * Handler function to call when an emergency message is received.
+	 */
+	private EmergencyHandler emergencyHandler;
 
 	/**
 	 * Construct simulated network interface, for the world given.
@@ -62,6 +68,19 @@ public class SimulatedNetworkModule implements NetworkInterface
 	}
 
 	/**
+	 * Handle a received message.
+	 * @param message    The message received.
+	 */
+	public synchronized void handleMessage(byte[] message) {
+		if (emergencyHandler != null && MessageReceipt.isEmergencyMessage(message)) {
+			emergencyHandler.handle(message);
+		}
+		else {
+			messageBuffer.add(new MessageReceipt(message, network.getTime()));
+		}
+	}
+
+	/**
 	 * Fetches the node's current position.
 	 * @return    The current position.
 	 */
@@ -70,10 +89,24 @@ public class SimulatedNetworkModule implements NetworkInterface
 	}
 
 	/**
-	 * Handle a received message.
-	 * @param message    The message received.
+	 * Set the emergency message handler.
+	 * @param emergencyHandler    Handler callback.
 	 */
-	public synchronized void handleMessage(byte[] message) {
-		this.messageBuffer.add(new MessageReceipt(message, network.getTime()));
+	public void setEmergencyHandler(EmergencyHandler emergencyHandler) {
+		this.emergencyHandler = emergencyHandler;
 	}
+
+	/**
+	 * Functional interface for emergency message handling.
+	 */
+	@FunctionalInterface
+	public interface EmergencyHandler {
+		/**
+		 * Handle an emergency message.
+		 * @param message    The byte array received that contains the emergency
+		 *                   message.
+		 */
+		void handle(byte[] message);
+	}
+
 }
