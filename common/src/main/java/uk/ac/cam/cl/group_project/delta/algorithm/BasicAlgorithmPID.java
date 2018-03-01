@@ -20,11 +20,11 @@ public class BasicAlgorithmPID extends Algorithm{
 	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double buffDist = 0.3;
+	private double buffDist = 0.8;
 	//constant headway time in s
 	private double headTime = 0.2;
 
-	private double maxSensorDist = 0.5;
+	private double maxSensorDist = 2;
 
 	public BasicAlgorithmPID(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -96,7 +96,7 @@ public class BasicAlgorithmPID extends Algorithm{
 	//and the sensor proximity data
 	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
 		if (predictedFrontProximity != null && sensorFrontProximity != null) {
-			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
+			return 0.0 * predictedFrontProximity + 1 * sensorFrontProximity;
 		}
 		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
@@ -108,8 +108,6 @@ public class BasicAlgorithmPID extends Algorithm{
 	}
 
 	public void initialise() {
-		algorithmData.miniPID = new MiniPID(pidP, pidI, pidD);
-		algorithmData.miniPID.setOutputLimits(minAcc, maxAcc);
 	}
 
 	public void makeDecision() {
@@ -130,7 +128,7 @@ public class BasicAlgorithmPID extends Algorithm{
 					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
 			//calculate desired distance
-			desired_dist = buffDist + headTime * (algorithmData.predecessorSpeed - algorithmData.speed);
+			desired_dist = buffDist + headTime * algorithmData.speed;
 
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
@@ -154,7 +152,16 @@ public class BasicAlgorithmPID extends Algorithm{
 
 		if(weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity
-			algorithmData.chosenAcceleration = algorithmData.miniPID.getOutput(desired_dist - weightedFrontProximity);
+			double pTerm = pidP * (algorithmData.frontProximity -
+					(headTime * algorithmData.speed + buffDist));
+			double dTerm = pidD* (algorithmData.frontProximity - algorithmData.previousDistance);
+			double chosenAcceleration = pTerm + dTerm;
+			if (chosenAcceleration > maxAcc) {
+				chosenAcceleration = maxAcc;
+			} else if (chosenAcceleration < minAcc) {
+				chosenAcceleration = minAcc;
+			}
+			algorithmData.chosenAcceleration = chosenAcceleration;
 		} else {
 			//no messages received and proximity sensor not working
 			algorithmData.chosenAcceleration = 0;
