@@ -68,8 +68,8 @@ public class SimulationThread extends Thread {
 	public void run() {
 
 		long realTime = System.nanoTime();
-		Time.useSetTime = true;
-		Time.currentTime = 0;
+		Time.useDefinedTime();
+		Time.setTime(0);
 
 		long lastAlgorithmUpdate = 0; // w.r.t. cumulative
 
@@ -105,11 +105,11 @@ public class SimulationThread extends Thread {
 				}
 
 				// Update cars
-				Time.currentTime += l_dt;
+				Time.increaseTime(l_dt);
 				if (Time.getTime() - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
 					for (PhysicsBody body : bodies) {
 						if (body instanceof SimulatedCar) {
-							((SimulatedCar) body).updateControl(Time.currentTime);
+							((SimulatedCar) body).updateControl();
 						}
 					}
 					if ((Time.getTime() - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {

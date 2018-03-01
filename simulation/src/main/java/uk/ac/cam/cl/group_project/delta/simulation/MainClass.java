@@ -72,15 +72,16 @@ class MainClass {
 			// Add headers
 			writer.write("time,uuid,x,y,class\n");
 
-			Time.useSetTime = true;
+			Time.useDefinedTime();
+			Time.setTime(0);
 
-			for (int step = 0; step < simulationSteps; step++, Time.currentTime = UPDATE_INTERVAL) {
+			for (int step = 0; step < simulationSteps; step++, Time.increaseTime(UPDATE_INTERVAL)) {
 
 				// Update the positions of everything in the world
 				world.update(UPDATE_INTERVAL / 1E9); // ns to s
 				// then run the algorithm
 				for (SimulatedCar car : cars) {
-					car.updateControl(Time.getTime());
+					car.updateControl();
 				}
 
 				// If we should log, do it

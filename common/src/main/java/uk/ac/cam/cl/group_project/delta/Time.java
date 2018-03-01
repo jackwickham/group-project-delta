@@ -5,12 +5,12 @@ public class Time {
 	/**
 	 * The current global time, can be set by the simulation.
 	 */
-	public static long currentTime = -1;
+	private static long currentTime = -1;
 
 	/**
 	 * A flag indicating whether to use the system time or the set time.
 	 */
-	public static boolean useSetTime = false;
+	private static boolean useSetTime = false;
 
 	/**
 	 * @return The current 'global' time
@@ -21,5 +21,21 @@ public class Time {
 		} else {
 			return System.nanoTime();
 		}
+	}
+
+	public static void setTime(long time) {
+		currentTime = time;
+	}
+
+	public static void increaseTime(long diff) {
+		currentTime += diff;
+	}
+
+	public static void useSystemTime() {
+		useSetTime = false;
+	}
+
+	public static void useDefinedTime() {
+		useSetTime = true;
 	}
 }
