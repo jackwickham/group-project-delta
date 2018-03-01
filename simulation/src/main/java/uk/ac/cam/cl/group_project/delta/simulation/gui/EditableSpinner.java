@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
+import javafx.beans.NamedArg;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -61,7 +62,11 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 *
 	 * @see Spinner#Spinner(int, int, int)
 	 */
-	public EditableSpinner(int min, int max, int initialValue) {
+	public EditableSpinner(
+		@NamedArg("min") int min,
+		@NamedArg("max") int max,
+		@NamedArg("initialValue") int initialValue
+	) {
 		super(min, max, initialValue);
 		setup(this);
 	}
@@ -84,7 +89,12 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 *
 	 * @see Spinner#Spinner(int, int, int, int)
 	 */
-	public EditableSpinner(int min, int max, int initialValue, int amountToStepBy) {
+	public EditableSpinner(
+		@NamedArg("min") int min,
+		@NamedArg("max") int max,
+		@NamedArg("initialValue") int initialValue,
+		@NamedArg("amountToStepBy") int amountToStepBy
+	) {
 		super(min, max, initialValue, amountToStepBy);
 		setup(this);
 	}
@@ -106,7 +116,11 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 *
 	 * @see Spinner#Spinner(double, double, double)
 	 */
-	public EditableSpinner(double min, double max, double initialValue) {
+	public EditableSpinner(
+		@NamedArg("min") double min,
+		@NamedArg("max") double max,
+		@NamedArg("initialValue") double initialValue
+	) {
 		super(min, max, initialValue);
 		setup(this);
 	}
@@ -129,7 +143,12 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 *
 	 * @see Spinner#Spinner(double, double, double, double)
 	 */
-	public EditableSpinner(double min, double max, double initialValue, double amountToStepBy) {
+	public EditableSpinner(
+		@NamedArg("min") double min,
+		@NamedArg("max") double max,
+		@NamedArg("initialValue") double initialValue,
+		@NamedArg("amountToStepBy") double amountToStepBy
+	) {
 		super(min, max, initialValue, amountToStepBy);
 		setup(this);
 	}
@@ -148,7 +167,7 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 *
 	 * @see Spinner#Spinner(ObservableList)
 	 */
-	public EditableSpinner(ObservableList<T> items) {
+	public EditableSpinner(@NamedArg("items") ObservableList<T> items) {
 		super(items);
 		setup(this);
 	}
@@ -163,7 +182,7 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 *
 	 * @see Spinner#Spinner(SpinnerValueFactory)
 	 */
-	public EditableSpinner(SpinnerValueFactory<T> valueFactory) {
+	public EditableSpinner(@NamedArg("valueFactory") SpinnerValueFactory<T> valueFactory) {
 		super(valueFactory);
 		setup(this);
 	}
