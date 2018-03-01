@@ -227,7 +227,7 @@ public class SimulationThread extends Thread {
 		public void initialise() {}
 
 		@Override
-		public void update(long time) {}
+		public void update() {}
 
 		@Override
 		public void run() {}

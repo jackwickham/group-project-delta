@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.Log;
+import uk.ac.cam.cl.group_project.delta.Time;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 
@@ -35,7 +36,7 @@ class MainClass {
 
 		// Instantiate world and virtual network
 		World world = new World();
-		SimulatedNetwork network = new SimulatedNetwork(true);
+		SimulatedNetwork network = new SimulatedNetwork();
 
 		List<SimulatedCar> cars = new ArrayList<>(NUMBER_OF_VEHICLES);
 
@@ -71,9 +72,10 @@ class MainClass {
 			// Add headers
 			writer.write("time,uuid,x,y,class\n");
 
+			Time.useSetTime = true;
 			long time = 0;
 
-			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL, network.incrementTime(UPDATE_INTERVAL)) {
+			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL, Time.currentTime = time) {
 
 				// Update the positions of everything in the world
 				world.update(UPDATE_INTERVAL / 1E9); // ns to s

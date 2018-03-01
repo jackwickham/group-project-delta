@@ -107,7 +107,7 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 		if (controller == null) {
 			throw new IllegalStateException("An algorithm must be attached to this vehicle before it can update");
 		}
-		controller.update(timeNanos);
+		controller.update();
 	}
 
 	/**
