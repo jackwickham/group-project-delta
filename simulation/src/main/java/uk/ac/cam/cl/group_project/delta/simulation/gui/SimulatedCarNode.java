@@ -107,16 +107,6 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	private final DoubleProperty frontProximity;
 
 	/**
-	 * The communications layer for this car, if found, null otherwise.
-	 */
-	private CommsInterface communications = null;
-
-	/**
-	 * The control layer for this car, if found, null otherwise.
-	 */
-	private ControlLayer controller = null;
-
-	/**
 	 * Construct a representation of the given car.
 	 * @param car    Car to represent.
 	 */
@@ -150,67 +140,47 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 * @param car    Car to instrument.
 	 */
 	private void constructAlgorithmInstrumentation(SimulatedCar car) {
-		try {
 
-			// Reflect into a deep dark well...
-			Field data = Algorithm.class.getDeclaredField("algorithmData");
-			Field comms = AlgorithmData.class.getDeclaredField("commsInterface");
-			Field ctrl = Communications.class.getDeclaredField("messageLayer");
-			data.setAccessible(true);
-			comms.setAccessible(true);
-			ctrl.setAccessible(true);
+		Algorithm controller = car.getController();
 
-			communications = (Communications) comms.get(
-				data.get(
-					car.getController()
-				)
-			);
-			controller = (ControlLayer) ctrl.get(communications);
+		// Setup properties
+		isLeader.set(controller.isLeader());
+		vehicleId.set(controller.getVehicleId());
+		platoonId.set(controller.getPlatoonId());
+		platoonPosition.set(controller.getPlatoonPosition());
+		platoonLeaderId.set(controller.getLeaderId());
+		platoonColour.set(toPaint(platoonId.get()));
 
-			// Setup properties
-			isLeader.set(communications.isLeader());
-			vehicleId.set(controller.getVehicleId());
-			platoonId.set(controller.getPlatoonId());
-			platoonPosition.set(controller.getCurrentPosition());
-			platoonLeaderId.set(controller.getLeaderId());
-			platoonColour.set(toPaint(platoonId.get()));
+		double base = car.getWheelBase() * Controller.UNITS_PER_METRE;
 
-			double base = car.getWheelBase() * Controller.UNITS_PER_METRE;
+		// Create circles for platoon representation
+		Circle leaderCircle = new Circle(base * 1.6);
+		leaderCircle.setFill(Color.TRANSPARENT);
+		leaderCircle.setStrokeWidth(base * 0.1);
+		leaderCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
+		leaderCircle.setMouseTransparent(true);
+		leaderCircle.strokeProperty().bind(platoonColour);
+		leaderCircle.visibleProperty().bind(isLeader);
 
-			// Create circles for platoon representation
-			Circle leaderCircle = new Circle(base * 1.6);
-			leaderCircle.setFill(Color.TRANSPARENT);
-			leaderCircle.setStrokeWidth(base * 0.1);
-			leaderCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
-			leaderCircle.setMouseTransparent(true);
-			leaderCircle.strokeProperty().bind(platoonColour);
-			leaderCircle.visibleProperty().bind(isLeader);
+		Circle platoonCircle = new Circle(base * 1.5);
+		platoonCircle.setMouseTransparent(true);
+		platoonCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
+		platoonCircle.fillProperty().bind(platoonColour);
 
-			Circle platoonCircle = new Circle(base * 1.5);
-			platoonCircle.setMouseTransparent(true);
-			platoonCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
-			platoonCircle.fillProperty().bind(platoonColour);
+		getChildren().addAll(leaderCircle, platoonCircle);
 
-			getChildren().addAll(leaderCircle, platoonCircle);
+		// Add tooltip for vehicle and platoon ID, and platoon position
+		Tooltip tooltip = new Tooltip();
+		tooltip.textProperty().bind(
+			(new SimpleStringProperty("Vehicle ID: "))
+				.concat(vehicleId.asString())
+				.concat("\nPlatoon ID: ")
+				.concat(platoonId.asString())
+				.concat("\nPlatoon position: ")
+				.concat(platoonPosition.asString())
+		);
+		Tooltip.install(this, tooltip);
 
-			// Add tooltip for vehicle and platoon ID, and platoon position
-			Tooltip tooltip = new Tooltip();
-			tooltip.textProperty().bind(
-				(new SimpleStringProperty("Vehicle ID: "))
-					.concat(vehicleId.asString())
-					.concat("\nPlatoon ID: ")
-					.concat(platoonId.asString())
-					.concat("\nPlatoon position: ")
-					.concat(platoonPosition.asString())
-			);
-			Tooltip.install(this, tooltip);
-
-
-		}
-		catch (IllegalAccessException | NoSuchFieldException e) {
-			Log.warn("Cannot snoop on the internal algorithm state");
-			Log.warn(e);
-		}
 	}
 
 	/**
@@ -324,22 +294,22 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
 		SimulatedCar car = getCar();
 		synchronized (car) {
+
 			velX.set(car.getVelocity().getX());
 			velY.set(car.getVelocity().getY());
 			heading.set(Math.toDegrees(-car.getHeading()));
 			wheelAngle.set(Math.toDegrees(-car.getWheelAngle()));
 			enginePower.set(car.getEnginePower());
 			frontProximity.set(car.getSensorInterface().getFrontProximity());
-			if (communications != null) {
-				isLeader.set(communications.isLeader());
-			}
-			if (controller != null) {
-				vehicleId.set(controller.getVehicleId());
-				platoonId.set(controller.getPlatoonId());
-				platoonPosition.set(controller.getCurrentPosition());
-				platoonLeaderId.set(controller.getLeaderId());
-				platoonColour.set(toPaint(platoonId.get()));
-			}
+
+			Algorithm controller = car.getController();
+			isLeader.set(controller.isLeader());
+			vehicleId.set(controller.getVehicleId());
+			platoonId.set(controller.getPlatoonId());
+			platoonPosition.set(controller.getPlatoonPosition());
+			platoonLeaderId.set(controller.getLeaderId());
+			platoonColour.set(toPaint(platoonId.get()));
+
 		}
 
 	}

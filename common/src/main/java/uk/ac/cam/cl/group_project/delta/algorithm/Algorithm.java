@@ -243,7 +243,8 @@ public abstract class Algorithm {
 		}
 	}
 
-	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
+	/**
+	 * Runs algorithm every ALGORITHM_LOOP_DURATION  nanoseconds until an emergency occurs
 	 */
 	public void run() {
 		algorithmData.notUsingRealTime = false;
@@ -268,4 +269,25 @@ public abstract class Algorithm {
 		}
 		Log.debug("Algorithm has finished running");
 	}
+
+	public boolean isLeader() {
+		return algorithmData.commsInterface.isLeader();
+	}
+
+	public int getVehicleId() {
+		return algorithmData.controlLayer.getVehicleId();
+	}
+
+	public int getPlatoonId() {
+		return algorithmData.controlLayer.getPlatoonId();
+	}
+
+	public int getPlatoonPosition() {
+		return algorithmData.controlLayer.getCurrentPosition();
+	}
+
+	public int getLeaderId() {
+		return algorithmData.controlLayer.getLeaderId();
+	}
+
 }
