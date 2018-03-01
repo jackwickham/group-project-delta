@@ -19,7 +19,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	/**
 	 * A physics body that represents the position from which we instrument.
 	 */
-	private SimulatedCar car;
+	private PhysicsCar car;
 
 	/**
 	 * Maximum angle from view normal that the sensor can detect, in radians.
@@ -31,7 +31,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @param world    World to instrument.
 	 * @param car      Physical body to instrument about.
 	 */
-	public SimulatedSensorModule(SimulatedCar car, World world) {
+	public SimulatedSensorModule(PhysicsCar car, World world) {
 		this.car = car;
 		this.world = world;
 	}

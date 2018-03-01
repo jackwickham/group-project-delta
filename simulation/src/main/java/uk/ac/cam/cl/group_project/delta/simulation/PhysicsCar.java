@@ -350,4 +350,19 @@ public class PhysicsCar extends PhysicsBody {
 		// In future this could take into account the angle
 		return getPosition().subtract(ray.multiply(getLength() / 2));
 	}
+
+	/**
+	 * Get the position of all of the sensors (beacon/proximity) for the car,
+	 * in world space.
+	 */
+	public Vector2D getSensorPosition() {
+		return getPosition().add(getHeadingVector().multiply(getLength() / 2));
+	}
+
+	/**
+	 * Get the position of this vehicle's beacon in world space.
+	 */
+	public Vector2D getBeaconPosition() {
+		return getPosition().subtract(getHeadingVector().multiply(getLength() / 2));
+	}
 }

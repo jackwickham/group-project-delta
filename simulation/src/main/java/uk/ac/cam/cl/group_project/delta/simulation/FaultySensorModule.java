@@ -23,7 +23,7 @@ public class FaultySensorModule extends SimulatedSensorModule {
 	 * @param car   Physical body to instrument about.
 	 * @param world World to instrument.
 	 */
-	public FaultySensorModule (SimulatedCar car, World world) {
+	public FaultySensorModule (PhysicsCar car, World world) {
 		super(car, world);
 		random = new Random();
 	}
