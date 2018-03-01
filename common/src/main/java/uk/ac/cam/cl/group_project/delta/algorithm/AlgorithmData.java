@@ -58,8 +58,6 @@ public class AlgorithmData {
 	public double previousAcceleration;
 	public Double previousAngle;
 
-	public MiniPID miniPID;
-
 	//only used if update method calls getTime
 	public long time;
 
