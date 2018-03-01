@@ -537,10 +537,10 @@ public class Controller {
 
 	/**
 	 * Handle the user's confirmed input to the dialog form.
-	 * @param wheelBase
-	 * @param posX
-	 * @param posY
-	 * @param controller
+	 * @param wheelBase     User input wheel base.
+	 * @param posX          User input x-coordinate.
+	 * @param posY          User input y-coordinate.
+	 * @param controller    User selected algorithm controller.
 	 */
 	private void onDialogConfirmed(double wheelBase, double posX, double posY, AlgorithmEnum controller) {
 
@@ -577,8 +577,8 @@ public class Controller {
 	 * If a car is left-clicked show its properties and control it (if we're not
 	 * following another car), and if it's right-clicked then show the context
 	 * menu.
-	 * @param e
-	 * @param node
+	 * @param e       Mouse click event.
+	 * @param node    Node representing the car.
 	 */
 	public void onCarClicked(MouseEvent e, SimulatedCarNode node) {
 
