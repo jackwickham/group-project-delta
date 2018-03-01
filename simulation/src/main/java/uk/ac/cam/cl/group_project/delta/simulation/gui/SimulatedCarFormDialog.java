@@ -1,16 +1,11 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 
@@ -84,7 +79,9 @@ public class SimulatedCarFormDialog extends FormDialog {
 		grid.add(posYSpinner, 2, 1);
 
 		ChoiceBox<AlgorithmEnum> choiceBox = new ChoiceBox<>();
-		choiceBox.getItems().addAll(AlgorithmEnum.values());
+		for (int i = AlgorithmEnum.values().length - 1; i >= 0; --i) {
+			choiceBox.getItems().add(AlgorithmEnum.values()[i]);
+		}
 		choiceBox.getSelectionModel().selectFirst();
 		this.algorithmController = choiceBox.valueProperty();
 		grid.add(choiceBox, 1, 2, 2, 1);
