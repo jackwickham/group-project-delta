@@ -32,7 +32,7 @@ Upon receipt of this message, every vehicle will emergency stop, regardless of p
 This is the normal data which is sent to each other vehicle to coordinate the algorithm. The payload of this message is defined in the `VehicleData` class.
 
 ### Request to merge
-This is sent by a smaller platoon ("merging platoon") to try to merge to a larger platoon.
+This is sent by a platoon (the "merging platoon") to initiate a merge with the platoon in front.
 
 Defined in `RequestToMergeMessage`.
 
@@ -47,7 +47,7 @@ Bytes | Content
 24+ | An ordered list of the ids of the members of the merging platoon
 
 ### Accept to merge
-This is used to confirm by the leader of the main platoon that the smaller platoon can merge into the main platoon.
+This is used to confirm by the leader of the front platoon that the merging platoon can go ahead with the merge.
 
 Defined in `AcceptToMergeMessage`.
 
