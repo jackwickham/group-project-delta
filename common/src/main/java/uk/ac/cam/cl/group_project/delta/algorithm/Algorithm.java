@@ -4,6 +4,8 @@ import uk.ac.cam.cl.group_project.delta.*;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
+import java.util.ArrayList;
+
 public abstract class Algorithm {
 
 	public static final int ALGORITHM_LOOP_DURATION = 50000000; // 50ms
@@ -100,7 +102,8 @@ public abstract class Algorithm {
 	public abstract ParameterEnum[] getParameterList();
 
 	public void initialise() {
-
+		algorithmData.travelDist = 0;
+		algorithmData.turnBuffer = new ArrayList<>();
 	}
 
 	private void readSensors() {
@@ -155,9 +158,10 @@ public abstract class Algorithm {
 			algorithmData.frontProximity = null;
 		}
 		// get initial distance reading from sensor, distance null if no distance reading
-		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
+		algorithmData.previousDistance = algorithmData.frontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
+
 	}
 
 	protected abstract void makeDecision();

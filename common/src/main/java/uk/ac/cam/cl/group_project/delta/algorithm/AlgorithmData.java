@@ -6,6 +6,7 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 import java.util.List;
+import java.util.Queue;
 
 //class for storing and passing data used by algorithm
 public class AlgorithmData {
@@ -66,4 +67,9 @@ public class AlgorithmData {
 
 	//sum of errors used by PID
 	public Double errorSum;
+
+	public List<Double> turnBuffer;
+	public double travelDist;
+	public Double initialDist;
+	public Double runTime;
 }

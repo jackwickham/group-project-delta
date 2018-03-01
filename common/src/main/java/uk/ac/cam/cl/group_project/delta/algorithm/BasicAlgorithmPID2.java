@@ -168,14 +168,35 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//TODO: This is not calculated
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 
+		algorithmData.turnBuffer.add(algorithmData.predecessorTurnRate);
+		if(algorithmData.runTime == null) {
+			algorithmData.runTime = 0.0;
+		}
+		if(algorithmData.initialDist == null) {
+			algorithmData.initialDist = algorithmData.frontProximity;
+		}
+		//if(algorithmData.travelDist > algorithmData.initialDist) {
+		if(algorithmData.runTime > 0.6) {
+			algorithmData.chosenTurnRate = algorithmData.turnBuffer.remove(0);
+			//basic turning PD
+			//d term not currently not used as overshoot is not a problem
+			if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
+				algorithmData.chosenTurnRate += 0.5*algorithmData.angle;
+			} else {
+				algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
+			}
+		} else {
+			algorithmData.runTime += 0.05;
+			//double time = 0.05;
+			//algorithmData.travelDist += algorithmData.speed*time+algorithmData.acceleration*time*time;
+		}
+		/*
 		//basic turning PD
 		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
-			double p = turnP * algorithmData.angle;
-			double d = turnD * (algorithmData.angle - algorithmData.angle);
-			algorithmData.chosenTurnRate = p + d;
+			algorithmData.chosenTurnRate =  algorithmData.angle*algorithmData.speed/(algorithmData.frontProximity);
 		} else {
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
-		}
+		} */
 	}
 }
