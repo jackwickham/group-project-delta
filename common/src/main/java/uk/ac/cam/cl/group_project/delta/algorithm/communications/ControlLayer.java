@@ -28,7 +28,12 @@ public class ControlLayer {
 	/**
 	 * The maximum range for which IDs can be picked up from beacons.
 	 */
-	private static double MAXIMUM_ID_DETECTION_RANGE = 0.5;
+	private static final double MAXIMUM_ID_DETECTION_RANGE = 0.5;
+
+	/**
+	 * The maximum angle for which IDs can be picked up from beacons.
+	 */
+	private static final double MAXIMUM_ID_DETECTION_ANGLE = Math.PI / 2;
 
 	/**
 	 * The current id of this vehicle.
@@ -440,7 +445,7 @@ public class ControlLayer {
 		int closestId = 0;
 		double minDistance = MAXIMUM_ID_DETECTION_RANGE;
 		for(Beacon b : beaconInterface.getBeacons()) {
-			if(b.getDistanceLowerBound() < minDistance) {
+			if(b.getDistanceLowerBound() < minDistance && b.getAngle() < MAXIMUM_ID_DETECTION_ANGLE) {
 				closestId = b.getBeaconIdentifier();
 				minDistance = b.getDistanceLowerBound();
 			}
