@@ -34,6 +34,8 @@ This is the normal data which is sent to each other vehicle to coordinate the al
 ### Request to merge
 This is sent by a smaller platoon ("merging platoon") to try to merge to a larger platoon.
 
+Defined in `RequestToMergeMessage`.
+
 #### Payload:
 
 Bytes | Content
@@ -46,6 +48,8 @@ Bytes | Content
 
 ### Accept to merge
 This is used to confirm by the leader of the main platoon that the smaller platoon can merge into the main platoon.
+
+Defined in `AcceptToMergeMessage`.
 
 #### Payload:
 
@@ -62,6 +66,8 @@ x+5 - end | A list of (old\_id, new\_id) telling vehicle `old_id` in the merging
 This is sent by every member of both platoons to confirm they have the new information
 and are ready to commit it.
 
+Defined in `ConfirmMergeMessage`.
+
 #### Payload:
 
 Bytes | Content
@@ -72,6 +78,8 @@ Bytes | Content
 This is sent by the leader of the merging platoon after it has seen that all of the 
 members have confirmed the merge.
 
+Defined in `MergeCompleteMessage`.
+
 #### Payload:
 
 Bytes | Content
@@ -80,6 +88,8 @@ Bytes | Content
 
 ### Beacon ID Query
 When a vehicle can see a beacon, it will send a query to the platoons that it knows about to ask them whether they own that beacon ID, so that it can potentially initiate a merge.
+
+Defined in `BeaconIdQuestion`.
 
 #### Payload:
 
@@ -90,6 +100,10 @@ Bytes | Content
 
 ### Beacon ID Answer
 If a vehicle owns that beacon, it will send an answer back to the platoon that queried it, identifying the platoon that it's in.
+
+Defined in `BeaconIdAnswer`.
+
+#### Payload
 
 Bytes | Content
 ------|--------
