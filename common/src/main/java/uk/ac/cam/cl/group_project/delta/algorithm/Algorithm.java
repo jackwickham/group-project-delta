@@ -129,12 +129,15 @@ public abstract class Algorithm {
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
 		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
+
+		algorithmData.previousAngle = algorithmData.angle;
 		//find closest beacon within maximum sensor distance
 		double min = Double.POSITIVE_INFINITY;
 		for (Beacon beacon : algorithmData.beacons) {
 			if (beacon.getDistanceLowerBound() <= min) {
 				min = beacon.getDistanceLowerBound();
 				algorithmData.closestBeacon = beacon;
+				algorithmData.angle = algorithmData.closestBeacon.getAngle();
 			}
 		}
 
