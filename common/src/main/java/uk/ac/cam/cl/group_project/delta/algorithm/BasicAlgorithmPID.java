@@ -145,16 +145,11 @@ public class BasicAlgorithmPID extends Algorithm{
 		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
 				algorithmData.frontProximity);
 
-		//update previous state variables so that they are correct in next time period
-		algorithmData.previousDistance = weightedFrontProximity;
-		algorithmData.previousSpeed = algorithmData.speed;
-		algorithmData.previousAcceleration = algorithmData.acceleration;
-
 		if(weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity
-			double pTerm = pidP * (algorithmData.frontProximity -
+			double pTerm = pidP * (weightedFrontProximity -
 					(headTime * algorithmData.speed + buffDist));
-			double dTerm = pidD* (algorithmData.frontProximity - algorithmData.previousDistance);
+			double dTerm = pidD* (weightedFrontProximity - algorithmData.previousDistance);
 			double chosenAcceleration = pTerm + dTerm;
 			if (chosenAcceleration > maxAcc) {
 				chosenAcceleration = maxAcc;
@@ -166,5 +161,9 @@ public class BasicAlgorithmPID extends Algorithm{
 			//no messages received and proximity sensor not working
 			algorithmData.chosenAcceleration = 0;
 		}
+		//update previous state variables so that they are correct in next time period
+		algorithmData.previousDistance = weightedFrontProximity;
+		algorithmData.previousSpeed = algorithmData.speed;
+		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
 }
