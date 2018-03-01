@@ -153,6 +153,16 @@ public class Controller {
 	private ContextMenu sceneContextMenu;
 
 	/**
+	 * Context menu displayed when the user right-clicks an vehicles.
+	 */
+	private ContextMenu vehicleContextMenu;
+
+	/**
+	 * Context menu item for following the clicked vehicle.
+	 */
+	private MenuItem vehicleContextMenuFollowItem;
+
+	/**
 	 * The last recorded mouse position.
 	 */
 	private Vector2D cursorPosition;
@@ -182,6 +192,9 @@ public class Controller {
 		MenuItem item = new MenuItem("Add object");
 		item.setOnAction(this::addObject);
 		sceneContextMenu = new ContextMenu(item);
+
+		vehicleContextMenuFollowItem = new MenuItem("Follow");
+		vehicleContextMenu = new ContextMenu(vehicleContextMenuFollowItem);
 
 	}
 
@@ -586,8 +599,7 @@ public class Controller {
 			case SECONDARY:
 
 				// Create a new context menu
-				MenuItem follow = new MenuItem("Follow");
-				follow.setOnAction(e2 -> {
+				vehicleContextMenuFollowItem.setOnAction(e2 -> {
 					currentSelection = node;
 					// (x, y) = (viewDimension / 2 - pos) * scale
 					scene.translateXProperty().bind(
@@ -603,18 +615,7 @@ public class Controller {
 							.multiply(scene.scaleYProperty())
 					);
 				});
-
-				/*MenuItem delete = new MenuItem("Delete");
-				delete.setOnAction(e2 -> {
-					if (currentSelection == node) {
-						currentSelection = null;
-					}
-					simulation.remove(node.getCar());
-					scene.getChildren().remove(node);
-				});*/
-
-				ContextMenu menu = new ContextMenu(follow/*, delete*/);
-				menu.show(node, e.getScreenX(), e.getScreenY());
+				vehicleContextMenu.show(node, e.getScreenX(), e.getScreenY());
 
 				break;
 
