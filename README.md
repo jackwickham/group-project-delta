@@ -15,7 +15,7 @@ To build all the code, just run `gradle build` (that means `./gradle build` on L
 ### Simulation
 To run the headless simulation, which will drive a vehicle forwards and output a CSV of the vehicles' routes, run `gradle :simulation:run`.
 
-To run the simulation with a GUI, run `gradle jfxRun`. It can be debugged by connecting a debugger to port 5005 if needed.
+To run the simulation with a GUI, run `gradle jfxRun`. It can be debugged by connecting a debugger to port 5005 if needed. Instructions for using the GUI can be found [alongside the GUI code](simulation/src/main/java/uk/ac/cam/cl/group_project/delta/simulation/gui/README.md).
 
 ### LEGO Mindstorms
 To deploy the code to a Mindstorms device that is connected via USB, execute `gradle :lego:deployUSB`.
