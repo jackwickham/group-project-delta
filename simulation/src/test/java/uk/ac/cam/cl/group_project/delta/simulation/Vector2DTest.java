@@ -117,4 +117,32 @@ public class Vector2DTest {
 		assertEquals(false, a.leftOf(a));
 	}
 
+	@Test
+	public void angleToTestSame() {
+		Vector2D a = new Vector2D(0, 1);
+
+		assertEquals(0.0, a.angleTo(a), 0.005);
+	}
+
+	@Test
+	public void angleToTestPositive() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(1, 1);
+		assertEquals(Math.PI / 4, a.angleTo(b), 0.01);
+	}
+
+	@Test
+	public void angleToTestNegative() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(-1, 1);
+		assertEquals(-Math.PI / 4, a.angleTo(b), 0.01);
+	}
+
+	@Test
+	public void angleToTestLarge() {
+		Vector2D a = new Vector2D(0, 1);
+		Vector2D b = new Vector2D(1, -1);
+		assertEquals(3 * Math.PI / 4, a.angleTo(b), 0.01);
+	}
+
 }
