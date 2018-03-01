@@ -141,7 +141,7 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 	}
 
 	/**
-	 * Get the position of all of the sensors (beacon & proximity) for the car
+	 * Get the position of all of the sensors (beacon/proximity) for the car,
 	 * in world space.
 	 */
 	public Vector2D getSensorPosition() {

@@ -327,6 +327,9 @@ public class PhysicsCar extends PhysicsBody {
 		return wheelBase * LENGTH_WHEEL_BASE_RATIO;
 	}
 
+	/**
+	 * Get the width of the vehicle, in metres
+	 */
 	public double getWidth() {
 		return wheelBase * WIDTH_WHEEL_BASE_RATIO;
 	}
