@@ -117,7 +117,7 @@ public class BasicAlgorithmPID extends Algorithm{
 		//TODO: add something to take into account network delay
 		double desired_dist;
 		Double weightedFrontProximity;
-		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
+		if (algorithmData.receiveMessageData != null && algorithmData.previousDistance != null) {
 			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 			//calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
@@ -139,17 +139,20 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
-		if(algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
+		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
 		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
 				algorithmData.frontProximity);
 
-		if(weightedFrontProximity != null) {
+		if (weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity
 			double pTerm = pidP * (weightedFrontProximity -
 					(headTime * algorithmData.speed + buffDist));
-			double dTerm = pidD* (weightedFrontProximity - algorithmData.previousDistance);
+			double dTerm = 0;
+			if(algorithmData.previousDistance != null) {
+				dTerm = pidD * (weightedFrontProximity - algorithmData.previousDistance);
+			}
 			double chosenAcceleration = pTerm + dTerm;
 			if (chosenAcceleration > maxAcc) {
 				chosenAcceleration = maxAcc;
@@ -162,7 +165,9 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenAcceleration = 0;
 		}
 		//update previous state variables so that they are correct in next time period
-		algorithmData.previousDistance = weightedFrontProximity;
+		if (weightedFrontProximity != null) {
+			algorithmData.previousDistance = weightedFrontProximity;
+		}
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
