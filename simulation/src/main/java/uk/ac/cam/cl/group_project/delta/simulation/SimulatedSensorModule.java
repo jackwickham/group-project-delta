@@ -53,7 +53,7 @@ public class SimulatedSensorModule implements SensorInterface {
 
 		for (PhysicsBody body : bodies) {
 			if (body != car) {
-				Vector2D ray = body.getPosition().subtract(car.getSensorPosition());
+				Vector2D ray = body.getPosition().subtract(car.getSensorPosition()).normalise();
 				Vector2D collisionLocation = body.getRayCollisionPosition(ray);
 				Vector2D relPos = collisionLocation.subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
