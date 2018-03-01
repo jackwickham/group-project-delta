@@ -73,15 +73,14 @@ class MainClass {
 			writer.write("time,uuid,x,y,class\n");
 
 			Time.useSetTime = true;
-			long time = 0;
 
-			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL, Time.currentTime = time) {
+			for (int step = 0; step < simulationSteps; step++, Time.currentTime = UPDATE_INTERVAL) {
 
 				// Update the positions of everything in the world
 				world.update(UPDATE_INTERVAL / 1E9); // ns to s
 				// then run the algorithm
 				for (SimulatedCar car : cars) {
-					car.updateControl(time);
+					car.updateControl(Time.getTime());
 				}
 
 				// If we should log, do it
@@ -90,7 +89,7 @@ class MainClass {
 					for (PhysicsBody body : world.getBodies()) {
 						Vector2D pos = body.getPosition();
 						writer.write(
-							time + ","
+							Time.getTime() + ","
 								+ body.getUuid() + ","
 								+ pos.getX() + ","
 								+ pos.getY() + ","
