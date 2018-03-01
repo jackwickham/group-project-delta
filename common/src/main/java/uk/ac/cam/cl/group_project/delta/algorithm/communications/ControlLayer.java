@@ -235,8 +235,9 @@ public class ControlLayer {
 						commitMerge();
 					}
 				}
+			} else if(packet.message instanceof EmergencyMessage){
+				// This has already been handled so ignore
 			} else {
-				// This indicates an Emergency which wasn't triggered or something
 				Log.error("Unexpected message received by ControlLayer");
 			}
 		}
