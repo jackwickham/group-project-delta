@@ -19,7 +19,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	/**
 	 * A physics body that represents the position from which we instrument.
 	 */
-	private PhysicsCar car;
+	private SimulatedCar car;
 
 	/**
 	 * Maximum angle from view normal that the sensor can detect, in radians.
@@ -31,7 +31,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @param world    World to instrument.
 	 * @param car      Physical body to instrument about.
 	 */
-	public SimulatedSensorModule(PhysicsCar car, World world) {
+	public SimulatedSensorModule(SimulatedCar car, World world) {
 		this.car = car;
 		this.world = world;
 	}
@@ -54,7 +54,9 @@ public class SimulatedSensorModule implements SensorInterface {
 
 		for (PhysicsBody body : bodies) {
 			if (body != car) {
-				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+				Vector2D ray = body.getPosition().subtract(car.getSensorPosition());
+				Vector2D collisionLocation = body.getRayCollisionPosition(ray);
+				Vector2D relPos = collisionLocation.subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
 				double angle = Math.acos(
 					relPos.dot(vecHeading) / relDistance
@@ -86,8 +88,9 @@ public class SimulatedSensorModule implements SensorInterface {
 		Vector2D vecHeading = car.getHeadingVector();
 
 		for (PhysicsBody body : bodies) {
-			if (body != car) {
-				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+			if (body != car && body instanceof SimulatedCar) {
+				SimulatedCar otherCar = (SimulatedCar) body;
+				Vector2D relPos = otherCar.getBeaconPosition().subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
 				double angle = Math.acos(
 					relPos.dot(vecHeading) / relDistance
@@ -98,7 +101,7 @@ public class SimulatedSensorModule implements SensorInterface {
 
 				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
 					beacons.add(new Beacon(
-						body.getUuid(),
+						otherCar.getUuid(),
 						relDistance,
 						relDistance,
 						angle
