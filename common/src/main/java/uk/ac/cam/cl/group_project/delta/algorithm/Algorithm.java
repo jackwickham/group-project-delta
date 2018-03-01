@@ -6,7 +6,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public abstract class Algorithm {
 
-	public static final int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	public static final int ALGORITHM_LOOP_DURATION = 50000000; // 50ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -211,10 +211,12 @@ public abstract class Algorithm {
 			emergencyStop();
 		}
 
+		boolean shouldSendInstruction;
 		if(!algorithmData.commsInterface.isLeader()) {
 			makeDecision();
+			shouldSendInstruction = true;
 		} else {
-			frontVehicleRoute.nextStep();
+			shouldSendInstruction = frontVehicleRoute.nextStep();
 		}
 
 		if (Thread.interrupted()) {
@@ -224,7 +226,7 @@ public abstract class Algorithm {
 		sendMessage();
 
 		// send instructions to drive if not leader
-		if(!algorithmData.commsInterface.isLeader()) {
+		if(shouldSendInstruction) {
 			sendInstruction();
 		}
 
