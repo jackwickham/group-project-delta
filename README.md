@@ -40,3 +40,6 @@ The tests for just one subproject can be run using `gradle :simulation:test` (re
 Gradle will try to remember which tests have been run before, and won't rerun them if it doesn't think the code has changed. To force it to rerun all tests, use `gradle clean test` to remove all cached builds and changes before testing.
 
 All code pushed to this repository will be tested using `gradle check` using Travis CI, and changes cannot be merged into `master` unless they pass all tests and checks.
+
+## Documentation
+The packet format used for inter-vehicle communication is defined in the [communications package](common/src/main/java/uk/ac/cam/cl/group_project/delta/algorithm/communications/README.md).
