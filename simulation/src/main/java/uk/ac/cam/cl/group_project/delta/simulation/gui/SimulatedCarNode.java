@@ -13,21 +13,13 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import uk.ac.cam.cl.group_project.delta.Beacon;
-import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
-import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmData;
-import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedSensorModule;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
