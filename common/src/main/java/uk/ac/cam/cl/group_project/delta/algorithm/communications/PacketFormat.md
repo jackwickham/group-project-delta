@@ -19,7 +19,9 @@ ID | Message Type
 2 | Request to merge, sent by leader of the platoon that would like to merge with another platoon ([definition](#request-to-merge))
 3 | Accept to merge, sent by leader of the platoon that is being merged into ([definition](#accept-to-merge))
 4 | Confirm merge, sent by all members of both platoons ([definition](#confirm-merge))  
-5 | Merge Complete, sent by leader of the platoon that initiated the merge ([definition](#merge-complete))  
+5 | Merge Complete, sent by leader of the platoon that initiated the merge ([definition](#merge-complete))
+6 | Beacon ID query ([definition](#beacon-id-query))
+7 | Beacon ID answer ([definition](#beacon-id-answer))
 
 
 ## Messages
@@ -75,3 +77,21 @@ members have confirmed the merge.
 Bytes | Content
 ------|--------
 12-15 | Transaction id
+
+### Beacon ID Query
+When a vehicle can see a beacon, it will send a query to the platoons that it knows about to ask them whether they own that beacon ID, so that it can potentially initiate a merge.
+
+#### Payload:
+
+Bytes | Content
+------|--------
+12-15 | Sending platoon ID
+16-19 | The beacon ID being queried
+
+### Beacon ID Answer
+If a vehicle owns that beacon, it will send an answer back to the platoon that queried it, identifying the platoon that it's in.
+
+Bytes | Content
+------|--------
+12-15 | Owner's platoon ID
+16-19 | The beacon ID that was queried
