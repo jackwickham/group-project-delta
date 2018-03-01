@@ -61,7 +61,7 @@ class MainClass {
 		public void run() {
 			while(true) {
 				if (algorithm.algorithmData.commsInterface.isLeader()) {
-					colourSensor.setFloodlight(Color.GREEN);
+					colourSensor.setFloodlight(Color.RED);
 				} else {
 					colourSensor.setFloodlight(Color.BLUE);
 				}

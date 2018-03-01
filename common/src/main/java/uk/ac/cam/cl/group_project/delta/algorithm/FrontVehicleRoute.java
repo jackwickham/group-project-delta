@@ -106,10 +106,10 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeOne() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, MoveType.ACCELERATION, 0.1));
-		moves.add(new Move(3, MoveType.ACCELERATION, -0.1));
-		moves.add(new Move(6, MoveType.ACCELERATION, 0.1));
-		moves.add(new Move(9, MoveType.ACCELERATION, -0.1));
+		moves.add(new Move(3, MoveType.ACCELERATION, 0.07));
+		moves.add(new Move(6, MoveType.ACCELERATION, -0.07));
+		moves.add(new Move(9, MoveType.ACCELERATION, 0.07));
+		moves.add(new Move(12, MoveType.ACCELERATION, -0.07));
 		return moves;
 	}
 
