@@ -199,7 +199,7 @@ public class Controller {
 	}
 
 	/**
-	 * Start the simulation and update Timeline.
+	 * FXML initialisation.
 	 */
 	@FXML
 	public void initialize() {
@@ -230,11 +230,6 @@ public class Controller {
 		message.setPrefWidth(600);
 		networkLog.getColumns().add(message);
 
-		// Register network packet sniffer
-		simulation.getNetwork().register(msg ->
-			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(msg)))
-		);
-
 		pausedPane.visibleProperty().bind(pauseButton.selectedProperty());
 		timeDilationSlider.valueProperty().addListener(
 			(observableValue, oldValue, newValue) -> {
@@ -244,8 +239,20 @@ public class Controller {
 			}
 		);
 
-		// Bind events
+		// And we are ready to begin...
+		start();
 
+	}
+
+	/**
+	 * Start background tasks: the simulation, GUI updater, and packet sniffer.
+	 */
+	private void start() {
+
+		// Register network packet sniffer
+		simulation.getNetwork().register(msg ->
+			Platform.runLater(() -> addToNetworkLog(new MessageReceipt(msg)))
+		);
 
 		// Start background tasks
 		simulation.start();
@@ -642,5 +649,32 @@ public class Controller {
 		else {
 			simulation.setTimeDilationFactor(timeDilationSlider.getValue());
 		}
+	}
+
+	/**
+	 * Reset the simulation world state.
+	 */
+	public void reset() {
+
+		// Terminate the simulation
+		simulation.terminate();
+		simulation.interrupt();
+		timeline.stop();
+
+		// Clear the scene graph
+		scene.setTranslateX(0);
+		scene.setTranslateY(0);
+		propertiesPane.getChildren().clear();
+		scene.getChildren().clear();
+
+		// Clear selection
+		currentSelection = null;
+
+		// Restart the simulation
+		simulation = new SimulationThread();
+
+		// And we may begin (again)...
+		start();
+
 	}
 }
