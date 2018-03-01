@@ -50,7 +50,7 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 		snm.setEmergencyHandler(m -> stop());
 
 		networkInterface = snm;
-		sensorInterface = new SimulatedSensorModule(this, world);
+		sensorInterface = new FaultySensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
 
 	}

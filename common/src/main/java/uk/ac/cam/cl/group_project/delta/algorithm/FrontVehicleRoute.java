@@ -31,9 +31,9 @@ public class FrontVehicleRoute {
 	private AlgorithmData algorithmData;
 
 	/**
-	 * The number of milliseconds per algorithm loop
+	 * The number of seconds per algorithm loop
 	 */
-	private final int LOOP_LENGTH;
+	private final double LOOP_LENGTH;
 
 	/**
 	 * Possible different types of move
@@ -45,12 +45,13 @@ public class FrontVehicleRoute {
 	 */
 	public enum RouteNumber {ROUTE_ZERO, ROUTE_ONE, ROUTE_TWO}
 
-	public FrontVehicleRoute(AlgorithmData algorithmData, int loopLength, RouteNumber routeNumber) {
+	public FrontVehicleRoute(AlgorithmData algorithmData, double algoLoopLength, RouteNumber routeNumber) {
 		this.algorithmData = algorithmData;
-		this.LOOP_LENGTH = loopLength;
+		this.LOOP_LENGTH = algoLoopLength / 1000000000;
 		switch (routeNumber) {
 			case ROUTE_ZERO:
 				this.moves = routeZero();
+				break;
 			case ROUTE_ONE:
 				this.moves = routeOne();
 				break;
@@ -58,18 +59,14 @@ public class FrontVehicleRoute {
 				this.moves = routeTwo();
 				break;
 		}
-		if (moves.size() > 0) {
-			nextActionStep = moves.get(0).seconds * LOOP_LENGTH;
-		} else {
-			stepsRemaining = false;
-		}
+		updateNextActionStep();
 	}
 
 	/**
 	 * Called in each algorithm loop, modifies algorithmData if necessary
 	 */
-	public void nextStep() {
-		if (!stepsRemaining) return;
+	public boolean nextStep() {
+		if (!stepsRemaining) return false;
 		if (currentStep == nextActionStep) {
 			Move thisMove = moves.get(0);
 			switch (thisMove.move) {
@@ -81,13 +78,19 @@ public class FrontVehicleRoute {
 					break;
 			}
 			moves.remove(0);
-			if (moves.size() > 0) {
-				nextActionStep = moves.get(0).seconds * LOOP_LENGTH;
-			} else {
-				stepsRemaining = false;
-			}
+			updateNextActionStep();
+			return true;
 		}
 		currentStep++;
+		return false;
+	}
+
+	private void updateNextActionStep() {
+		if (moves.size() > 0) {
+			nextActionStep = (int) (moves.get(0).seconds / LOOP_LENGTH);
+		} else {
+			stepsRemaining = false;
+		}
 	}
 
 	/**
@@ -103,10 +106,10 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeOne() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, MoveType.ACCELERATION, 0.05));
-		moves.add(new Move(3, MoveType.ACCELERATION, -0.05));
-		moves.add(new Move(6, MoveType.ACCELERATION, 0.05));
-		moves.add(new Move(9, MoveType.ACCELERATION, -0.05));
+		moves.add(new Move(0, MoveType.ACCELERATION, 0.1));
+		moves.add(new Move(3, MoveType.ACCELERATION, -0.1));
+		moves.add(new Move(6, MoveType.ACCELERATION, 0.1));
+		moves.add(new Move(9, MoveType.ACCELERATION, -0.1));
 		return moves;
 	}
 

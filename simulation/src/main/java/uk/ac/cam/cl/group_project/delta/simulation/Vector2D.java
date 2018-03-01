@@ -189,4 +189,34 @@ public class Vector2D {
 		return Vector2D.magnitude(this);
 	}
 
+	/**
+	 * Checks whether the vector `a` is to the left or the right of `b`,
+	 * meaning that the clockwise angle from b to a is less or greater than
+	 * 180°
+	 *
+	 * If the vectors point in the same or opposite directions, this will
+	 * return false
+	 *
+	 * @param a The vector to check the location of
+	 * @param b The reference vector
+	 * @return Whether `a` is to the left of `b`
+	 */
+	public static boolean leftOf(Vector2D a, Vector2D b) {
+		return a.getX() * b.getY() - a.getY() * b.getX() < 0;
+	}
+
+	/**
+	 * Checks whether the vector this is to the left or the right of `other`,
+	 * meaning that the clockwise angle from other to `this` is less or greater
+	 * than 180°
+	 *
+	 * If the vectors point in the same or opposite directions, this will
+	 * return false
+	 *
+	 * @param other The reference vector
+	 * @return Whether `other` is to the left of this vector
+	 */
+	public boolean leftOf(Vector2D other) {
+		return leftOf(this, other);
+	}
 }

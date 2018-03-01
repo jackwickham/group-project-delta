@@ -1,6 +1,9 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
@@ -10,6 +13,8 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmData;
@@ -21,6 +26,8 @@ import uk.ac.cam.cl.group_project.delta.simulation.SimulatedSensorModule;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
@@ -104,7 +111,15 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private final ObjectProperty<Paint> platoonColour;
 
-	private final DoubleProperty frontProximity;
+	/**
+	 * The vehicle's front proximity
+	 */
+	private final ObjectProperty<Double> frontProximity;
+
+	/**
+	 * The list of visible beacons
+	 */
+	private final ObservableList<String> beaconList;
 
 	/**
 	 * Construct a representation of the given car.
@@ -126,7 +141,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		platoonPosition = new SimpleIntegerProperty(0);
 		platoonLeaderId = new SimpleIntegerProperty(0);
 		platoonColour = new SimpleObjectProperty<>(Color.TRANSPARENT);
-		frontProximity = new SimpleDoubleProperty(Double.POSITIVE_INFINITY);
+		frontProximity = new SimpleObjectProperty<>(null);
+		beaconList = FXCollections.observableList(new ArrayList<>(4));
 
 		rotateProperty().bind(headingProperty());
 
@@ -310,6 +326,17 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			platoonLeaderId.set(controller.getLeaderId());
 			platoonColour.set(toPaint(platoonId.get()));
 
+			beaconList.clear();
+			for (Beacon beacon : car.getSensorInterface().getBeacons()) {
+				String distanceText;
+				if (beacon.getDistanceUpperBound() == beacon.getDistanceLowerBound()) {
+					distanceText = String.format("%.2f", beacon.getDistanceUpperBound());
+				} else {
+					distanceText = String.format("%.2f-%.2f", beacon.getDistanceLowerBound(), beacon.getDistanceUpperBound());
+				}
+				beaconList.add(String.format("%d:  %sm, %.2frad", beacon.getBeaconIdentifier(), distanceText, beacon.getAngle()));
+			}
+
 		}
 
 	}
@@ -394,9 +421,17 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			);
 			controller.platoonColour.setOpacity(PLATOON_CIRCLE_OPACITY);
 
+			ObservableValue<String> frontProximityString;
+			if (frontProximity.get() == null) {
+				frontProximityString = new SimpleStringProperty("null");
+			} else {
+				frontProximityString = frontProximity.asString("%.2f");
+			}
 			controller.frontProximity.textProperty().bind(
-				frontProximity.asString("%.2f")
+				frontProximityString
 			);
+
+			controller.beaconList.setItems(beaconList);
 
 			return pane;
 
@@ -426,7 +461,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		return enginePower;
 	}
 
-	public DoubleProperty frontProximityProperty() {
+	public ObjectProperty<Double> frontProximityProperty() {
 		return frontProximity;
 	}
 }

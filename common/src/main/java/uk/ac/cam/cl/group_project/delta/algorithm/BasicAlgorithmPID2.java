@@ -16,21 +16,23 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//increases response time
 	private double PID_P = 0.5;
 	//helps prevent steady-state errors
-	private double PID_I = 0;
+	private double pidI = 0;
 	//helps prevent overshoot
 	private double PID_D = 1.8;
 
 	//maximum and minimum acceleration in m/s
-	private double MAX_ACC = 2;
-	private double MIN_ACC = -2;
+	private double maxAcc = 2;
+	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double BUFF_DIST = 0.3;
+	private double buffDist = 0.3;
 	//constant headway time in s
-	private double HEAD_TIME = 0.2;
+	private double headTime = 0.2;
 
 	//distance below which emergency stop happens
-	private double EMER_DIST = 0.1;
+	private double emerDist = 0.1;
+
+	private double maxSensorDist = 0.5;
 
 	public BasicAlgorithmPID2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -47,25 +49,27 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				PID_P = value;
 				break;
 			case PID_I:
-				PID_I = value;
+				pidI = value;
 				break;
 			case PID_D:
 				PID_D = value;
 				break;
 			case MaxAcc:
-				MAX_ACC = value;
+				maxAcc = value;
 				break;
 			case MinAcc:
-				MIN_ACC = value;
+				minAcc = value;
 				break;
 			case BufferDistance:
-				BUFF_DIST = value;
+				buffDist = value;
 				break;
 			case HeadTime:
-				HEAD_TIME = value;
+				headTime = value;
 				break;
 			case EmergencyDistance:
-				EMER_DIST = value;
+				emerDist = value;
+			case MaxSensorDist:
+				maxSensorDist = value;
 		}
 	}
 
@@ -75,19 +79,21 @@ public class BasicAlgorithmPID2 extends Algorithm {
 			case PID_P:
 				return PID_P;
 			case PID_I:
-				return PID_I;
+				return pidI;
 			case PID_D:
 				return PID_D;
 			case MaxAcc:
-				return MAX_ACC;
+				return maxAcc;
 			case MinAcc:
-				return MIN_ACC;
+				return minAcc;
 			case BufferDistance:
-				return BUFF_DIST;
+				return buffDist;
 			case HeadTime:
-				return HEAD_TIME;
+				return headTime;
 			case EmergencyDistance:
-				return EMER_DIST;
+				return emerDist;
+			case MaxSensorDist:
+				return maxSensorDist;
 		}
 		return null;
 	}
@@ -95,24 +101,28 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	@Override
 	public ParameterEnum[] getParameterList() {
 		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
-				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime, ParameterEnum.EmergencyDistance};
+				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime,
+				ParameterEnum.EmergencyDistance, ParameterEnum.MaxSensorDist};
 	}
 
 	@Override
 	public void makeDecision() {
 		double pTerm;
+		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
+			algorithmData.frontProximity = null;
+		}
 		if(algorithmData.frontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
-			if (algorithmData.frontProximity < EMER_DIST) {
+			if (algorithmData.frontProximity < emerDist) {
 				emergencyStop();
 			}
 			if(algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
 				pTerm = PID_P * (algorithmData.frontProximity +
-						HEAD_TIME * (algorithmData.predecessorSpeed - algorithmData.speed) - BUFF_DIST);
+						headTime *  algorithmData.speed - buffDist);
 			} else {
 				//if no message received just use sensor data
-				pTerm = PID_P * (algorithmData.frontProximity - BUFF_DIST);
+				pTerm = PID_P * (algorithmData.frontProximity - buffDist);
 			}
 		} else {
 			//without front proximity reading p Term is not used
@@ -122,7 +132,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if(algorithmData.receiveMessageData != null) {
 			//Multiplies the rate of change of error by a constant term PID_D
 			dTerm = PID_D * (algorithmData.predecessorSpeed -
-					algorithmData.speed + HEAD_TIME * (algorithmData.predecessorChosenAcceleration - algorithmData.acceleration));
+					algorithmData.speed + headTime * algorithmData.acceleration);
 		} else {
 			//if no message has ever been received d Term not used
 			dTerm = 0;
@@ -131,10 +141,10 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//clamp chosen acceleration within range min and max acceleration
 		double chosenAcceleration = pTerm + dTerm;
 
-		if(chosenAcceleration > MAX_ACC) {
-			chosenAcceleration = MAX_ACC;
-		} else if(chosenAcceleration < MIN_ACC) {
-			chosenAcceleration = MIN_ACC;
+		if(chosenAcceleration > maxAcc) {
+			chosenAcceleration = maxAcc;
+		} else if(chosenAcceleration < minAcc) {
+			chosenAcceleration = minAcc;
 		}
 
 		algorithmData.chosenAcceleration = chosenAcceleration;

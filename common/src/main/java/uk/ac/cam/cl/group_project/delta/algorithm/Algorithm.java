@@ -6,7 +6,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 
 public abstract class Algorithm {
 
-	public final static int ALGORITHM_LOOP_DURATION = 10000000; // 10ms
+	public static final int ALGORITHM_LOOP_DURATION = 50000000; // 50ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -129,9 +129,10 @@ public abstract class Algorithm {
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
 		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
+		//find closest beacon within maximum sensor distance
 		double min = Double.POSITIVE_INFINITY;
 		for (Beacon beacon : algorithmData.beacons) {
-			if (beacon.getDistanceLowerBound() < min) {
+			if (beacon.getDistanceLowerBound() <= min) {
 				min = beacon.getDistanceLowerBound();
 				algorithmData.closestBeacon = beacon;
 			}
@@ -210,10 +211,12 @@ public abstract class Algorithm {
 			emergencyStop();
 		}
 
+		boolean shouldSendInstruction;
 		if(!algorithmData.commsInterface.isLeader()) {
 			makeDecision();
+			shouldSendInstruction = true;
 		} else {
-			frontVehicleRoute.nextStep();
+			shouldSendInstruction = frontVehicleRoute.nextStep();
 		}
 
 		if (Thread.interrupted()) {
@@ -223,7 +226,7 @@ public abstract class Algorithm {
 		sendMessage();
 
 		// send instructions to drive if not leader
-		if(!algorithmData.commsInterface.isLeader()) {
+		if(shouldSendInstruction) {
 			sendInstruction();
 		}
 
