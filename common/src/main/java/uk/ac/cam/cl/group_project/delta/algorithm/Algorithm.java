@@ -174,9 +174,11 @@ public abstract class Algorithm {
 	}
 
 	public void emergencyStop() {
-		algorithmData.emergencyOccurred = true;
-		algorithmData.driveInterface.stop();
-		algorithmData.commsInterface.notifyEmergency();
+		if (!algorithmData.emergencyOccurred) {
+			algorithmData.emergencyOccurred = true;
+			algorithmData.driveInterface.stop();
+			algorithmData.commsInterface.notifyEmergency();
+		}
 	}
 
 	private void sendInstruction() {
