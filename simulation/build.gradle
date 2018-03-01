@@ -33,4 +33,5 @@ apply plugin: 'javafx-gradle-plugin'
 jfx {
 	mainClass = 'uk.ac.cam.cl.group_project.delta.simulation.gui.Gui'
 	vendor = 'Delta'
+	runJavaParameter = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
 }
