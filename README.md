@@ -8,7 +8,9 @@ Implementing platooning for LEGOⓇ Mindstorms vehicles, testable both on the ve
 The code is structured for Gradle, with three subprojects. `lego` and `simulation` contain LEGO- and simulation-specific code respectively, while `common` has the core algorithm and communication code, as well as interfaces and utility functions, and is used by both.
 
 ## Running
-We are using [Gradle](https://gradle.org/) 4.5 to manage building and deploying code. In all commands below, you should replace `gradle` with `./gradlew` on Linux and MacOS, and with `gradlew.bat` on Windows (sometimes `./gradlew.bat` is required). This will download an appropriate version of Gradle for you, and use it to run the command. There is no need to have Gradle installed.
+We are using [Gradle](https://gradle.org/) 4.5 to manage building and deploying code.
+
+> **Note**: In all commands below, you should replace `gradle` with `./gradlew` on Linux and MacOS, and with `gradlew.bat` on Windows (sometimes `./gradlew.bat` is required). This will download an appropriate version of Gradle for you, and use it to run the command. There is no need to have Gradle installed.
 
 To build all the code, just run `gradle build` (that means `./gradle build` on Linux and `gradlew.bat build` on Windows). All run or deploy commands will build the code automatically before running.
 
@@ -36,3 +38,5 @@ All of the unit tests in the project can be run using `gradle test`. For a more 
 The tests for just one subproject can be run using `gradle :simulation:test` (replacing `simulation` as appropriate).
 
 Gradle will try to remember which tests have been run before, and won't rerun them if it doesn't think the code has changed. To force it to rerun all tests, use `gradle clean test` to remove all cached builds and changes before testing.
+
+All code pushed to this repository will be tested using `gradle check` using Travis CI, and changes cannot be merged into `master` unless they pass all tests and checks.
