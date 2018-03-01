@@ -45,7 +45,6 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return the distance in m or null if there is no hardware support
 	 */
 	public Double getFrontProximity() {
-
 		List<PhysicsBody> bodies = world.getBodies();
 
 		Vector2D vecHeading = car.getHeadingVector();
@@ -58,9 +57,7 @@ public class SimulatedSensorModule implements SensorInterface {
 				Vector2D collisionLocation = body.getRayCollisionPosition(ray);
 				Vector2D relPos = collisionLocation.subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
-				double angle = Math.acos(
-					relPos.dot(vecHeading) / relDistance
-				);
+				double angle = vecHeading.angleTo(relPos);
 
 				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
 					distance = Math.min(distance, relDistance);
@@ -92,12 +89,7 @@ public class SimulatedSensorModule implements SensorInterface {
 				SimulatedCar otherCar = (SimulatedCar) body;
 				Vector2D relPos = otherCar.getBeaconPosition().subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
-				double angle = Math.acos(
-					relPos.dot(vecHeading) / relDistance
-				);
-				if (relPos.leftOf(vecHeading)) {
-					angle *= -1;
-				}
+				double angle = vecHeading.angleTo(relPos);
 
 				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
 					beacons.add(new Beacon(
