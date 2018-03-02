@@ -90,7 +90,7 @@ public class Drive implements DriveInterface {
 	 *
 	 * If the vehicle changes speed, its turn rate will become inaccurate.
 	 *
-	 * Using the formula: sin(wheelAngle) = turnRate * vehicleLength / speed
+	 * Using the formula: sin(wheelAngle) = turnRate * wheelbase / speed
 	 *
 	 * @param turnRate in rad/s
 	 */
@@ -120,7 +120,7 @@ public class Drive implements DriveInterface {
 	 * Rotate the front wheels to a given angle, where a negative value
 	 * indicates a left turn and a positive value indicates a right turn.
 	 *
-	 * @param angle in rad
+	 * @param angle in degrees
 	 */
 	private void rotateTo(double angle) {
 		steer.rotateTo((int) ((STRAIGHT_AHEAD - angle) * GEAR_RATIO));

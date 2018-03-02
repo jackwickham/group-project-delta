@@ -22,11 +22,11 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	private double pidD= 2;
 
 	//turning PD parameters
-	private double turnP = 5;
+	private double turnP = 0.5;//3;
 	private double turnD = 0.6;
 
 	//maximum and minimum acceleration in m/s
-	private double maxAcc = 0.3;
+	private double maxAcc = 0.2;
 	private double minAcc = -2;
 
 	//constant buffer distance in m
@@ -169,12 +169,19 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		algorithmData.chosenAcceleration = chosenAcceleration;
 
 		//TODO: This is not calculated
-		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+		algorithmData.chosenSpeed = algorithmData.speed;
 
 		//basic turning PD
-		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
 			double p = turnP * algorithmData.angle;
+			if (algorithmData.speed < 0.1) {
+				// Prevent swerving at low speeds
+				p *= algorithmData.speed * 10;
+			}
+			if (algorithmData.closestBeacon.getDistanceLowerBound() < 0.5) {
+				// Turn harder
+				p *= 2;
+			}
 			double d;
 			if (algorithmData.previousAngle == null) {
 				d = 0;
