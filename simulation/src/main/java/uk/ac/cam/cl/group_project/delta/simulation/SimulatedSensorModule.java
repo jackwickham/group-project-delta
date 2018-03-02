@@ -24,7 +24,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	/**
 	 * Maximum angle from view normal that the sensor can detect, in radians.
 	 */
-	public static final double VIEW_HALF_ANGLE = 0.44; // 25°
+	private static final double VIEW_HALF_ANGLE = Math.PI / 4; // 45°
 
 	/**
 	 * Constructs a sensor module for given car in provided world.
@@ -53,7 +53,9 @@ public class SimulatedSensorModule implements SensorInterface {
 
 		for (PhysicsBody body : bodies) {
 			if (body != car) {
-				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+				Vector2D ray = body.getPosition().subtract(car.getSensorPosition()).normalise();
+				Vector2D collisionLocation = body.getRayCollisionPosition(ray);
+				Vector2D relPos = collisionLocation.subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
 				double angle = vecHeading.angleTo(relPos);
 
@@ -83,14 +85,15 @@ public class SimulatedSensorModule implements SensorInterface {
 		Vector2D vecHeading = car.getHeadingVector();
 
 		for (PhysicsBody body : bodies) {
-			if (body != car) {
-				Vector2D relPos = body.getPosition().subtract(car.getPosition());
+			if (body != car && body instanceof SimulatedCar) {
+				SimulatedCar otherCar = (SimulatedCar) body;
+				Vector2D relPos = otherCar.getBeaconPosition().subtract(car.getSensorPosition());
 				double relDistance = relPos.magnitude();
 				double angle = vecHeading.angleTo(relPos);
 
 				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
 					beacons.add(new Beacon(
-						body.getUuid(),
+						otherCar.getUuid(),
 						relDistance,
 						relDistance,
 						angle
