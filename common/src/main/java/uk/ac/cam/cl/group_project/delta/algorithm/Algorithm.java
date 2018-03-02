@@ -122,7 +122,6 @@ public abstract class Algorithm {
 			}
 		}
 
-
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
@@ -154,8 +153,9 @@ public abstract class Algorithm {
 		} else {
 			algorithmData.frontProximity = null;
 		}
+
 		// get initial distance reading from sensor, distance null if no distance reading
-		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
+		algorithmData.previousDistance = algorithmData.frontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
@@ -186,17 +186,6 @@ public abstract class Algorithm {
 		// send instructions to drive
 		algorithmData.driveInterface.setAcceleration(algorithmData.chosenAcceleration);
 		algorithmData.driveInterface.setTurnRate(algorithmData.chosenTurnRate);
-	}
-
-	/**
-	 * @return time in nanoseconds, if using update method then return set time otherwise return system time
-	 */
-	protected long getTime() {
-		if(algorithmData.notUsingRealTime) {
-			return algorithmData.time;
-		} else {
-			return System.nanoTime();
-		}
 	}
 
 	/**
@@ -236,25 +225,21 @@ public abstract class Algorithm {
 	}
 	/**
 	 * Runs one loop of algorithm
-	 * @param time -time in nanoseconds, algorithm assumes this is the current time
 	 */
-	public void update(long time) {
-		algorithmData.notUsingRealTime = true;
-		algorithmData.time = time;
+	public void update() {
 		runOneLoop();
 	}
 
 	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
 	 */
 	public void run() {
-		algorithmData.notUsingRealTime = false;
 		initialise();
-		long startTime = System.nanoTime();
+		long startTime = Time.getTime();
 
 		while (!algorithmData.emergencyOccurred) {
 			runOneLoop();
 			try {
-				long nanosToSleep = ALGORITHM_LOOP_DURATION - (System.nanoTime() - startTime);
+				long nanosToSleep = ALGORITHM_LOOP_DURATION - (Time.getTime() - startTime);
 				if(nanosToSleep > 0) {
 					// Note: integer division desired
 					Thread.sleep(nanosToSleep/1000000);
@@ -265,7 +250,7 @@ public abstract class Algorithm {
 				emergencyStop();
 				break;
 			}
-			startTime = System.nanoTime();
+			startTime = Time.getTime();
 		}
 		Log.debug("Algorithm has finished running");
 	}

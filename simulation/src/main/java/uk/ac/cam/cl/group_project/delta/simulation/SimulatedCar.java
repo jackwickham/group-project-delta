@@ -38,12 +38,12 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 
 	/**
 	 * Constructs a car, but do not add it to the world.
-	 * @param length     Wheel base of the vehicle.
+	 * @param wheelBase  Wheel base of the vehicle.
 	 * @param world      Simulated world in which this car exists.
 	 * @param network    Simulated network on which this car will communicate.
 	 */
-	public SimulatedCar(double length, World world, SimulatedNetwork network) {
-		super(length);
+	public SimulatedCar(double wheelBase, World world, SimulatedNetwork network) {
+		super(wheelBase);
 		networkInterface = new SimulatedNetworkModule(this, network);
 		sensorInterface = new FaultySensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
@@ -101,13 +101,12 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 
 	/**
 	 * Call the algorithm to update this car's state and communicate it to the other vehicles
-	 * @param timeNanos The world time in nanoseconds
 	 */
-	public void updateControl(long timeNanos) {
+	public void updateControl() {
 		if (controller == null) {
 			throw new IllegalStateException("An algorithm must be attached to this vehicle before it can update");
 		}
-		controller.update(timeNanos);
+		controller.update();
 	}
 
 	/**

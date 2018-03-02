@@ -4,6 +4,7 @@ import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.Time;
 
 /**
  * As basic algorithm 3.
@@ -96,7 +97,7 @@ public class BasicAlgorithmPID extends Algorithm{
 	//and the sensor proximity data
 	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
 		if (predictedFrontProximity != null && sensorFrontProximity != null) {
-			return 0.0 * predictedFrontProximity + 1 * sensorFrontProximity;
+			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
 		}
 		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
@@ -107,9 +108,6 @@ public class BasicAlgorithmPID extends Algorithm{
 		else return null;
 	}
 
-	public void initialise() {
-	}
-
 	public void makeDecision() {
 		//decide on chosen acceleration, speed and turnRate
 
@@ -117,8 +115,8 @@ public class BasicAlgorithmPID extends Algorithm{
 		//TODO: add something to take into account network delay
 		double desired_dist;
 		Double weightedFrontProximity;
-		if (algorithmData.receiveMessageData != null && algorithmData.previousDistance != null) {
-			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
+		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
+			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 			//calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 					+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;

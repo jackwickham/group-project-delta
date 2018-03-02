@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
 import uk.ac.cam.cl.group_project.delta.Log;
+import uk.ac.cam.cl.group_project.delta.Time;
 
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class Merge {
 		Random r = new Random();
 		transactionId = r.nextInt();
 
-		lastUpdate = System.nanoTime();
+		lastUpdate = Time.getTime();
 		state = MergeState.Requested;
 	}
 
@@ -122,7 +123,7 @@ public class Merge {
 		if(mainPlatoon == currentPlatoon) {
 			additionalIdLookups = msg.getNewPlatoon();
 		}
-		lastUpdate = System.nanoTime();
+		lastUpdate = Time.getTime();
 	}
 
 	/**
@@ -192,7 +193,7 @@ public class Merge {
 			}
 			idClashReplacements = msg.getRenames();
 		}
-		lastUpdate = System.nanoTime();
+		lastUpdate = Time.getTime();
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class Merge {
 				state = MergeState.Confirmed;
 			}
 		}
-		lastUpdate = System.nanoTime();
+		lastUpdate = Time.getTime();
 	}
 
 	/**
@@ -218,7 +219,7 @@ public class Merge {
 	 * @return whether the merge is still valid
 	 */
 	public boolean isValid() {
-		return !state.equals(MergeState.Cancelled) && (System.nanoTime() - TIMEOUT) < lastUpdate;
+		return !state.equals(MergeState.Cancelled) && (Time.getTime() - TIMEOUT) < lastUpdate;
 	}
 
 	public boolean doesAccept() {

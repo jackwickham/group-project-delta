@@ -81,7 +81,10 @@ public class AlgorithmTest {
 
 		algorithm.algorithmData.commsInterface = mockCommsInterface;
 		algorithm.initialise();
-		algorithm.update(0);
-		algorithm.update(10000000);
+		Time.useDefinedTime();
+		Time.setTime(0);
+		algorithm.update();
+		Time.increaseTime(10000000);
+		algorithm.update();
 	}
 }
