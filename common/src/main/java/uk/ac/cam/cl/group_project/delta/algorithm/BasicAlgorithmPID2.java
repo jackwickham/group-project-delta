@@ -22,12 +22,12 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	private double pidD= 3;
 
 	//turning PD parameters
-	private double turnP = 10;
-	private double turnD = 0;
+	private double turnP = 2;
+	private double turnD = 0.6;
 
 	//maximum and minimum acceleration in m/s
-	private double maxAcc = 2;
-	private double minAcc = -2;
+	private double maxAcc = 0.3;
+	private double minAcc = -0.3;
 
 	//constant buffer distance in m
 	private double buffDist = 0.3;
@@ -117,6 +117,9 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
+		if (algorithmData.frontProximity == null && algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
+			algorithmData.frontProximity = algorithmData.closestBeacon.getDistanceLowerBound();
+		}
 		if (algorithmData.frontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
 			if (algorithmData.frontProximity < emerDist) {
@@ -172,7 +175,12 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
 			double p = turnP * algorithmData.angle;
-			double d = turnD * (algorithmData.angle - algorithmData.angle);
+			double d;
+			if (algorithmData.previousAngle == null) {
+				d = 0;
+			} else {
+				d = turnD * (algorithmData.angle - algorithmData.previousAngle);
+			}
 			algorithmData.chosenTurnRate = p + d;
 		} else {
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
