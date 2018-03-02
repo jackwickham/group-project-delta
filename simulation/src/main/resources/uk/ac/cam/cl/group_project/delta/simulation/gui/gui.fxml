@@ -7,6 +7,8 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
+
+<?import uk.ac.cam.cl.group_project.delta.simulation.gui.EditableSpinner?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0"
 			xmlns="http://javafx.com/javafx/8.0.112"
 			xmlns:fx="http://javafx.com/fxml/1"
@@ -90,6 +92,215 @@
 														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="4"/>
 													</children>
 												</GridPane>
+											</children>
+										</AnchorPane>
+									</content>
+								</Tab>
+								<Tab text="Options">
+									<content>
+										<AnchorPane>
+											<children>
+												<ScrollPane fitToWidth="true"
+															hbarPolicy="NEVER"
+															AnchorPane.topAnchor="0"
+															AnchorPane.rightAnchor="0"
+															AnchorPane.bottomAnchor="0"
+															AnchorPane.leftAnchor="0">
+													<content>
+														<VBox>
+															<children>
+																<HBox spacing="10" alignment="CENTER_RIGHT">
+																	<padding>
+																		<Insets top="10" bottom="10" right="10" left="10"/>
+																	</padding>
+																	<children>
+																		<Button text="Reset world"
+																				onAction="#reset"/>
+																	</children>
+																</HBox>
+																<TitledPane animated="false" text="Network error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Network delivery modifier"/>
+																						<EditableSpinner
+																								fx:id="networkDeliveryModifier"
+																								GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.5"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+																<TitledPane animated="false" text="Proximity sensor error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Front proximity standard deviation"/>
+																						<EditableSpinner
+																								fx:id="frontProximityStdDev"
+																								GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Front proximity failure rate"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner
+																								fx:id="frontProximityFailureRate"
+																								GridPane.rowIndex="1"
+																								GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="1" initialValue="0" amountToStepBy="0.05"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Front proximity enabled"
+																							   GridPane.rowIndex="2"/>
+																						<CheckBox fx:id="frontProximityEnabled"
+																								  GridPane.rowIndex="2"
+																								  GridPane.columnIndex="1"/>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+																<TitledPane animated="false" text="Beacon sensor error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Beacons emulate Mindstorms"/>
+																						<CheckBox fx:id="beaconsEmulateMindstorms"
+																								  GridPane.columnIndex="1"/>
+																						<Label text="Beacon distance standard deviation"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner fx:id="beaconDistanceStdDev"
+																										 GridPane.rowIndex="1"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Beacon angle standard deviation"
+																							   GridPane.rowIndex="2"/>
+																						<EditableSpinner fx:id="beaconAngleStdDev"
+																										 GridPane.rowIndex="2"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="1" initialValue="0" amountToStepBy="0.05"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+																<TitledPane animated="false" text="Motion sensor error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Acceleration standard deviation"/>
+																						<EditableSpinner fx:id="accelerationStdDev"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																								min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Speed standard deviation"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner fx:id="speedStdDev"
+																										 GridPane.rowIndex="1"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																								min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Turn rate standard deviation"
+																							   GridPane.rowIndex="2"/>
+																						<EditableSpinner fx:id="turnRateStdDev"
+																										 GridPane.rowIndex="2"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+															</children>
+														</VBox>
+													</content>
+												</ScrollPane>
 											</children>
 										</AnchorPane>
 									</content>

@@ -21,8 +21,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageType;
 import uk.ac.cam.cl.group_project.delta.algorithm.communications.Packet;
-import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
-import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
+import uk.ac.cam.cl.group_project.delta.simulation.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -71,11 +70,13 @@ public class Controller {
 	 */
 	@FXML
 	private Pane viewPane;
+
 	/**
 	 * The simulated world containing nodes representing the simulated objects.
 	 */
 	@FXML
 	private Pane scene;
+
 	/**
 	 * GUI element containing the hierarchical information for a selected
 	 * object.
@@ -88,12 +89,10 @@ public class Controller {
 	 */
 	@FXML
 	private TableView<NetworkLogMessage> networkLog;
-
 	/**
 	 * Backend store for network logs.
 	 */
 	private ObservableList<NetworkLogMessage> networkLogStore;
-
 	/**
 	 * Emergency messages filter button.
 	 */
@@ -143,6 +142,76 @@ public class Controller {
 	public Slider timeDilationSlider;
 
 	/**
+	 * Network parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork#setMessageDeliveryModifier(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> networkDeliveryModifier;
+
+	/**
+	 * Sensor parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setFrontProximityStdDev(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> frontProximityStdDev;
+
+	/**
+	 * Sensor parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setFrontProximityFailureRate(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> frontProximityFailureRate;
+
+	/**
+	 * Sensor parameter checkbox.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setFrontProximityEnabled(boolean)
+	 */
+	@FXML
+	public CheckBox frontProximityEnabled;
+
+	/**
+	 * Beacon detection parameter checkbox.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setBeaconsEmulateMindstorms(boolean)
+	 */
+	@FXML
+	public CheckBox beaconsEmulateMindstorms;
+
+	/**
+	 * Beacon detection parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setBeaconDistanceStdDev(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> beaconDistanceStdDev;
+
+	/**
+	 * Beacon detection parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setBeaconAngleStdDev(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> beaconAngleStdDev;
+
+	/**
+	 * Motion detection parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setAccelerationStdDev(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> accelerationStdDev;
+
+	/**
+	 * Motion detection parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setSpeedStdDev(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> speedStdDev;
+
+	/**
+	 * Motion detection parameter spinner.
+	 * @see uk.ac.cam.cl.group_project.delta.simulation.FaultySensorModule#setTurnRateStdDev(double)
+	 */
+	@FXML
+	public EditableSpinner<Double> turnRateStdDev;
+
+	/**
 	 * The JavaFX GUI updater - an "animation".
 	 */
 	private Timeline timeline;
@@ -182,6 +251,7 @@ public class Controller {
 		cursorPosition = new Vector2D();
 		networkLogStore = FXCollections.observableList(new LinkedList<>());
 
+		// Create timeline
 		timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(new KeyFrame(
@@ -189,10 +259,12 @@ public class Controller {
 			e -> this.update()
 		));
 
+		// Create scene context menu
 		MenuItem item = new MenuItem("Add object");
 		item.setOnAction(this::addObject);
 		sceneContextMenu = new ContextMenu(item);
 
+		// Create vehicle context menu
 		vehicleContextMenuFollowItem = new MenuItem("Follow");
 		vehicleContextMenu = new ContextMenu(vehicleContextMenuFollowItem);
 
@@ -230,6 +302,7 @@ public class Controller {
 		message.setPrefWidth(600);
 		networkLog.getColumns().add(message);
 
+		// Time controls
 		pausedPane.visibleProperty().bind(pauseButton.selectedProperty());
 		timeDilationSlider.valueProperty().addListener(
 			(observableValue, oldValue, newValue) -> {
@@ -237,6 +310,38 @@ public class Controller {
 					simulation.setTimeDilationFactor(newValue.doubleValue());
 				}
 			}
+		);
+
+		// Bind options
+		networkDeliveryModifier.valueProperty().addListener(
+			(value, prev, next) -> SimulatedNetwork.setMessageDeliveryModifier(next)
+		);
+		frontProximityStdDev.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setFrontProximityStdDev(next)
+		);
+		frontProximityFailureRate.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setFrontProximityFailureRate(next)
+		);
+		frontProximityEnabled.selectedProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setFrontProximityEnabled(next)
+		);
+		beaconsEmulateMindstorms.selectedProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setBeaconsEmulateMindstorms(next)
+		);
+		beaconDistanceStdDev.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setBeaconDistanceStdDev(next)
+		);
+		beaconAngleStdDev.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setBeaconAngleStdDev(next)
+		);
+		accelerationStdDev.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setAccelerationStdDev(next)
+		);
+		speedStdDev.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setSpeedStdDev(next)
+		);
+		turnRateStdDev.valueProperty().addListener(
+			(value, prev, next) -> FaultySensorModule.setTurnRateStdDev(next)
 		);
 
 		// And we are ready to begin...
