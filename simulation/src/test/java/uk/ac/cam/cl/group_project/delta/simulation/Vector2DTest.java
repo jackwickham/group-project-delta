@@ -157,4 +157,13 @@ public class Vector2DTest {
 		assertEquals("Floating point inaccuracies aren't corrected for", 0.0, a.angleTo(b), 0.01);
 	}
 
+	@Test
+	public void normaliseTest() {
+		Vector2D v = new Vector2D(3, 4);
+
+		Vector2D normalised = v.normalise();
+		assertEquals(0.6, normalised.getX(), 0.01);
+		assertEquals(0.8, normalised.getY(), 0.01);
+	}
+
 }
