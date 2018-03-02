@@ -4,6 +4,7 @@ import uk.ac.cam.cl.group_project.delta.BeaconInterface;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.Time;
 
 /**
  * As basic algorithm 3.
@@ -120,7 +121,7 @@ public class BasicAlgorithmPID extends Algorithm{
 		double desired_dist;
 		Double weightedFrontProximity;
 		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
-			double delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
+			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 			//calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 					+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
