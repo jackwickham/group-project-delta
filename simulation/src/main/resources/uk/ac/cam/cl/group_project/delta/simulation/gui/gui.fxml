@@ -167,31 +167,30 @@
 																						<RowConstraints prefHeight="30"/>
 																					</rowConstraints>
 																					<children>
-																						<Label text="Front proximity standard deviation"/>
-																						<EditableSpinner
-																								fx:id="frontProximityStdDev"
-																								GridPane.columnIndex="1">
+																						<Label text="Front proximity enabled"/>
+																						<CheckBox fx:id="frontProximityEnabled"
+																								  selected="true"
+																								  GridPane.columnIndex="1"/>
+																						<Label text="Front proximity standard deviation"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner fx:id="frontProximityStdDev"
+																										 GridPane.rowIndex="1"
+																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																								min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																						<Label text="Front proximity failure rate"
-																							   GridPane.rowIndex="1"/>
-																						<EditableSpinner
-																								fx:id="frontProximityFailureRate"
-																								GridPane.rowIndex="1"
-																								GridPane.columnIndex="1">
+																							   GridPane.rowIndex="2"/>
+																						<EditableSpinner fx:id="frontProximityFailureRate"
+																										 GridPane.rowIndex="2"
+																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																										min="0" max="1" initialValue="0" amountToStepBy="0.05"/>
+																								min="0" max="1" initialValue="0" amountToStepBy="0.05"/>
 																							</valueFactory>
 																						</EditableSpinner>
-																						<Label text="Front proximity enabled"
-																							   GridPane.rowIndex="2"/>
-																						<CheckBox fx:id="frontProximityEnabled"
-																								  GridPane.rowIndex="2"
-																								  GridPane.columnIndex="1"/>
 																					</children>
 																				</GridPane>
 																			</children>
