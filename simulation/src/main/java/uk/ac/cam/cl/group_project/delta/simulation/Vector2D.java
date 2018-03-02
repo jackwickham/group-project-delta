@@ -190,6 +190,23 @@ public class Vector2D {
 	}
 
 	/**
+	 * Computes the vector with magnitude 1 in the same direction as `vec`
+	 * @return The normal vector
+	 */
+	public static Vector2D normalise(Vector2D vec) {
+		double mag = magnitude(vec);
+		return new Vector2D(vec.getX() / mag, vec.getY() / mag);
+	}
+
+	/**
+	 * Computes the vector with magnitude 1 in the same direction as this
+	 * @return The normal vector
+	 */
+	public Vector2D normalise() {
+		return normalise(this);
+	}
+
+	/**
 	 * Checks whether the vector `a` is to the left or the right of `b`,
 	 * meaning that the clockwise angle from b to a is less or greater than
 	 * 180°
