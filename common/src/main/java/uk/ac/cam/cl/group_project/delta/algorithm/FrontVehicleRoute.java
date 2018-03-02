@@ -43,7 +43,7 @@ public class FrontVehicleRoute {
 	/**
 	 * Possible different routes for the front vehicle to follow
 	 */
-	public enum RouteNumber {ROUTE_ZERO, ROUTE_ONE, ROUTE_TWO}
+	public enum RouteNumber {ROUTE_ZERO, ROUTE_ONE, ROUTE_TWO, ROUTE_THREE}
 
 	public FrontVehicleRoute(AlgorithmData algorithmData, double algoLoopLength, RouteNumber routeNumber) {
 		this.algorithmData = algorithmData;
@@ -57,6 +57,9 @@ public class FrontVehicleRoute {
 				break;
 			case ROUTE_TWO:
 				this.moves = routeTwo();
+				break;
+			case ROUTE_THREE:
+				this.moves = routeThree();
 				break;
 		}
 		updateNextActionStep();
@@ -115,7 +118,7 @@ public class FrontVehicleRoute {
 
 	/**
 	 * @return list of moves which makes the car accelerate at 0.01m/m/m for 3s,
-	 * curve out to the right, return to the original path, then decelerate to a stop.
+	 * make a S shape (right first), then decelerate to a stop.
 	 */
 	private static List<Move> routeTwo() {
 		List<Move> moves = new ArrayList<>();
@@ -126,6 +129,22 @@ public class FrontVehicleRoute {
 		moves.add(new Move(10, MoveType.TURN_RATE, 0.3));
 		moves.add(new Move(13, MoveType.TURN_RATE, 0));
 		moves.add(new Move(14, MoveType.ACCELERATION, -0.01));
+		return moves;
+	}
+
+	/**
+	 * @return list of moves which makes the car drive forwards,
+	 * then a little to the right, then straight again.
+	 */
+	private static List<Move> routeThree() {
+		List<Move> moves = new ArrayList<>();
+		moves.add(new Move(0, MoveType.ACCELERATION, 0.01));
+		moves.add(new Move(3, MoveType.ACCELERATION, 0));
+		moves.add(new Move(4, MoveType.TURN_RATE, 0.2));
+		moves.add(new Move(5, MoveType.TURN_RATE, 0));
+		moves.add(new Move(7, MoveType.TURN_RATE, -0.2));
+		moves.add(new Move(8, MoveType.TURN_RATE, 0));
+		moves.add(new Move(9, MoveType.ACCELERATION, -0.01));
 		return moves;
 	}
 
