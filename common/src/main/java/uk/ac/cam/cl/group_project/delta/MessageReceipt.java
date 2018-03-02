@@ -13,18 +13,8 @@ public class MessageReceipt {
 	 * @param data The message which was received
 	 */
 	public MessageReceipt(byte[] data) {
-		this(data, System.nanoTime());
-	}
-
-	/**
-	 * Timestamps a message as it arrives at the device
-	 *
-	 * @param data The message which was received
-	 * @param time The timestamp to assign to the message (in nanoseconds)
-	 */
-	public MessageReceipt(byte[] data, long time) {
 		this.data = data;
-		this.time = time;
+		this.time = Time.getTime();
 	}
 
 	/**

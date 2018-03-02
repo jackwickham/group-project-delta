@@ -101,13 +101,12 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 
 	/**
 	 * Call the algorithm to update this car's state and communicate it to the other vehicles
-	 * @param timeNanos The world time in nanoseconds
 	 */
-	public void updateControl(long timeNanos) {
+	public void updateControl() {
 		if (controller == null) {
 			throw new IllegalStateException("An algorithm must be attached to this vehicle before it can update");
 		}
-		controller.update(timeNanos);
+		controller.update();
 	}
 
 	/**

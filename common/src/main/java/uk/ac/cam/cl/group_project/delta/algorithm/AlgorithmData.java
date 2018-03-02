@@ -57,10 +57,4 @@ public class AlgorithmData {
 	public double previousAcceleration;
 
 	public MiniPID miniPID;
-
-	//only used if update method calls getTime
-	public long time;
-
-	//flag which is true if update method in Algorithm is being used
-	public boolean notUsingRealTime;
 }

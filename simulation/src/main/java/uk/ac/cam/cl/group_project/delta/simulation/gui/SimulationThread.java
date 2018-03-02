@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
 import uk.ac.cam.cl.group_project.delta.Log;
+import uk.ac.cam.cl.group_project.delta.Time;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.ParameterEnum;
 import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
@@ -66,9 +67,9 @@ public class SimulationThread extends Thread {
 	@Override
 	public void run() {
 
-		long start = System.nanoTime();
-		long time = start;
-		long cumulative = 0;
+		long realTime = System.nanoTime();
+		Time.useDefinedTime();
+		Time.setTime(0);
 
 		long lastAlgorithmUpdate = 0; // w.r.t. cumulative
 
@@ -86,7 +87,7 @@ public class SimulationThread extends Thread {
 
 			long tmp = System.nanoTime();
 
-			if (tmp - time > UPDATE_INTERVAL) {
+			if (tmp - realTime > UPDATE_INTERVAL) {
 
 				// Fetch bodies from world
 				List<PhysicsBody> bodies;
@@ -95,7 +96,7 @@ public class SimulationThread extends Thread {
 				}
 
 				// Update world
-				long l_dt = (long) ((tmp - time) * timeDilationFactor);
+				long l_dt = (long) ((tmp - realTime) * timeDilationFactor);
 				double dt = l_dt / 1e9;
 				for (PhysicsBody body : bodies) {
 					synchronized (body) {
@@ -104,20 +105,20 @@ public class SimulationThread extends Thread {
 				}
 
 				// Update cars
-				cumulative += l_dt;
-				if (cumulative - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
+				Time.increaseTime(l_dt);
+				if (Time.getTime() - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
 					for (PhysicsBody body : bodies) {
 						if (body instanceof SimulatedCar) {
-							((SimulatedCar) body).updateControl(cumulative);
+							((SimulatedCar) body).updateControl();
 						}
 					}
-					if ((cumulative - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
+					if ((Time.getTime() - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
 						Log.warn("Simulation thread cannot keep algorithms up-to-date");
 					}
 					lastAlgorithmUpdate += CONTROLLER_INTERVAL;
 				}
 
-				time = tmp;
+				realTime = tmp;
 
 			}
 
@@ -227,7 +228,7 @@ public class SimulationThread extends Thread {
 		public void initialise() {}
 
 		@Override
-		public void update(long time) {}
+		public void update() {}
 
 		@Override
 		public void run() {}
