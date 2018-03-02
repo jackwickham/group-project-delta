@@ -32,6 +32,12 @@ The filters are:
 
 New messages will be added to the top of the list.
 
+#### Options Tab
+
+This tab gives the option to reset the simulation and to modify various error
+injection options to stress test the current simulated platoon on more realistic
+peripherals.
+
 ### Main View
 
 The main view shows the current simulation state. It can be navigated using
