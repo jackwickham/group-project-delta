@@ -37,7 +37,6 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	private double maxSensorDist = 2;
 
 	//determines if state variables(speed, acc) are used to improve the previous proximity value which is used in smoothing
-	//note: currently turned off as I am getting a negative time for the delay in the simulation
 	private boolean usePrediction = true;
 
 	//higher value will help to smooth out spikes in the proximity sensor but will decrease the response time
