@@ -56,13 +56,8 @@ public class AlgorithmData {
 	public Double previousDistance;
 	public double previousSpeed;
 	public double previousAcceleration;
+
 	public Double previousAngle;
-
-	//only used if update method calls getTime
-	public long time;
-
-	//flag which is true if update method in Algorithm is being used
-	public boolean notUsingRealTime;
 
 	//sum of errors used by PID
 	public Double errorSum;
