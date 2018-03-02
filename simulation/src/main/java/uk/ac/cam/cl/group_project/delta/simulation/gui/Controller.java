@@ -339,7 +339,7 @@ public class Controller {
 			synchronized (car) {
 				switch (keyEvent.getCode()) {
 					case W:
-						car.setEnginePower(0.5);
+						car.setEnginePower(0.25);
 						break;
 					case S:
 						car.setEnginePower(-1000.0);

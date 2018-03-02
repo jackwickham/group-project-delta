@@ -15,24 +15,24 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//not these defaults are not well configured
 	//ID parameters
 	//increases response time
-	private double pidP = 1.5;
+	private double pidP = 4;
 	//helps prevent steady-state errors
 	private double pidI = 0;
 	//helps prevent overshoot
-	private double pidD= 3;
+	private double pidD= 2;
 
 	//turning PD parameters
-	private double turnP = 2;
+	private double turnP = 5;
 	private double turnD = 0.6;
 
 	//maximum and minimum acceleration in m/s
 	private double maxAcc = 0.3;
-	private double minAcc = -0.3;
+	private double minAcc = -2;
 
 	//constant buffer distance in m
 	private double buffDist = 0.3;
 	//constant headway time in s
-	private double headTime = 0.1;
+	private double headTime = 0.0;
 
 	//distance below which emergency stop happens
 	private double emerDist = 0.1;
