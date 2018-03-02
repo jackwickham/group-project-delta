@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.Log;
+import uk.ac.cam.cl.group_project.delta.Time;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 
@@ -35,7 +36,7 @@ class MainClass {
 
 		// Instantiate world and virtual network
 		World world = new World();
-		SimulatedNetwork network = new SimulatedNetwork(true);
+		SimulatedNetwork network = new SimulatedNetwork();
 
 		List<SimulatedCar> cars = new ArrayList<>(NUMBER_OF_VEHICLES);
 
@@ -71,15 +72,16 @@ class MainClass {
 			// Add headers
 			writer.write("time,uuid,x,y,class\n");
 
-			long time = 0;
+			Time.useDefinedTime();
+			Time.setTime(0);
 
-			for (int step = 0; step < simulationSteps; step++, time += UPDATE_INTERVAL, network.incrementTime(UPDATE_INTERVAL)) {
+			for (int step = 0; step < simulationSteps; step++, Time.increaseTime(UPDATE_INTERVAL)) {
 
 				// Update the positions of everything in the world
 				world.update(UPDATE_INTERVAL / 1E9); // ns to s
 				// then run the algorithm
 				for (SimulatedCar car : cars) {
-					car.updateControl(time);
+					car.updateControl();
 				}
 
 				// If we should log, do it
@@ -88,7 +90,7 @@ class MainClass {
 					for (PhysicsBody body : world.getBodies()) {
 						Vector2D pos = body.getPosition();
 						writer.write(
-							time + ","
+							Time.getTime() + ","
 								+ body.getUuid() + ","
 								+ pos.getX() + ","
 								+ pos.getY() + ","

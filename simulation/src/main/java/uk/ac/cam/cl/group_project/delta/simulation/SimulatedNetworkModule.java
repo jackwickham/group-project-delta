@@ -2,7 +2,6 @@ package uk.ac.cam.cl.group_project.delta.simulation;
 
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +75,7 @@ public class SimulatedNetworkModule implements NetworkInterface
 			emergencyHandler.handle(message);
 		}
 		else {
-			messageBuffer.add(new MessageReceipt(message, network.getTime()));
+			messageBuffer.add(new MessageReceipt(message));
 		}
 	}
 

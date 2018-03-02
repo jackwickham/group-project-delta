@@ -46,4 +46,57 @@ public class PhysicsCarTest {
 		classUnderTest.setTurnRate(-100);
 		assertEquals(-Math.PI / 4, classUnderTest.getWheelAngle(), 0.02);
 	}
+
+	@Test
+	public void testTurnRateDoesntAffectHeadingImmediately() {
+		classUnderTest.setTurnRate(1);
+		assertEquals(0.0, classUnderTest.getHeading(), 0.0);
+	}
+
+	@Test
+	public void testHeadingCorrectlyUpdatedAfterTurn() {
+		classUnderTest.setTurnRate(Math.PI / 4);
+		for (int i = 0; i < 10; i++) {
+			classUnderTest.update(0.1);
+		}
+		// We should now have turned 45° right
+		assertEquals(Math.PI / 4, classUnderTest.getHeading(), 0.05);
+	}
+
+	@Test
+	public void testHeadingCorrectlyUpdatedAfterNegativeTurn() {
+		classUnderTest.setTurnRate(-Math.PI / 4);
+
+		for (int i = 0; i < 10; i++) {
+			classUnderTest.update(0.1);
+		}
+		// We should now have turned 45° left
+		assertEquals(-Math.PI / 4, classUnderTest.getHeading(), 0.05);
+	}
+
+	@Test
+	public void testGetHeadingVectorCorrect() {
+		classUnderTest.setTurnRate(Math.PI / 6);
+
+		for (int i = 0; i < 10; i++) {
+			classUnderTest.update(0.1);
+		}
+		// We should now have turned 30° right
+		Vector2D headingVector = classUnderTest.getHeadingVector();
+		assertEquals(0.5, headingVector.getX(), 0.05);
+		assertEquals(Math.sqrt(3) / 2.0, headingVector.getY(), 0.05);
+	}
+
+	@Test
+	public void testGetNegativeHeadingVectorCorrect() {
+		classUnderTest.setTurnRate(-Math.PI / 6);
+
+		for (int i = 0; i < 10; i++) {
+			classUnderTest.update(0.1);
+		}
+		// We should now have turned 30° left
+		Vector2D headingVector = classUnderTest.getHeadingVector();
+		assertEquals(-0.5, headingVector.getX(), 0.05);
+		assertEquals(Math.sqrt(3) / 2.0, headingVector.getY(), 0.05);
+	}
 }

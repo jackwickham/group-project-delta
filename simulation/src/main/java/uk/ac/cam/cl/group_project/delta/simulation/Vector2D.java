@@ -190,6 +190,23 @@ public class Vector2D {
 	}
 
 	/**
+	 * Computes the vector with magnitude 1 in the same direction as `vec`
+	 * @return The normal vector
+	 */
+	public static Vector2D normalise(Vector2D vec) {
+		double mag = magnitude(vec);
+		return new Vector2D(vec.getX() / mag, vec.getY() / mag);
+	}
+
+	/**
+	 * Computes the vector with magnitude 1 in the same direction as this
+	 * @return The normal vector
+	 */
+	public Vector2D normalise() {
+		return normalise(this);
+	}
+
+	/**
 	 * Checks whether the vector `a` is to the left or the right of `b`,
 	 * meaning that the clockwise angle from b to a is less or greater than
 	 * 180°
@@ -218,5 +235,40 @@ public class Vector2D {
 	 */
 	public boolean leftOf(Vector2D other) {
 		return leftOf(this, other);
+	}
+
+	/**
+	 * Returns the angle from `a` to `b` in radians, between -π (exclusive) and
+	 * π (inclusive). A positive angle is measured clockwise.
+	 *
+	 * Returns NaN if either vector has length 0
+	 *
+	 * @param a The reference vector
+	 * @param b The other vector
+	 * @return The angle from `a` to `b`, measured clockwise.
+	 */
+	public static double angleTo(Vector2D a, Vector2D b) {
+		double cosAngle = a.dot(b) / (a.magnitude() * b.magnitude());
+		// Floating point inaccuracies can result in this being slightly outside -1...1
+		cosAngle = Math.max(Math.min(cosAngle, 1.0), -1.0);
+
+		double angle = Math.acos(cosAngle);
+		if (leftOf(b, a)) {
+			angle *= -1;
+		}
+		return angle;
+	}
+
+	/**
+	 * Get the angle from this vector to `other` in radians, between -π
+	 * (exclusive) and π (inclusive). Positive angles are measured clockwise.
+	 *
+	 * Returns NaN if either vector has length 0
+	 *
+	 * @param other The vector to compare to
+	 * @return The angle from `this` to `other`, measured clockwise
+	 */
+	public double angleTo(Vector2D other) {
+		return angleTo(this, other);
 	}
 }
