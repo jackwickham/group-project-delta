@@ -122,7 +122,6 @@ public abstract class Algorithm {
 			}
 		}
 
-
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
@@ -154,8 +153,9 @@ public abstract class Algorithm {
 		} else {
 			algorithmData.frontProximity = null;
 		}
+
 		// get initial distance reading from sensor, distance null if no distance reading
-		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
+		algorithmData.previousDistance = algorithmData.frontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
