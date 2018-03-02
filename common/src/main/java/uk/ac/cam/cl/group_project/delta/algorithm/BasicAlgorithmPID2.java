@@ -1,10 +1,7 @@
 
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
-import uk.ac.cam.cl.group_project.delta.BeaconInterface;
-import uk.ac.cam.cl.group_project.delta.DriveInterface;
-import uk.ac.cam.cl.group_project.delta.NetworkInterface;
-import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.*;
 
 /**
  *Uses the formula found in the research paper
@@ -41,7 +38,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	//determines if state variables(speed, acc) are used to improve the previous proximity value which is used in smoothing
 	//note: currently turned off as I am getting a negative time for the delay in the simulation
-	private boolean usePrediction = false;
+	private boolean usePrediction = true;
 
 	//higher value will help to smooth out spikes in the proximity sensor but will decrease the response time
 	private double proximitySmoothing = 0.8;
@@ -121,7 +118,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//if prediction is turned on use messagedata and previous front proximity to estimate the current front proximity
 		if(usePrediction) {
 			if (algorithmData.receiveMessageData != null && algorithmData.predictedFrontProximity != null) {
-				long delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) ;
+				double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
 				//calculate the distance us and our predecessor have travelled since message received
 				algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 						+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
