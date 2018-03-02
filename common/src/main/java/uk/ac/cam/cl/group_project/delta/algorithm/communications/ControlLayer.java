@@ -28,7 +28,7 @@ public class ControlLayer {
 	/**
 	 * The maximum range for which IDs can be picked up from beacons.
 	 */
-	private static final double MAXIMUM_ID_DETECTION_RANGE = 0.5;
+	private static final double MAXIMUM_ID_DETECTION_RANGE = 1.5;
 
 	/**
 	 * The maximum angle for which IDs can be picked up from beacons.
