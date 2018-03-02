@@ -140,7 +140,7 @@ public class SimulationThread extends Thread {
 		if (Time.getTime() - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
 			for (PhysicsBody body : bodies) {
 				if (body instanceof SimulatedCar) {
-					((SimulatedCar) body).updateControl(cumulative);
+					((SimulatedCar) body).updateControl();
 				}
 			}
 			if ((Time.getTime() - lastAlgorithmUpdate) / CONTROLLER_INTERVAL > 1) {

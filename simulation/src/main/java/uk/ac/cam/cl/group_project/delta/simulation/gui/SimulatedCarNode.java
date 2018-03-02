@@ -17,26 +17,12 @@ import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedSensorModule;
+import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
-
-	/**
-	 * Ratio of axle width to the wheel base.
-	 */
-	private static final double ASPECT_RATIO = 0.7;
-
-	/**
-	 * Ratio of car body width to axle width.
-	 */
-	private static final double BODY_WIDTH_RATIO = 0.95;
-
-	/**
-	 * Ratio of car body height to wheel base.
-	 */
-	private static final double BODY_HEIGHT_RATIO = 1.4;
 
 	/**
 	 * Opacity of circles drawn to present platoons.
@@ -209,30 +195,26 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private void constructSimpleVisualRepresentation(SimulatedCar car) {
 
-		double length = car.getWheelBase() * Controller.UNITS_PER_METRE;
-		double width = length * ASPECT_RATIO;
+		double length = car.getLength() * Controller.UNITS_PER_METRE;
+		double width = car.getWidth() * Controller.UNITS_PER_METRE;
+		double wheelBase = car.getWheelBase() * Controller.UNITS_PER_METRE;
 		double hw = width / 2.0;
 		double hl = length / 2.0;
 
-		Rectangle rect = makeRect(
-			-hw * BODY_WIDTH_RATIO,
-			-hl * BODY_HEIGHT_RATIO,
-			width * BODY_WIDTH_RATIO,
-			length * BODY_HEIGHT_RATIO
-		);
+		Rectangle rect = makeRect(-hw, -hl, width, length);
 
 		double wheelLength = length / 5.0;
 		double wheelWidth = wheelLength / 3.0;
 
 		Rectangle frontLeftWheel = makeRect(
-			-hw,
-			hl - 0.5 * wheelLength,
+			-hw - wheelWidth * 0.2,
+			(wheelBase - wheelLength) / 2.0,
 			wheelWidth,
 			wheelLength
 		);
 		Rectangle frontRightWheel = makeRect(
-			hw - wheelWidth,
-			hl - 0.5 * wheelLength,
+			hw - wheelWidth * 0.8,
+			(wheelBase - wheelLength) / 2.0,
 			wheelWidth,
 			wheelLength
 		);
@@ -242,7 +224,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		final double VIEW_ARC_DISTANCE = length * 5;
 		Arc viewArc = new Arc(
 			0,
-			0,
+			length / 2.0,
 			VIEW_ARC_DISTANCE,
 			VIEW_ARC_DISTANCE,
 			-90 - Math.toDegrees(SimulatedSensorModule.VIEW_HALF_ANGLE),
@@ -265,7 +247,9 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		viewArc.setType(ArcType.ROUND);
 		viewArc.setMouseTransparent(true);
 
-		Circle transformationCorrectionCircle = new Circle(VIEW_ARC_DISTANCE);
+		Circle transformationCorrectionCircle = new Circle(
+			VIEW_ARC_DISTANCE + length / 2.0
+		);
 		transformationCorrectionCircle.setOpacity(0);
 		transformationCorrectionCircle.setMouseTransparent(true);
 
@@ -275,14 +259,14 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			frontLeftWheel,
 			frontRightWheel,
 			makeRect(
-				-hw,
-				-hl - 0.5 * wheelLength,
+				-hw - wheelWidth * 0.2,
+				(-wheelBase - wheelLength) / 2.0,
 				wheelWidth,
 				wheelLength
 			),
 			makeRect(
-				hw - wheelWidth,
-				-hl - 0.5 * wheelLength,
+				hw - wheelWidth * 0.8,
+				(-wheelBase - wheelLength) / 2.0,
 				wheelWidth,
 				wheelLength
 			),
