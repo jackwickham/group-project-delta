@@ -39,6 +39,13 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	private double maxSensorDist = 2;
 
+	//determines if state variables(speed, acc) are used to improve the previous proximity value which is used in smoothing
+	//note: currently turned off as I am getting a negative time for the delay in the simulation
+	private boolean usePrediction = false;
+
+	//higher value will help to smooth out spikes in the proximity sensor but will decrease the response time
+	private double proximitySmoothing = 0.8;
+
 	public BasicAlgorithmPID2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
 			NetworkInterface networkInterface,
@@ -102,7 +109,6 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		}
 		return null;
 	}
-
 	@Override
 	public ParameterEnum[] getParameterList() {
 		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
@@ -112,19 +118,43 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	@Override
 	public void makeDecision() {
+		//if prediction is turned on use messagedata and previous front proximity to estimate the current front proximity
+		if(usePrediction) {
+			if (algorithmData.receiveMessageData != null && algorithmData.predictedFrontProximity != null) {
+				long delay = (getTime() - algorithmData.receiveMessageData.getStartTime()) ;
+				//calculate the distance us and our predecessor have travelled since message received
+				algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
+						+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
+				algorithmData.predictedMovement = algorithmData.previousSpeed * delay
+						+ 0.5 * algorithmData.previousAcceleration * delay * delay;
+				algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
+						- algorithmData.predictedMovement + algorithmData.predictedFrontProximity;
+			}
+		}
+
+		if(algorithmData.frontProximity != null && algorithmData.frontProximity < maxSensorDist) {
+			if(algorithmData.predictedFrontProximity != null) {
+				//update predicted proximity with new sensor data, weighting by proximitySmoothing coefficient
+				algorithmData.predictedFrontProximity = proximitySmoothing * algorithmData.predictedFrontProximity + (1 - proximitySmoothing) * algorithmData.frontProximity;
+			} else {
+				//if first time sensor is working then use front proximity as smoothed prediction
+				algorithmData.predictedFrontProximity = algorithmData.frontProximity;
+			}
+		} else {
+			//if front proximity is null or above maxSensorDistance set distance to null to not use it
+			algorithmData.predictedFrontProximity = null;
+		}
+
 		double pTerm;
 		double iTerm =0;
-		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
-			algorithmData.frontProximity = null;
-		}
-		if (algorithmData.frontProximity != null) {
+		if (algorithmData.predictedFrontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
-			if (algorithmData.frontProximity < emerDist) {
+			if (algorithmData.predictedFrontProximity < emerDist) {
 				emergencyStop();
 			}
 			if (algorithmData.receiveMessageData != null) {
 				//This multiplies the error by a constant term PID_P
-				double error = (algorithmData.frontProximity -
+				double error = (algorithmData.predictedFrontProximity -
 						(headTime * algorithmData.speed + buffDist));
 				pTerm = pidP * error;
 				if(algorithmData.errorSum != null && error < 2 && error > -10) {
@@ -136,7 +166,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 			} else {
 				//if no message received just use sensor data
-				pTerm = pidP * (algorithmData.frontProximity - buffDist);
+				pTerm = pidP * (algorithmData.predictedFrontProximity - buffDist);
 			}
 		} else {
 			//without front proximity reading p Term is not used
