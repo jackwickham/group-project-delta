@@ -4,7 +4,13 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import uk.ac.cam.cl.group_project.delta.*;
 
 /**
- *Uses the formula found in the research paper
+ * If message received over network:
+ * then takes the acceleration of the car in-front
+ * and corrects for errors in the buffer distance by using a PID.
+ * The PID uses the velocity and acceleration from the predecessor as the
+ *
+ * If no message has been received:
+ * then just uses a PID, with the D term calculated using the rate of change of error in the buffer distance.
  */
 
 public class BasicAlgorithmPID2 extends Algorithm {
@@ -114,7 +120,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	@Override
 	public void makeDecision() {
-		//if prediction is turned on use messagedata and previous front proximity to estimate the current front proximity
+		// if prediction is turned on use the data from the message
+		// and previous front proximity to estimate the current front proximity
 		if(usePrediction) {
 			if (algorithmData.receiveMessageData != null && algorithmData.predictedFrontProximity != null) {
 				double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
@@ -149,6 +156,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				emergencyStop();
 			}
 			if (algorithmData.receiveMessageData != null) {
+				//Proximity, Networking
+
 				//This multiplies the error by a constant term PID_P
 				double error = (algorithmData.predictedFrontProximity -
 						(headTime * algorithmData.speed + buffDist));
@@ -161,10 +170,14 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				iTerm = pidI * algorithmData.errorSum;
 
 			} else {
+				//Proximity, No Networking
+
 				//if no message received just use sensor data
 				pTerm = pidP * (algorithmData.predictedFrontProximity - buffDist);
 			}
 		} else {
+			//No Proximity
+
 			//without front proximity reading p Term is not used
 			pTerm = 0;
 			iTerm = 0;
@@ -179,7 +192,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 			dTerm = 0;
 		}
 
-		//use predecessors acceleration as feedforward
+		//use predecessors acceleration as feed-forward
 		double chosenAcceleration = pTerm + dTerm + iTerm + algorithmData.predecessorAcceleration;
 
 		//clamp chosen acceleration within range min and max acceleration
