@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -766,14 +767,25 @@ public class Controller {
 		simulation.interrupt();
 		timeline.stop();
 
-		// Clear the scene graph
+		// Reset view
+		scene.translateXProperty().unbind();
+		scene.translateYProperty().unbind();
 		scene.setTranslateX(0);
 		scene.setTranslateY(0);
-		propertiesPane.getChildren().clear();
-		scene.getChildren().clear();
+		scene.setScaleX(1);
+		scene.setScaleY(1);
+
+		// Clear the scene
+		List<Node> nodes = new ArrayList<>(scene.getChildren());
+		for (Node node : nodes) {
+			if (node instanceof SimulatedCarNode) {
+				scene.getChildren().remove(node);
+			}
+		}
 
 		// Clear selection
 		currentSelection = null;
+		propertiesPane.getChildren().clear();
 
 		// Restart the simulation
 		simulation = new SimulationThread();
