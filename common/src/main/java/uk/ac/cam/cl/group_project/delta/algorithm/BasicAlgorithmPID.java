@@ -97,7 +97,7 @@ public class BasicAlgorithmPID extends Algorithm{
 	//and the sensor proximity data
 	private static Double weightFrontProximity(Double predictedFrontProximity, Double sensorFrontProximity) {
 		if (predictedFrontProximity != null && sensorFrontProximity != null) {
-			return 0.0 * predictedFrontProximity + 1 * sensorFrontProximity;
+			return 0.5 * predictedFrontProximity + 0.5 * sensorFrontProximity;
 		}
 		if(predictedFrontProximity != null){
 			return predictedFrontProximity;
@@ -106,9 +106,6 @@ public class BasicAlgorithmPID extends Algorithm{
 			return sensorFrontProximity;
 		}
 		else return null;
-	}
-
-	public void initialise() {
 	}
 
 	public void makeDecision() {

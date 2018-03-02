@@ -9,14 +9,14 @@ import uk.ac.cam.cl.group_project.delta.*;
 
 public class BasicAlgorithmPID2 extends Algorithm {
 
-	//not these defaults are not well configured
+	//note these defaults are not well configured
 	//ID parameters
 	//increases response time
 	private double pidP = 1.5;
 	//helps prevent steady-state errors
 	private double pidI = 0;
 	//helps prevent overshoot
-	private double pidD= 3;
+	private double pidD = 3;
 
 	//turning PD parameters
 	private double turnP = 10;
@@ -191,7 +191,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 		algorithmData.chosenAcceleration = chosenAcceleration;
 
-		//TODO: This is not calculated
+		//Note: This is not calculated
 		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 
 		//basic turning PD
