@@ -19,10 +19,10 @@ public class NaiveAlgorithm2 extends Algorithm{
 	private double maxSensorDist = 0.5;
 
 	public NaiveAlgorithm2(DriveInterface driveInterface,
-	                       SensorInterface sensorInterface,
-	                       NetworkInterface networkInterface,
-	                       BeaconInterface beacons,
-	                       FrontVehicleRoute.RouteNumber routeNumber) {
+	                        SensorInterface sensorInterface,
+	                        NetworkInterface networkInterface,
+	                        BeaconInterface beacons,
+							FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
