@@ -195,7 +195,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if (algorithmData.predictedFrontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
 			if (algorithmData.predictedFrontProximity < emerDist) {
-				//emergencyStop();
+				emergencyStop();
 			}
 			if (algorithmData.receiveMessageData != null) {
 				//Proximity, Networking
