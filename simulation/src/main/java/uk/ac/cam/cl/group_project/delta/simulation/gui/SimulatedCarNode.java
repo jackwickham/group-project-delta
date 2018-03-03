@@ -5,7 +5,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Arc;
@@ -15,12 +17,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
+import uk.ac.cam.cl.group_project.delta.algorithm.ParameterEnum;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedSensorModule;
 import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
@@ -99,6 +103,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private final ObservableList<String> beaconList;
 
+	private final Algorithm algorithm;
+
 	/**
 	 * Construct a representation of the given car.
 	 * @param car    Car to represent.
@@ -126,6 +132,8 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
 		constructAlgorithmInstrumentation(car);
 		constructSimpleVisualRepresentation(car);
+
+		algorithm = car.getController();
 
 	}
 
@@ -408,6 +416,18 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			);
 
 			controller.beaconList.setItems(beaconList);
+
+			ParameterEnum[] supportedParameters = algorithm.getParameterList();
+			for (int i = 0; i < supportedParameters.length; i++) {
+				final ParameterEnum param = supportedParameters[i];
+				Label label = new Label(param.name());
+				EditableSpinner<Double> valueInput = new EditableSpinner<>(0.0, 1E300, algorithm.getParameter(param), 0.1);
+				valueInput.valueProperty().addListener(
+					(value, prev, next) -> algorithm.setParameter(param, next)
+				);
+				controller.algorithmParameters.add(label, 0, i);
+				controller.algorithmParameters.add(valueInput, 1, i);
+			}
 
 			return pane;
 

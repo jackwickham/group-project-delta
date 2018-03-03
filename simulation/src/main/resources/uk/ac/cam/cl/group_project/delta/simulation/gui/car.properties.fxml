@@ -234,5 +234,22 @@
 				</AnchorPane>
 			</content>
 		</TitledPane>
+		<TitledPane animated="false" text="Algorithm Parameters">
+			<AnchorPane>
+				<GridPane fx:id="algorithmParameters"
+						  AnchorPane.bottomAnchor="0.0"
+						  AnchorPane.leftAnchor="0.0"
+						  AnchorPane.rightAnchor="0.0"
+						  AnchorPane.topAnchor="0.0">
+					<columnConstraints>
+						<ColumnConstraints hgrow="SOMETIMES"/>
+						<ColumnConstraints halignment="RIGHT"/>
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints prefHeight="30"/>
+					</rowConstraints>
+				</GridPane>
+			</AnchorPane>
+		</TitledPane>
 	</children>
 </VBox>
