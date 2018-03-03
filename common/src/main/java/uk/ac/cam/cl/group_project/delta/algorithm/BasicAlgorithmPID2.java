@@ -204,10 +204,6 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				// Prevent swerving at low speeds
 				p *= algorithmData.speed * 10;
 			}
-			if (algorithmData.closestBeacon.getDistanceLowerBound() < 0.5) {
-				// Turn harder
-				p *= 2;
-			}
 			double d;
 			if (algorithmData.previousAngle == null) {
 				d = 0;
