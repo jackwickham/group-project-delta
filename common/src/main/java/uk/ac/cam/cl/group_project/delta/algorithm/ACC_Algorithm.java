@@ -110,7 +110,6 @@ public class ACC_Algorithm extends Algorithm{
 		//decide on chosen acceleration, speed and turnRate
 
 		//calculate time since message received
-		double desired_dist;
 		Double weightedFrontProximity;
 		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
 			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
