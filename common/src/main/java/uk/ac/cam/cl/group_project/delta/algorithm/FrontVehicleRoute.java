@@ -133,8 +133,8 @@ public class FrontVehicleRoute {
 	}
 
 	/**
-	 * @return list of moves which makes the car drive forwards,
-	 * then a little to the right, then straight again.
+	 * @return list of moves which makes the car accelerate forwards, then
+	 * drive to the right, then to the left, then decelerate to a stop.
 	 */
 	private static List<Move> routeThree() {
 		List<Move> moves = new ArrayList<>();
