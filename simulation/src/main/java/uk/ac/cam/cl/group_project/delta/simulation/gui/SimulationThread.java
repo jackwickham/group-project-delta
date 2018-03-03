@@ -69,7 +69,7 @@ public class SimulationThread extends Thread {
 	@Override
 	public void run() {
 
-		long time = System.nanoTime();
+		long realTime = System.nanoTime();
 
 		Time.useDefinedTime();
 		Time.setTime(0);
@@ -89,12 +89,12 @@ public class SimulationThread extends Thread {
 			}
 
 			long tmp = System.nanoTime();
-			long dt = tmp - time;
+			long dt = tmp - realTime;
 			if (dt > UPDATE_INTERVAL) {
 				if (getTimeDilationFactor() > 0) {
 					update((long) (dt * getTimeDilationFactor()));
 				}
-				time = tmp;
+				realTime = tmp;
 			}
 
 			try {
