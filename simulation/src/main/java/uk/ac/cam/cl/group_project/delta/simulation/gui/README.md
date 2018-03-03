@@ -32,7 +32,11 @@ The filters are:
 
 New messages will be added to the top of the list.
 
-Messages are of the format `[@<Time> <Vehicle ID>] <Message>`.
+#### Options Tab
+
+This tab gives the option to reset the simulation and to modify various error
+injection options to stress test the current simulated platoon on more realistic
+peripherals.
 
 ### Main View
 
@@ -42,6 +46,13 @@ click-and-drag to pan the view, and scrolling to zoom.
 New objects can be added by right-clicking in the main view; the status of
 existing objects can be acquired by left-clicking on the object and navigating
 to the "Network" tab.
+
+The following shortcut keys are available:
+-	`<space>`: pause/unpause
+-	`;`: step
+-	`+`/`=`: reduce time warp factor
+-	`-`/`_`: increase time warp factor
+-	`0`: reset time warp factor to `1.0`
 
 #### Platoons
 
@@ -77,3 +88,13 @@ The currently selected vehicle can be controlled using the W, A, S and D keys:
 >	**Note**: only the leader of a platoon is likely to be controllable, because
 >	the followers will make driving decisions based on their internal state
 >	which will override user input.
+
+#### Following vehicles
+
+To follow a vehicle, right-click on it a select the "Follow" option from the
+context menu. The view will keep this vehicle centered.
+
+All user input will be directed to the followed vehicle regardless of the
+currently selected vehicle.
+
+Drag the view to release the control lock and view tracking.

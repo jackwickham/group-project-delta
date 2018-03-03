@@ -1,65 +1,33 @@
 package uk.ac.cam.cl.group_project.delta.simulation.gui;
 
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import uk.ac.cam.cl.group_project.delta.Beacon;
-import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
-import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmData;
-import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.Communications;
-import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
+import uk.ac.cam.cl.group_project.delta.simulation.SimulatedSensorModule;
+import uk.ac.cam.cl.group_project.delta.simulation.Vector2D;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
-
-	/**
-	 * Ratio of axle width to the wheel base.
-	 */
-	private static final double ASPECT_RATIO = 0.7;
-
-	/**
-	 * Ratio of car body width to axle width.
-	 */
-	private static final double BODY_WIDTH_RATIO = 0.95;
-
-	/**
-	 * Ratio of car body height to wheel base.
-	 */
-	private static final double BODY_HEIGHT_RATIO = 1.4;
 
 	/**
 	 * Opacity of circles drawn to present platoons.
 	 */
 	public static final double PLATOON_CIRCLE_OPACITY = 0.2;
-
-	/**
-	 * An internal group that will be rotated to align with the heading of the
-	 * car.
-	 */
-	private Group alignedGroup;
 
 	/**
 	 * X-component of the car's velocity. Updated by a call to `update()`.
@@ -132,24 +100,12 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	private final ObservableList<String> beaconList;
 
 	/**
-	 * The communications layer for this car, if found, null otherwise.
-	 */
-	private CommsInterface communications = null;
-
-	/**
-	 * The control layer for this car, if found, null otherwise.
-	 */
-	private ControlLayer controller = null;
-
-	/**
 	 * Construct a representation of the given car.
 	 * @param car    Car to represent.
 	 */
 	public SimulatedCarNode(SimulatedCar car) {
 
 		super(car);
-
-		alignedGroup = new Group();
 
 		// Construct properties
 		velX = new SimpleDoubleProperty(car.getVelocity().getX());
@@ -166,12 +122,10 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 		frontProximity = new SimpleObjectProperty<>(null);
 		beaconList = FXCollections.observableList(new ArrayList<>(4));
 
-		alignedGroup.rotateProperty().bind(headingProperty());
+		rotateProperty().bind(headingProperty());
 
 		constructAlgorithmInstrumentation(car);
 		constructSimpleVisualRepresentation(car);
-
-		getChildren().add(alignedGroup);
 
 	}
 
@@ -180,67 +134,47 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 * @param car    Car to instrument.
 	 */
 	private void constructAlgorithmInstrumentation(SimulatedCar car) {
-		try {
 
-			// Reflect into a deep dark well...
-			Field data = Algorithm.class.getDeclaredField("algorithmData");
-			Field comms = AlgorithmData.class.getDeclaredField("commsInterface");
-			Field ctrl = Communications.class.getDeclaredField("messageLayer");
-			data.setAccessible(true);
-			comms.setAccessible(true);
-			ctrl.setAccessible(true);
+		Algorithm controller = car.getController();
 
-			communications = (Communications) comms.get(
-				data.get(
-					car.getController()
-				)
-			);
-			controller = (ControlLayer) ctrl.get(communications);
+		// Setup properties
+		isLeader.set(controller.isLeader());
+		vehicleId.set(controller.getVehicleId());
+		platoonId.set(controller.getPlatoonId());
+		platoonPosition.set(controller.getPlatoonPosition());
+		platoonLeaderId.set(controller.getLeaderId());
+		platoonColour.set(toPaint(platoonId.get()));
 
-			// Setup properties
-			isLeader.set(communications.isLeader());
-			vehicleId.set(controller.getVehicleId());
-			platoonId.set(controller.getPlatoonId());
-			platoonPosition.set(controller.getCurrentPosition());
-			platoonLeaderId.set(controller.getLeaderId());
-			platoonColour.set(toPaint(platoonId.get()));
+		double base = car.getWheelBase() * Controller.UNITS_PER_METRE;
 
-			double base = car.getWheelBase() * Controller.UNITS_PER_METRE;
+		// Create circles for platoon representation
+		Circle leaderCircle = new Circle(base * 1.6);
+		leaderCircle.setFill(Color.TRANSPARENT);
+		leaderCircle.setStrokeWidth(base * 0.1);
+		leaderCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
+		leaderCircle.setMouseTransparent(true);
+		leaderCircle.strokeProperty().bind(platoonColour);
+		leaderCircle.visibleProperty().bind(isLeader);
 
-			// Create circles for platoon representation
-			Circle leaderCircle = new Circle(base * 1.6);
-			leaderCircle.setFill(Color.TRANSPARENT);
-			leaderCircle.setStrokeWidth(base * 0.1);
-			leaderCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
-			leaderCircle.setMouseTransparent(true);
-			leaderCircle.strokeProperty().bind(platoonColour);
-			leaderCircle.visibleProperty().bind(isLeader);
+		Circle platoonCircle = new Circle(base * 1.5);
+		platoonCircle.setMouseTransparent(true);
+		platoonCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
+		platoonCircle.fillProperty().bind(platoonColour);
 
-			Circle platoonCircle = new Circle(base * 1.5);
-			platoonCircle.setMouseTransparent(true);
-			platoonCircle.setOpacity(PLATOON_CIRCLE_OPACITY);
-			platoonCircle.fillProperty().bind(platoonColour);
+		getChildren().addAll(leaderCircle, platoonCircle);
 
-			getChildren().addAll(leaderCircle, platoonCircle);
+		// Add tooltip for vehicle and platoon ID, and platoon position
+		Tooltip tooltip = new Tooltip();
+		tooltip.textProperty().bind(
+			(new SimpleStringProperty("Vehicle ID: "))
+				.concat(vehicleId.asString())
+				.concat("\nPlatoon ID: ")
+				.concat(platoonId.asString())
+				.concat("\nPlatoon position: ")
+				.concat(platoonPosition.asString())
+		);
+		Tooltip.install(this, tooltip);
 
-			// Add tooltip for vehicle and platoon ID, and platoon position
-			Tooltip tooltip = new Tooltip();
-			tooltip.textProperty().bind(
-				(new SimpleStringProperty("Vehicle ID: "))
-					.concat(vehicleId.asString())
-					.concat("\nPlatoon ID: ")
-					.concat(platoonId.asString())
-					.concat("\nPlatoon position: ")
-					.concat(platoonPosition.asString())
-			);
-			Tooltip.install(this, tooltip);
-
-
-		}
-		catch (IllegalAccessException | NoSuchFieldException e) {
-			Log.warn("Cannot snoop on the internal algorithm state");
-			Log.warn(e);
-		}
 	}
 
 	/**
@@ -260,52 +194,85 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 * @param car    Car to represent.
 	 */
 	private void constructSimpleVisualRepresentation(SimulatedCar car) {
-		// Create GUI representation
-		double length = car.getWheelBase() * Controller.UNITS_PER_METRE;
-		double width = length * ASPECT_RATIO;
+
+		double length = car.getLength() * Controller.UNITS_PER_METRE;
+		double width = car.getWidth() * Controller.UNITS_PER_METRE;
+		double wheelBase = car.getWheelBase() * Controller.UNITS_PER_METRE;
 		double hw = width / 2.0;
 		double hl = length / 2.0;
 
-		Rectangle rect = makeRect(
-			-hw * BODY_WIDTH_RATIO,
-			-hl * BODY_HEIGHT_RATIO,
-			width * BODY_WIDTH_RATIO,
-			length * BODY_HEIGHT_RATIO
-		);
-		alignedGroup.getChildren().add(rect);
+		Rectangle rect = makeRect(-hw, -hl, width, length);
 
 		double wheelLength = length / 5.0;
 		double wheelWidth = wheelLength / 3.0;
 
 		Rectangle frontLeftWheel = makeRect(
-			-hw,
-			hl - 0.5 * wheelLength,
+			-hw - wheelWidth * 0.2,
+			(wheelBase - wheelLength) / 2.0,
 			wheelWidth,
 			wheelLength
 		);
 		Rectangle frontRightWheel = makeRect(
-			hw - wheelWidth,
-			hl - 0.5 * wheelLength,
+			hw - wheelWidth * 0.8,
+			(wheelBase - wheelLength) / 2.0,
 			wheelWidth,
 			wheelLength
 		);
-		alignedGroup.getChildren().add(frontLeftWheel);
-		alignedGroup.getChildren().add(frontRightWheel);
 		frontLeftWheel.rotateProperty().bind(wheelAngle);
 		frontRightWheel.rotateProperty().bind(wheelAngle);
 
-		alignedGroup.getChildren().add(makeRect(
-			-hw,
-			-hl - 0.5 * wheelLength,
-			wheelWidth,
-			wheelLength
+		final double VIEW_ARC_DISTANCE = length * 5;
+		Arc viewArc = new Arc(
+			0,
+			length / 2.0,
+			VIEW_ARC_DISTANCE,
+			VIEW_ARC_DISTANCE,
+			-90 - Math.toDegrees(SimulatedSensorModule.VIEW_HALF_ANGLE),
+			Math.toDegrees(SimulatedSensorModule.VIEW_HALF_ANGLE) * 2
+		);
+		viewArc.setFill(Color.TRANSPARENT);
+		viewArc.setOpacity(0.5);
+		viewArc.setStrokeWidth(2);
+		viewArc.setStroke(new RadialGradient(
+			0,
+			0,
+			0,
+			0,
+			VIEW_ARC_DISTANCE,
+			false,
+			CycleMethod.NO_CYCLE,
+			new Stop(0, Color.GREY),
+			new Stop(VIEW_ARC_DISTANCE, Color.TRANSPARENT)
 		));
-		alignedGroup.getChildren().add(makeRect(
-			hw - wheelWidth,
-			-hl - 0.5 * wheelLength,
-			wheelWidth,
-			wheelLength
-		));
+		viewArc.setType(ArcType.ROUND);
+		viewArc.setMouseTransparent(true);
+
+		Circle transformationCorrectionCircle = new Circle(
+			VIEW_ARC_DISTANCE + length / 2.0
+		);
+		transformationCorrectionCircle.setOpacity(0);
+		transformationCorrectionCircle.setMouseTransparent(true);
+
+		getChildren().addAll(
+			transformationCorrectionCircle,
+			viewArc,
+			frontLeftWheel,
+			frontRightWheel,
+			makeRect(
+				-hw - wheelWidth * 0.2,
+				(-wheelBase - wheelLength) / 2.0,
+				wheelWidth,
+				wheelLength
+			),
+			makeRect(
+				hw - wheelWidth * 0.8,
+				(-wheelBase - wheelLength) / 2.0,
+				wheelWidth,
+				wheelLength
+			),
+			rect
+		);
+
 	}
 
 	/**
@@ -319,22 +286,22 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 
 		SimulatedCar car = getCar();
 		synchronized (car) {
+
 			velX.set(car.getVelocity().getX());
 			velY.set(car.getVelocity().getY());
 			heading.set(Math.toDegrees(-car.getHeading()));
 			wheelAngle.set(Math.toDegrees(-car.getWheelAngle()));
 			enginePower.set(car.getEnginePower());
 			frontProximity.set(car.getSensorInterface().getFrontProximity());
-			if (communications != null) {
-				isLeader.set(communications.isLeader());
-			}
-			if (controller != null) {
-				vehicleId.set(controller.getVehicleId());
-				platoonId.set(controller.getPlatoonId());
-				platoonPosition.set(controller.getCurrentPosition());
-				platoonLeaderId.set(controller.getLeaderId());
-				platoonColour.set(toPaint(platoonId.get()));
-			}
+
+			Algorithm controller = car.getController();
+			isLeader.set(controller.isLeader());
+			vehicleId.set(controller.getVehicleId());
+			platoonId.set(controller.getPlatoonId());
+			platoonPosition.set(controller.getPlatoonPosition());
+			platoonLeaderId.set(controller.getLeaderId());
+			platoonColour.set(toPaint(platoonId.get()));
+
 			beaconList.clear();
 			for (Beacon beacon : car.getSensorInterface().getBeacons()) {
 				String distanceText;
@@ -345,6 +312,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 				}
 				beaconList.add(String.format("%d:  %sm, %.2frad", beacon.getBeaconIdentifier(), distanceText, beacon.getAngle()));
 			}
+
 		}
 
 	}
@@ -367,7 +335,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 	 */
 	private static Rectangle makeRect(double x, double y, double w, double h) {
 		Rectangle rect = new Rectangle(x, y, w, h);
-		rect.setFill(Color.TRANSPARENT);
+		rect.setFill(Color.WHITESMOKE);
 		rect.setStroke(Color.BLACK);
 		return rect;
 	}
@@ -395,10 +363,10 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 				posYProperty().divide(Controller.UNITS_PER_METRE).asString("%.2f")
 			);
 			controller.heading.textProperty().bind(
-				headingProperty().asString("%.2f°")
+				headingProperty().negate().asString("%.2f°")
 			);
 			controller.wheelAngle.textProperty().bind(
-				wheelAngleProperty().asString("%.2f°")
+				wheelAngleProperty().negate().asString("%.2f°")
 			);
 			controller.enginePower.textProperty().bind(
 				enginePowerProperty().asString("%.2f")
@@ -438,6 +406,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			controller.frontProximity.textProperty().bind(
 				frontProximityString
 			);
+
 			controller.beaconList.setItems(beaconList);
 
 			return pane;
