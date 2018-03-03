@@ -100,10 +100,10 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				proximitySmoothing = value;
 				break;
 			case usePrediction:
-				if(value == 0) {
-					usePrediction = false;
-				} else {
+				if(value == 1) {
 					usePrediction = true;
+				} else {
+					usePrediction = false;
 				}
 		}
 	}
@@ -156,12 +156,20 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		//algorithmData.receiveMessageData = null;
 		if(usePrediction) {
 			if (algorithmData.receiveMessageData != null && algorithmData.predictedFrontProximity != null) {
-				double delay = ALGORITHM_LOOP_DURATION;
+				double delay = ALGORITHM_LOOP_DURATION/1E9;
 				//calculate the distance us and our predecessor have travelled since message received
-				algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
-						+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
-				algorithmData.predictedMovement = algorithmData.previousSpeed * delay
-						+ 0.5 * algorithmData.previousAcceleration * delay * delay;
+				if(algorithmData.predecessorSpeed > 0.1) {
+					algorithmData.predictedPredecessorMovement = Math.max(0, algorithmData.predecessorSpeed * delay
+							+ 0.5 * algorithmData.predecessorAcceleration * delay * delay);
+				} else {
+					algorithmData.predictedMovement = 0;
+				}
+				if(algorithmData.previousSpeed > 0.1) {
+					algorithmData.predictedMovement = Math.max(0, algorithmData.previousSpeed * delay
+							+ 0.5 * algorithmData.previousAcceleration * delay * delay);
+				} else {
+					algorithmData.predictedMovement = 0;
+				}
 				// for safety reasons do not predict that distance has increased
 				algorithmData.predictedFrontProximity = Math.min(0,algorithmData.predictedPredecessorMovement
 						- algorithmData.predictedMovement) + algorithmData.predictedFrontProximity;
@@ -187,7 +195,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if (algorithmData.predictedFrontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
 			if (algorithmData.predictedFrontProximity < emerDist) {
-				emergencyStop();
+				//emergencyStop();
 			}
 			if (algorithmData.receiveMessageData != null) {
 				//Proximity, Networking
