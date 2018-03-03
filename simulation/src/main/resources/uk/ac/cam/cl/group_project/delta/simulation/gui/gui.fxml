@@ -142,7 +142,7 @@
 																								GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.5"/>
+																										min="0" max="1e300" initialValue="0" amountToStepBy="0.5"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																					</children>
@@ -180,7 +180,7 @@
 																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																								min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																								min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																						<Label text="Front proximity failure rate"
@@ -227,7 +227,7 @@
 																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																										min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																						<Label text="Beacon angle standard deviation"
@@ -269,7 +269,7 @@
 																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																								min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																								min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																						<Label text="Speed standard deviation"
@@ -279,7 +279,7 @@
 																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																								min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																								min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																						<Label text="Turn rate standard deviation"
@@ -289,7 +289,7 @@
 																										 GridPane.columnIndex="1">
 																							<valueFactory>
 																								<SpinnerValueFactory.DoubleSpinnerValueFactory
-																										min="0" max="Infinity" initialValue="0" amountToStepBy="0.1"/>
+																										min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
 																							</valueFactory>
 																						</EditableSpinner>
 																					</children>

@@ -22,13 +22,29 @@ public class EditableSpinner<T> extends Spinner<T> {
 	 * @param <E>        Type of the spinner value.
 	 */
 	public static <E> void setup(EditableSpinner<E> spinner) {
+
 		spinner.setEditable(true);
+
 		SpinnerValueFactory<E> factory = spinner.getValueFactory();
+
 		StringConverter<E> converter = new SafeStringConverter<>(factory.getConverter());
 		factory.setConverter(converter);
+
 		TextFormatter<E> formatter = new TextFormatter<>(converter, factory.getValue());
 		spinner.getEditor().setTextFormatter(formatter);
 		factory.valueProperty().bindBidirectional(formatter.valueProperty());
+
+		spinner.getEditor().setOnKeyPressed(event -> {
+			switch (event.getCode()) {
+				case UP:
+					spinner.increment();
+					break;
+				case DOWN:
+					spinner.decrement();
+					break;
+			}
+		});
+
 	}
 
 	// Reworked implementations of `Spinner` constructors follow, which call the
