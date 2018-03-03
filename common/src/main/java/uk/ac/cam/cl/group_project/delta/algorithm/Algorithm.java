@@ -122,19 +122,21 @@ public abstract class Algorithm {
 			}
 		}
 
-
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
 		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
+
+		algorithmData.previousAngle = algorithmData.angle;
 		//find closest beacon within maximum sensor distance
 		double min = Double.POSITIVE_INFINITY;
 		for (Beacon beacon : algorithmData.beacons) {
 			if (beacon.getDistanceLowerBound() <= min) {
 				min = beacon.getDistanceLowerBound();
 				algorithmData.closestBeacon = beacon;
+				algorithmData.angle = algorithmData.closestBeacon.getAngle();
 			}
 		}
 
@@ -151,8 +153,9 @@ public abstract class Algorithm {
 		} else {
 			algorithmData.frontProximity = null;
 		}
+
 		// get initial distance reading from sensor, distance null if no distance reading
-		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
+		algorithmData.previousDistance = algorithmData.frontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
