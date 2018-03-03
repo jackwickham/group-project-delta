@@ -43,10 +43,16 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 	 * @param network    Simulated network on which this car will communicate.
 	 */
 	public SimulatedCar(double wheelBase, World world, SimulatedNetwork network) {
+
 		super(wheelBase);
-		networkInterface = new SimulatedNetworkModule(this, network);
+
+		SimulatedNetworkModule snm = new SimulatedNetworkModule(this, network);
+		snm.setEmergencyHandler(m -> stop());
+
+		networkInterface = snm;
 		sensorInterface = new FaultySensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
+
 	}
 
 	/**
@@ -113,7 +119,7 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 	 * Stop the vehicle
 	 */
 	public void stop() {
-		//controller.emergencyStop();
+		controller.emergencyStop();
 	}
 
 	/**

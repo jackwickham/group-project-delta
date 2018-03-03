@@ -30,7 +30,7 @@ class MainClass {
 					sensor,
 					network,
 					beacon,
-					FrontVehicleRoute.RouteNumber.ROUTE_ONE
+					FrontVehicleRoute.RouteNumber.ROUTE_THREE
 			);
 			algo.run();
 		} finally {

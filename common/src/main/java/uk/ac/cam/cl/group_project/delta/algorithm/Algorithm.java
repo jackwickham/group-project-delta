@@ -186,9 +186,12 @@ public abstract class Algorithm {
 		algorithmData.commsInterface.sendMessage(sendMessageData);
 	}
 
-	protected void emergencyStop() {
-		algorithmData.driveInterface.stop();
-		algorithmData.commsInterface.notifyEmergency();
+	public void emergencyStop() {
+		if (!algorithmData.emergencyOccurred) {
+			algorithmData.emergencyOccurred = true;
+			algorithmData.driveInterface.stop();
+			algorithmData.commsInterface.notifyEmergency();
+		}
 	}
 
 	private void sendInstruction() {
@@ -236,10 +239,13 @@ public abstract class Algorithm {
 	 * Runs one loop of algorithm
 	 */
 	public void update() {
-		runOneLoop();
+		if (!algorithmData.emergencyOccurred) {
+			runOneLoop();
+		}
 	}
 
-	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
+	/**
+	 * Runs algorithm every ALGORITHM_LOOP_DURATION  nanoseconds until an emergency occurs
 	 */
 	public void run() {
 		initialise();
@@ -263,4 +269,25 @@ public abstract class Algorithm {
 		}
 		Log.debug("Algorithm has finished running");
 	}
+
+	public boolean isLeader() {
+		return algorithmData.commsInterface.isLeader();
+	}
+
+	public int getVehicleId() {
+		return algorithmData.controlLayer.getVehicleId();
+	}
+
+	public int getPlatoonId() {
+		return algorithmData.controlLayer.getPlatoonId();
+	}
+
+	public int getPlatoonPosition() {
+		return algorithmData.controlLayer.getCurrentPosition();
+	}
+
+	public int getLeaderId() {
+		return algorithmData.controlLayer.getLeaderId();
+	}
+
 }

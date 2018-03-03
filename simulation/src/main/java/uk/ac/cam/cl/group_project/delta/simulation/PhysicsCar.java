@@ -138,7 +138,7 @@ public class PhysicsCar extends PhysicsBody {
 				double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
 
 				translation = new Vector2D(dx, dy);
-				heading = endAngle;
+				heading = endAngle % (Math.PI * 2);
 			}
 
 			setPosition(getPosition().add(translation));
