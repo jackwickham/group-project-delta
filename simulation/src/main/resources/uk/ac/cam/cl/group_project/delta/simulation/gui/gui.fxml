@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
+
+<?import uk.ac.cam.cl.group_project.delta.simulation.gui.EditableSpinner?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0"
 			xmlns="http://javafx.com/javafx/8.0.112"
 			xmlns:fx="http://javafx.com/fxml/1"
 			fx:controller="uk.ac.cam.cl.group_project.delta.simulation.gui.Controller"
-			onKeyPressed="#onKeyPressed" onKeyReleased="#onKeyReleased">
+			fx:id="root">
 	<stylesheets>
 		<URL value="@style.css"/>
 	</stylesheets>
@@ -58,6 +62,8 @@
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 													</columnConstraints>
 													<rowConstraints>
 														<RowConstraints vgrow="NEVER" prefHeight="30"/>
@@ -69,19 +75,233 @@
 																<Tooltip text="Show emergency messages"/>
 															</tooltip>
 														</CheckBox>
-														<CheckBox fx:id="filterMerges" text="Merges" selected="true"  GridPane.columnIndex="2">
-															<tooltip>
-																<Tooltip text="Show platoon merging communication"/>
-															</tooltip>
-														</CheckBox>
 														<CheckBox fx:id="filterData" text="Data" selected="false"  GridPane.columnIndex="1">
 															<tooltip>
 																<Tooltip text="Show data messages"/>
 															</tooltip>
 														</CheckBox>
-														<ListView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+														<CheckBox fx:id="filterMerges" text="Merges" selected="true"  GridPane.columnIndex="2">
+															<tooltip>
+																<Tooltip text="Show platoon merging communication"/>
+															</tooltip>
+														</CheckBox>
+														<CheckBox fx:id="filterQueries" text="Queries" selected="true" GridPane.columnIndex="3">
+															<tooltip>
+																<Tooltip text="Show beacon query communication"/>
+															</tooltip>
+														</CheckBox>
+														<Button text="Clear log" onAction="#clearNetworkLog" GridPane.columnIndex="4"/>
+														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="5"/>
 													</children>
 												</GridPane>
+											</children>
+										</AnchorPane>
+									</content>
+								</Tab>
+								<Tab text="Options">
+									<content>
+										<AnchorPane>
+											<children>
+												<ScrollPane fitToWidth="true"
+															hbarPolicy="NEVER"
+															AnchorPane.topAnchor="0"
+															AnchorPane.rightAnchor="0"
+															AnchorPane.bottomAnchor="0"
+															AnchorPane.leftAnchor="0">
+													<content>
+														<VBox>
+															<children>
+																<HBox spacing="10" alignment="CENTER_RIGHT">
+																	<padding>
+																		<Insets top="10" bottom="10" right="10" left="10"/>
+																	</padding>
+																	<children>
+																		<Button text="Reset world"
+																				onAction="#reset"/>
+																	</children>
+																</HBox>
+																<TitledPane animated="false" text="Network error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Network delivery modifier"/>
+																						<EditableSpinner
+																								fx:id="networkDeliveryModifier"
+																								GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="1e300" initialValue="0" amountToStepBy="0.5"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+																<TitledPane animated="false" text="Proximity sensor error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Front proximity enabled"/>
+																						<CheckBox fx:id="frontProximityEnabled"
+																								  selected="true"
+																								  GridPane.columnIndex="1"/>
+																						<Label text="Front proximity standard deviation"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner fx:id="frontProximityStdDev"
+																										 GridPane.rowIndex="1"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																								min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Front proximity failure rate"
+																							   GridPane.rowIndex="2"/>
+																						<EditableSpinner fx:id="frontProximityFailureRate"
+																										 GridPane.rowIndex="2"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																								min="0" max="1" initialValue="0" amountToStepBy="0.05"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+																<TitledPane animated="false" text="Beacon sensor error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Beacons emulate Mindstorms"/>
+																						<CheckBox fx:id="beaconsEmulateMindstorms"
+																								  GridPane.columnIndex="1"/>
+																						<Label text="Beacon distance standard deviation"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner fx:id="beaconDistanceStdDev"
+																										 GridPane.rowIndex="1"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Beacon angle standard deviation"
+																							   GridPane.rowIndex="2"/>
+																						<EditableSpinner fx:id="beaconAngleStdDev"
+																										 GridPane.rowIndex="2"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="1" initialValue="0" amountToStepBy="0.05"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+																<TitledPane animated="false" text="Motion sensor error">
+																	<content>
+																		<AnchorPane>
+																			<children>
+																				<GridPane AnchorPane.topAnchor="0"
+																						  AnchorPane.rightAnchor="0"
+																						  AnchorPane.bottomAnchor="0"
+																						  AnchorPane.leftAnchor="0">
+																					<columnConstraints>
+																						<ColumnConstraints hgrow="SOMETIMES"/>
+																						<ColumnConstraints halignment="RIGHT"/>
+																					</columnConstraints>
+																					<rowConstraints>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																						<RowConstraints prefHeight="30"/>
+																					</rowConstraints>
+																					<children>
+																						<Label text="Acceleration standard deviation"/>
+																						<EditableSpinner fx:id="accelerationStdDev"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																								min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Speed standard deviation"
+																							   GridPane.rowIndex="1"/>
+																						<EditableSpinner fx:id="speedStdDev"
+																										 GridPane.rowIndex="1"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																								min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																						<Label text="Turn rate standard deviation"
+																							   GridPane.rowIndex="2"/>
+																						<EditableSpinner fx:id="turnRateStdDev"
+																										 GridPane.rowIndex="2"
+																										 GridPane.columnIndex="1">
+																							<valueFactory>
+																								<SpinnerValueFactory.DoubleSpinnerValueFactory
+																										min="0" max="1e300" initialValue="0" amountToStepBy="0.1"/>
+																							</valueFactory>
+																						</EditableSpinner>
+																					</children>
+																				</GridPane>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</TitledPane>
+															</children>
+														</VBox>
+													</content>
+												</ScrollPane>
 											</children>
 										</AnchorPane>
 									</content>
@@ -90,22 +310,54 @@
 						</TabPane>
 					</children>
 				</AnchorPane>
-				<Pane fx:id="viewPane" onMouseClicked="#onViewPaneMouseClick"
-					  onMouseDragged="#onViewPaneMouseDragged"
-					  onMousePressed="#onViewPaneMousePressed"
-					  onScroll="#onViewPaneScroll" scaleY="-1.0">
+				<VBox>
 					<children>
-						<Pane fx:id="scene">
+						<StackPane fx:id="viewPane"
+								   VBox.vgrow="ALWAYS"
+								   onMouseClicked="#onViewPaneMouseClick"
+								   onMouseDragged="#onViewPaneMouseDragged"
+								   onMousePressed="#onViewPaneMousePressed"
+								   onScroll="#onViewPaneScroll" scaleY="-1.0">
 							<children>
-								<Line endX="10.0" startX="-10.0"/>
-								<Line endY="10.0" startY="-10.0"/>
+								<Pane fx:id="scene">
+									<children>
+										<Line endX="10.0" startX="-10.0"/>
+										<Line endY="10.0" startY="-10.0"/>
+									</children>
+								</Pane>
+								<AnchorPane mouseTransparent="true">
+									<children>
+										<Pane fx:id="pausedPane" visible="false" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" opacity="0.3">
+											<Rectangle x="0" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+											<Rectangle x="15" y="0" width="10" height="30" arcHeight="2" arcWidth="2"/>
+										</Pane>
+									</children>
+								</AnchorPane>
 							</children>
-						</Pane>
+							<cursor>
+								<Cursor fx:constant="OPEN_HAND"/>
+							</cursor>
+						</StackPane>
+						<HBox alignment="CENTER" style="-fx-background-color: #eee; -fx-border-color: #ccc; -fx-border-width: 1 0 0 0">
+							<padding>
+								<Insets top="5" bottom="5" left="5" right="5"/>
+							</padding>
+							<children>
+								<ToggleButton fx:id="pauseButton" text="Pause" onAction="#onPause"/>
+								<Button fx:id="stepButton" text="Step" onAction="#onStep"/>
+								<Slider fx:id="timeDilationSlider"
+										HBox.hgrow="ALWAYS"
+										value="1"
+										min="0"
+										max="3"
+										majorTickUnit="1"
+										minorTickCount="10"
+										snapToTicks="true"
+										showTickLabels="true"/>
+							</children>
+						</HBox>
 					</children>
-					<cursor>
-						<Cursor fx:constant="OPEN_HAND"/>
-					</cursor>
-				</Pane>
+				</VBox>
 			</items>
 		</SplitPane>
 	</children>

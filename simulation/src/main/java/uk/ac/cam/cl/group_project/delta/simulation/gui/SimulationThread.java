@@ -3,11 +3,7 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.Time;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
-import uk.ac.cam.cl.group_project.delta.algorithm.ParameterEnum;
-import uk.ac.cam.cl.group_project.delta.simulation.PhysicsBody;
-import uk.ac.cam.cl.group_project.delta.simulation.SimulatedCar;
-import uk.ac.cam.cl.group_project.delta.simulation.SimulatedNetwork;
-import uk.ac.cam.cl.group_project.delta.simulation.World;
+import uk.ac.cam.cl.group_project.delta.simulation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +16,7 @@ public class SimulationThread extends Thread {
 	/**
 	 * Minimum number of real nanoseconds between simulation updates.
 	 */
-	private static final long UPDATE_INTERVAL = 1000000; // 0.1 sec
+	private static final long UPDATE_INTERVAL = 1000000; // 1ms
 
 	/**
 	 * Target number of simulation nanoseconds between algorithm controller
@@ -50,6 +46,12 @@ public class SimulationThread extends Thread {
 	private double timeDilationFactor;
 
 	/**
+	 * Last time algorithm instances were updated, with respect to the
+	 * cumulative time.
+	 */
+	private long lastAlgorithmUpdate;
+
+	/**
 	 * Construct thread, and the world and network it will simulate.
 	 */
 	public SimulationThread() {
@@ -68,62 +70,101 @@ public class SimulationThread extends Thread {
 	public void run() {
 
 		long realTime = System.nanoTime();
+
 		Time.useDefinedTime();
 		Time.setTime(0);
 
-		long lastAlgorithmUpdate = 0; // w.r.t. cumulative
+		lastAlgorithmUpdate = 0;
 
 		synchronized (this) {
 			running = true;
 		}
 
-		// For thread safety
-		boolean localRunning = true;
+		while (true) {
 
-		while (localRunning) {
 			synchronized (this) {
-				localRunning = running;
+				if (!running) {
+					break;
+				}
 			}
 
 			long tmp = System.nanoTime();
-
-			if (tmp - realTime > UPDATE_INTERVAL) {
-
-				// Fetch bodies from world
-				List<PhysicsBody> bodies;
-				synchronized (world) {
-					bodies = new ArrayList<>(world.getBodies());
+			long dt = tmp - realTime;
+			if (dt > UPDATE_INTERVAL) {
+				if (getTimeDilationFactor() > 0) {
+					update((long) (dt * getTimeDilationFactor()));
 				}
-
-				// Update world
-				long l_dt = (long) ((tmp - realTime) * timeDilationFactor);
-				double dt = l_dt / 1e9;
-				for (PhysicsBody body : bodies) {
-					synchronized (body) {
-						body.update(dt);
-					}
-				}
-
-				// Update cars
-				Time.increaseTime(l_dt);
-				if (Time.getTime() - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
-					for (PhysicsBody body : bodies) {
-						if (body instanceof SimulatedCar) {
-							((SimulatedCar) body).updateControl();
-						}
-					}
-					if ((Time.getTime() - lastAlgorithmUpdate) / CONTROLLER_INTERVAL != 1) {
-						Log.warn("Simulation thread cannot keep algorithms up-to-date");
-					}
-					lastAlgorithmUpdate += CONTROLLER_INTERVAL;
-				}
-
 				realTime = tmp;
+			}
 
+			try {
+				Thread.sleep(
+					UPDATE_INTERVAL / 1000000,
+					(int)(UPDATE_INTERVAL % 1000000)
+				);
+			}
+			catch (InterruptedException e) {
+				// Fired when another thread interrupts this, which is unlikely
+				// but may indicate that we should check that the simulation is
+				// still running, which we do on the next loop.
 			}
 
 		}
 
+	}
+
+	/**
+	 * Update the simulation state.
+	 * @param dt    True time delta, should have already been warped, in
+	 *                 nanoseconds.
+	 */
+	public synchronized void update(long dt) {
+
+		Time.increaseTime(dt);
+
+		// Fetch bodies from world
+		List<PhysicsBody> bodies;
+		synchronized (world) {
+			bodies = new ArrayList<>(world.getBodies());
+		}
+
+		// Update world
+		double d_dt = dt / 1e9;
+		for (PhysicsBody body : bodies) {
+			synchronized (body) {
+				body.update(d_dt);
+			}
+		}
+
+		// Update cars
+		if (Time.getTime() - lastAlgorithmUpdate > CONTROLLER_INTERVAL) {
+			for (PhysicsBody body : bodies) {
+				if (body instanceof SimulatedCar) {
+					((SimulatedCar) body).updateControl();
+				}
+			}
+			if ((Time.getTime() - lastAlgorithmUpdate) / CONTROLLER_INTERVAL > 1) {
+				Log.warn("Simulation thread cannot keep algorithms up-to-date");
+			}
+			lastAlgorithmUpdate = (Time.getTime() / CONTROLLER_INTERVAL) * CONTROLLER_INTERVAL;
+		}
+
+	}
+
+	/**
+	 * Update the simulation state in increments of UPDATE_INTERVAL, except the
+	 * last update which may be a different size if `dt` is not a multiple of
+	 * UPDATE_INTERVAL.
+	 * @param dt    Simulation delta-t in ns, should have already been warped.
+	 */
+	public void smoothUpdate(long dt) {
+		// TODO: aim for step size uniformity
+		for (long i = 0; i <= dt; i += UPDATE_INTERVAL) {
+			update(UPDATE_INTERVAL);
+		}
+		if (dt % UPDATE_INTERVAL != 0) {
+			update(dt % UPDATE_INTERVAL);
+		}
 	}
 
 	/**
@@ -137,13 +178,25 @@ public class SimulationThread extends Thread {
 	}
 
 	/**
+	 * Remove a physics body from the simulated world.
+	 */
+	public void remove(PhysicsBody body) {
+		synchronized (world) {
+			if (body instanceof SimulatedCar) {
+				SimulatedCar car = (SimulatedCar) body;
+				network.deregister((SimulatedNetworkModule)car.getNetworkInterface());
+			}
+			world.getBodies().remove(body);
+		}
+	}
+
+	/**
 	 * Create a {@link SimulatedCar} within this simulated world.
-	 * @param wheelBase    Distance from front- to rear-axle.
-	 * @return             The car created.
+	 * @param wheelBase     Distance from front- to rear-axle.
+	 * @return              The car created.
 	 */
 	public SimulatedCar createCar(double wheelBase) {
 		SimulatedCar car = new SimulatedCar(wheelBase, world, network);
-		car.setController(StubAlgorithm.getInstance());
 		add(car);
 		return car;
 	}
@@ -168,7 +221,7 @@ public class SimulationThread extends Thread {
 	 * Get the current time dilation.
 	 * @return    Time distortion scale factor.
 	 */
-	public double getTimeDilationFactor() {
+	public synchronized double getTimeDilationFactor() {
 		return timeDilationFactor;
 	}
 
@@ -176,7 +229,7 @@ public class SimulationThread extends Thread {
 	 * Set the time distortion.
 	 * @param timeDilationFactor    Factor by which to distort time.
 	 */
-	public void setTimeDilationFactor(double timeDilationFactor) {
+	public synchronized void setTimeDilationFactor(double timeDilationFactor) {
 		this.timeDilationFactor = timeDilationFactor;
 	}
 
@@ -194,47 +247,6 @@ public class SimulationThread extends Thread {
 	 */
 	public synchronized SimulatedNetwork getNetwork() {
 		return network;
-	}
-
-	/**
-	 * A singleton implementation of {@link Algorithm} that does nothing.
-	 */
-	public static class StubAlgorithm extends Algorithm {
-
-		private static StubAlgorithm instance = new StubAlgorithm();
-
-		private StubAlgorithm() {
-			super(null, null, null, null);
-		}
-
-		public static StubAlgorithm getInstance() {
-			return instance;
-		}
-
-		@Override
-		public void setParameter(ParameterEnum parameterEnum, double value) {}
-
-		@Override
-		public Double getParameter(ParameterEnum parameterEnum) {
-			return null;
-		}
-
-		@Override
-		public ParameterEnum[] getParameterList() {
-			return new ParameterEnum[0];
-		}
-
-		@Override
-		public void initialise() {}
-
-		@Override
-		public void update() {}
-
-		@Override
-		public void run() {}
-
-		@Override
-		protected void makeDecision() {}
 	}
 
 }

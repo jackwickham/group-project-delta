@@ -24,7 +24,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	/**
 	 * Maximum angle from view normal that the sensor can detect, in radians.
 	 */
-	private static final double VIEW_HALF_ANGLE = Math.PI / 4; // 45°
+	public static final double VIEW_HALF_ANGLE = Math.PI / 4; // 45°
 
 	/**
 	 * Constructs a sensor module for given car in provided world.
