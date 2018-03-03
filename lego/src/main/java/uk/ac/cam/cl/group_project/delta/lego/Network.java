@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class Network implements NetworkInterface, Closeable {
 	/**
 	 * A list of messages received since the last call to {@link #pollData}
 	 */
-	private final List<MessageReceipt> receivedMessages;
+	private final LinkedHashSet<MessageReceipt> receivedMessages;
 
 	/**
 	 * The thread which will run the algorithm, this can be interrupted when
@@ -81,7 +82,7 @@ public class Network implements NetworkInterface, Closeable {
 		socket.setBroadcast(true);
 
 		// Start the listener
-		receivedMessages = new ArrayList<>();
+		receivedMessages = new LinkedHashSet<>();
 		ListenerThread lt = new ListenerThread();
 		lt.setDaemon(true);
 		lt.start();
@@ -153,7 +154,11 @@ public class Network implements NetworkInterface, Closeable {
 						// Might be useful to log the messages after this or something
 					}
 					synchronized (receivedMessages) {
-						receivedMessages.add(new MessageReceipt(receivedData));
+						MessageReceipt receipt = new MessageReceipt(receivedData);
+						// Remove then add it so that it is in the correct location in the collection
+						// If we received messages with the same header, the most recent copy
+						receivedMessages.remove(receipt);
+						receivedMessages.add(receipt);
 					}
 				}
 			} catch (IOException e) {
