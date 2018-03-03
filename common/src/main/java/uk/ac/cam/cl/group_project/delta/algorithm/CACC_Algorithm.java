@@ -55,10 +55,8 @@ public class CACC_Algorithm extends Algorithm {
 	private double proximitySmoothing = 0.5;
 
 	public CACC_Algorithm(DriveInterface driveInterface,
-	                    SensorInterface sensorInterface,
-						NetworkInterface networkInterface,
-						BeaconInterface beacons,
-	                    FrontVehicleRoute.RouteNumber routeNumber) {
+	SensorInterface sensorInterface, NetworkInterface networkInterface,
+	BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 

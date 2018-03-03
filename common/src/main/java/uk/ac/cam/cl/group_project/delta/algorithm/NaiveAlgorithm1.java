@@ -12,10 +12,8 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 public class NaiveAlgorithm1 extends Algorithm {
 
 	public NaiveAlgorithm1(DriveInterface driveInterface,
-	                        SensorInterface sensorInterface,
-	                        NetworkInterface networkInterface,
-							BeaconInterface beacons,
-	                        FrontVehicleRoute.RouteNumber routeNumber) {
+			SensorInterface sensorInterface, NetworkInterface networkInterface,
+			BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 

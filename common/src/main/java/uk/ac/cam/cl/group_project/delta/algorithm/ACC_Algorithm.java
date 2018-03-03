@@ -28,11 +28,9 @@ public class ACC_Algorithm extends Algorithm{
 	private double maxSensorDist = 2;
 
 	public ACC_Algorithm(DriveInterface driveInterface,
-	                    SensorInterface sensorInterface,
-	                    NetworkInterface networkInterface,
-						BeaconInterface beacons,
-	                    FrontVehicleRoute.RouteNumber routeNumber) {
-		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+				SensorInterface sensorInterface, NetworkInterface networkInterface,
+				BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
+				super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	@Override
