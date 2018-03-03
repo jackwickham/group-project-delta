@@ -82,6 +82,7 @@ function platoon.dissector(tvbuf, pktinfo, root)
 
     -- Set the protocol column to show our protocol name
     pktinfo.cols.protocol:set("Platoon Merge")
+    local info_string = ""
 
     -- Find out the packet size
     local pktlen = tvbuf:reported_length_remaining()
@@ -101,24 +102,24 @@ function platoon.dissector(tvbuf, pktinfo, root)
 
     tree:add(pf_vehicle_field, tvbuf:range(8,4))
 
-    -- Set the info field of the packet
-    pktinfo.cols.info:set(types_field().display ..", Platoon: " ..
-        platoon_field().display)
+    info_string = info_string .. types_field().display ..", Platoon: " .. platoon_field().display
 
     if type == RTM_TYPE or type == ATM_TYPE or
             type == CONFIRM_TYPE or type == COMPLETE_TYPE then
         local merge_tree = tree:add("Merging")
         merge_tree:add(pf_transaction_field, tvbuf:range(12, 4))
+        info_string = info_string ..", Transaction: "..tvbuf:range(12, 4):uint()
+
         local pos = 16
         if type == RTM_TYPE then
             merge_tree:add(pf_merging_platoon_field, tvbuf:range(pos, 4))
+            info_string = info_string ..", Merging Platoon: "..tvbuf:range(pos, 4):uint()
             pos = pos + 4
-        end
-        if type == ATM_TYPE then
+        elseif type == ATM_TYPE then
             merge_tree:add(pf_merge_accepted_field, tvbuf:range(pos, 1))
         end
         if type == RTM_TYPE or type == ATM_TYPE then
-            local length_tree = merge_tree:add(pf_length_platoon_field, tvbuf:range(pos, 4))
+            local length_tree = merge_tree:add(pf_length_platoon_field, tvbuf:range(pos+1, 4))
             local length = tvbuf:range(pos+1,3):uint()
             pos = pos + 4
             for i = 0, length-1, 1 do
@@ -141,6 +142,7 @@ function platoon.dissector(tvbuf, pktinfo, root)
             tree:add(pf_beacon_response_field, tvbuf:range(12,4))
         end
         tree:add(pf_beacon_id_field, tvbuf:range(16,4))
+        info_string = info_string .. ", Beacon ID: "..tvbuf:range(16, 4):uint()
     elseif type == DATA_TYPE then
         local data_tree = tree:add("Data")
 
@@ -152,6 +154,8 @@ function platoon.dissector(tvbuf, pktinfo, root)
         data_tree:add(pf_chosen_tr_field, tvbuf:range(52,8))
     end
 
+    -- Set the info field of the packet
+    pktinfo.cols.info:set(info_string)
     return pktlen
 end
 
