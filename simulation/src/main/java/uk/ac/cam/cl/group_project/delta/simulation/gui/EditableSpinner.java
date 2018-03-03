@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextFormatter;
+import javafx.util.StringConverter;
 
 /**
  * A wrapper class around {@link Spinner}, that improves the editable
@@ -23,7 +24,9 @@ public class EditableSpinner<T> extends Spinner<T> {
 	public static <E> void setup(EditableSpinner<E> spinner) {
 		spinner.setEditable(true);
 		SpinnerValueFactory<E> factory = spinner.getValueFactory();
-		TextFormatter<E> formatter = new TextFormatter<>(factory.getConverter(), factory.getValue());
+		StringConverter<E> converter = new SafeStringConverter<>(factory.getConverter());
+		factory.setConverter(converter);
+		TextFormatter<E> formatter = new TextFormatter<>(converter, factory.getValue());
 		spinner.getEditor().setTextFormatter(formatter);
 		factory.valueProperty().bindBidirectional(formatter.valueProperty());
 	}
