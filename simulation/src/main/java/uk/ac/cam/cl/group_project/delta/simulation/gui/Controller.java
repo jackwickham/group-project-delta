@@ -277,8 +277,8 @@ public class Controller {
 	@FXML
 	public void initialize() {
 
-		root.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPressed);
-		root.addEventFilter(KeyEvent.KEY_RELEASED, this::onKeyReleased);
+		root.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+		root.addEventHandler(KeyEvent.KEY_RELEASED, this::onKeyReleased);
 
 		networkLog.setItems(networkLogStore);
 
