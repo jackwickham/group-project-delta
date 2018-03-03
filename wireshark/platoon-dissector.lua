@@ -5,7 +5,7 @@ local PORT_NUMBER = 5187
 local PACKET_LENGTH = 200
 
 -- creates a Proto object, but doesn't register it yet
-local platoon = Proto("platoon","Platoon Merge Protocol")
+local platoon = Proto("platoon","Platooning Protocol")
 
 
 -- Message types lookup
@@ -81,7 +81,7 @@ local vehicle_field = Field.new("platoon.vehicle")
 function platoon.dissector(tvbuf, pktinfo, root)
 
     -- Set the protocol column to show our protocol name
-    pktinfo.cols.protocol:set("Platoon Merge")
+    pktinfo.cols.protocol:set("Platooning")
     local info_string = ""
 
     -- Find out the packet size
