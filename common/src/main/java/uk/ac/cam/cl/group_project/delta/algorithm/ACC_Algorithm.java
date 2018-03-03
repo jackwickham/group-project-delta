@@ -122,15 +122,11 @@ public class ACC_Algorithm extends Algorithm{
 			algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
-			//calculate desired distance
-			desired_dist = buffDist + headTime * algorithmData.speed;
-
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		} else {
 			//no message received or no previous distance
 			algorithmData.predictedFrontProximity = null;
-			desired_dist = buffDist;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
@@ -157,7 +153,7 @@ public class ACC_Algorithm extends Algorithm{
 			algorithmData.chosenAcceleration = chosenAcceleration;
 		} else {
 			//no messages received and proximity sensor not working
-			algorithmData.chosenAcceleration = 0;
+			emergencyStop();
 		}
 		//update previous state variables so that they are correct in next time period
 		if (weightedFrontProximity != null) {
