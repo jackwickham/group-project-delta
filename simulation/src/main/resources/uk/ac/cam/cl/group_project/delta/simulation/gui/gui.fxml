@@ -63,6 +63,7 @@
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
+														<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER"/>
 													</columnConstraints>
 													<rowConstraints>
 														<RowConstraints vgrow="NEVER" prefHeight="30"/>
@@ -89,7 +90,8 @@
 																<Tooltip text="Show beacon query communication"/>
 															</tooltip>
 														</CheckBox>
-														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="4"/>
+														<Button text="Clear log" onAction="#clearNetworkLog" GridPane.columnIndex="4"/>
+														<TableView fx:id="networkLog" GridPane.rowIndex="1" GridPane.columnSpan="5"/>
 													</children>
 												</GridPane>
 											</children>

@@ -758,6 +758,10 @@ public class Controller {
 		}
 	}
 
+	public void clearNetworkLog() {
+		networkLogStore.clear();
+	}
+
 	/**
 	 * Reset the simulation world state.
 	 */
@@ -783,6 +787,9 @@ public class Controller {
 				scene.getChildren().remove(node);
 			}
 		}
+
+		// Clear network log
+		clearNetworkLog();
 
 		// Clear selection
 		currentSelection = null;
