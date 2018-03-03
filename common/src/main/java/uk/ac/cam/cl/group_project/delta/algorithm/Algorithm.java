@@ -7,6 +7,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 public abstract class Algorithm {
 
 	public static final int ALGORITHM_LOOP_DURATION = 50000000; // 50ms
+	public static final int MAXIMUM_MESSAGE_AGE = 200000000; //200ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -106,20 +107,28 @@ public abstract class Algorithm {
 	private void readSensors() {
 		// try to get predecessors messages, trying next car infront if message null, upto the front of platoon
 		// note: leader check not needed as if leader then getPredecessorMessages() returns an empty list
-		//TODO: use timestamp in message to decide which to use
+		//uses timestamp in message to decide which to use
 		// note: individual algorithms handle case in which no message ever received
 		for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
-			algorithmData.receiveMessageData = message;
-			if (algorithmData.receiveMessageData != null) {
-				algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
-				algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
-				algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
-				algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
-				algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
-				algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
-				//break if predecessor has a message otherwise loop to try one vehicle infront
-				break;
+			//loop through messages starting with predecessor up to leader
+			if (algorithmData.receiveMessageData == null ||
+					message.getStartTime() + ALGORITHM_LOOP_DURATION < algorithmData.receiveMessageData.getStartTime()) {
+				//if message is at least ALGORITHM_LOOP_DURATION time newer than use it instead
+				algorithmData.receiveMessageData = message;
 			}
+		}
+		if(algorithmData.receiveMessageData != null &&
+				Time.getTime() - algorithmData.receiveMessageData.getStartTime() > MAXIMUM_MESSAGE_AGE) {
+			//if message age is longer than MAXIMUM_MESSAGE_AGE discard message
+			algorithmData.receiveMessageData = null;
+		}
+		if (algorithmData.receiveMessageData != null) {
+			algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
+			algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
+			algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
+			algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
+			algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
+			algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
 		}
 
 		// read data from sensors
