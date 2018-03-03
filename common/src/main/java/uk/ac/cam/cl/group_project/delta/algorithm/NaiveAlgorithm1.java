@@ -9,13 +9,13 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  * Basic version of algorithm which sets acceleration and turn rate to that of
  * its predecessors
  */
-public class BasicAlgorithm extends Algorithm {
+public class NaiveAlgorithm1 extends Algorithm {
 
-	public BasicAlgorithm(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
+	public NaiveAlgorithm1(DriveInterface driveInterface,
+	                       SensorInterface sensorInterface,
+	                       NetworkInterface networkInterface,
+	                       BeaconInterface beacons,
+	                       FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 

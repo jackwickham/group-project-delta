@@ -49,16 +49,16 @@ public abstract class Algorithm {
 			BeaconInterface beacons,
 			FrontVehicleRoute.RouteNumber routeNumber) {
 		switch (algorithmEnum) {
-		case BasicAlgorithm:
-			return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithm2:
-			return new BasicAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithm3:
-			return new BasicAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithmPID:
-			return new BasicAlgorithmPID(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithmPID2:
-			return new BasicAlgorithmPID2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Naive1:
+			return new NaiveAlgorithm1(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Naive2:
+			return new NaiveAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Naive3:
+			return new NaiveAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Adaptive_Cruise_Control:
+			return new ACC_Algorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Cooperative_Adaptive_Cruise_Control:
+			return new CACC_Algorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		}
 		return null;
 	}

@@ -10,7 +10,7 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
  * additionally modifies the chosen acceleration by a linear function of the
  * front proximity
  */
-public class BasicAlgorithm2 extends Algorithm{
+public class NaiveAlgorithm2 extends Algorithm{
 
 	private double buffDist = 0.3;
 	//larger values will result in more deceleration/acceleration when distance is too low/high
@@ -18,11 +18,11 @@ public class BasicAlgorithm2 extends Algorithm{
 	private double accelerationConstant = 4;
 	private double maxSensorDist = 0.5;
 
-	public BasicAlgorithm2(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
+	public NaiveAlgorithm2(DriveInterface driveInterface,
+	                       SensorInterface sensorInterface,
+	                       NetworkInterface networkInterface,
+	                       BeaconInterface beacons,
+	                       FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 

@@ -4,6 +4,7 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import uk.ac.cam.cl.group_project.delta.*;
 
 /**
+ * Main Cooperative cruise control Algorithm
  * If message received over network:
  * then takes the acceleration of the car in-front
  * and corrects for errors in the buffer distance by using a PID.
@@ -13,7 +14,7 @@ import uk.ac.cam.cl.group_project.delta.*;
  * then just uses a PID, with the D term calculated using the rate of change of error in the buffer distance.
  */
 
-public class BasicAlgorithmPID2 extends Algorithm {
+public class CACC_Algorithm extends Algorithm {
 
 	//note these defaults are not well configured
 	//ID parameters
@@ -53,11 +54,11 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//higher value will help to smooth out spikes in the proximity sensor but will decrease the response time
 	private double proximitySmoothing = 0.5;
 
-	public BasicAlgorithmPID2(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
+	public CACC_Algorithm(DriveInterface driveInterface,
+	                      SensorInterface sensorInterface,
+	                      NetworkInterface networkInterface,
+	                      BeaconInterface beacons,
+	                      FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 

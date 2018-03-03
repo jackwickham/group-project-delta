@@ -7,10 +7,10 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.Time;
 
 /**
- * As basic algorithm 3.
- * Additionally, uses a PID to calculate the chosen acceleration
+ * Adaptive cruise control (no networking)
+ * Uses a PID to calculate the chosen acceleration
  */
-public class BasicAlgorithmPID extends Algorithm{
+public class ACC_Algorithm extends Algorithm{
 	//ID parameters
 	private double pidP = 0.5;
 	private double pidI = 0;
@@ -27,11 +27,11 @@ public class BasicAlgorithmPID extends Algorithm{
 
 	private double maxSensorDist = 2;
 
-	public BasicAlgorithmPID(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
+	public ACC_Algorithm(DriveInterface driveInterface,
+	                     SensorInterface sensorInterface,
+	                     NetworkInterface networkInterface,
+	                     BeaconInterface beacons,
+	                     FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
@@ -112,7 +112,6 @@ public class BasicAlgorithmPID extends Algorithm{
 		//decide on chosen acceleration, speed and turnRate
 
 		//calculate time since message received
-		//TODO: add something to take into account network delay
 		double desired_dist;
 		Double weightedFrontProximity;
 		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {

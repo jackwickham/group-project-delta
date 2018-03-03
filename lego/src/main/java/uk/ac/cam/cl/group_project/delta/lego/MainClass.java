@@ -1,7 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
 import lejos.hardware.BrickFinder;
-import lejos.hardware.Keys;
 import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.TextLCD;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
@@ -25,7 +24,7 @@ class MainClass {
 		try {
 			network = new Network(Thread.currentThread());
 			Algorithm algo = Algorithm.createAlgorithm(
-					AlgorithmEnum.BasicAlgorithmPID2,
+					AlgorithmEnum.Cooperative_Adaptive_Cruise_Control,
 					drive,
 					sensor,
 					network,
