@@ -86,6 +86,16 @@ public class PhysicsCar extends PhysicsBody {
 	private static final double MAX_DECELERATION = 2;
 
 	/**
+	 * The ratio between the vehicle's length and its wheel base
+	 */
+	private static final double LENGTH_WHEEL_BASE_RATIO = 1.4;
+
+	/**
+	 * The ratio between the vehicle's width and its wheel base
+	 */
+	private static final double WIDTH_WHEEL_BASE_RATIO = 0.7;
+
+	/**
 	 * Initialise physically simulated representation of a car.
 	 * @param wheelBase    Distance from rear to front axle.
 	 */
@@ -128,7 +138,7 @@ public class PhysicsCar extends PhysicsBody {
 				double dy = radius * (Math.sin(endAngle) - Math.sin(startAngle));
 
 				translation = new Vector2D(dx, dy);
-				heading = endAngle;
+				heading = endAngle % (Math.PI * 2);
 			}
 
 			setPosition(getPosition().add(translation));
@@ -310,4 +320,49 @@ public class PhysicsCar extends PhysicsBody {
 		this.wheelBase = wheelBase;
 	}
 
+	/**
+	 * Get the total length of the vehicle, in metres
+	 */
+	public double getLength() {
+		return wheelBase * LENGTH_WHEEL_BASE_RATIO;
+	}
+
+	/**
+	 * Get the width of the vehicle, in metres
+	 */
+	public double getWidth() {
+		return wheelBase * WIDTH_WHEEL_BASE_RATIO;
+	}
+
+	/**
+	 * Get the position at which the provided ray intersects with this object
+	 * if the ray passes through the location returned by `getPosition()`.
+	 *
+	 * This is used as a cheap approximation for finding the closest point on
+	 * a vehicle.
+	 *
+	 * @param ray The ray to calculate the intersection with, as a normalised
+	 *               vector
+	 * @return The position in world space where the collision occurs
+	 */
+	@Override
+	public Vector2D getRayCollisionPosition(Vector2D ray) {
+		// In future this could take into account the angle
+		return getPosition().subtract(ray.multiply(getLength() / 2));
+	}
+
+	/**
+	 * Get the position of all of the sensors (beacon/proximity) for the car,
+	 * in world space.
+	 */
+	public Vector2D getSensorPosition() {
+		return getPosition().add(getHeadingVector().multiply(getLength() / 2));
+	}
+
+	/**
+	 * Get the position of this vehicle's beacon in world space.
+	 */
+	public Vector2D getBeaconPosition() {
+		return getPosition().subtract(getHeadingVector().multiply(getLength() / 2));
+	}
 }

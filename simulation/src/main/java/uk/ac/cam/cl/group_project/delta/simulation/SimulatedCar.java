@@ -38,15 +38,21 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 
 	/**
 	 * Constructs a car, but do not add it to the world.
-	 * @param length     Wheel base of the vehicle.
+	 * @param wheelBase  Wheel base of the vehicle.
 	 * @param world      Simulated world in which this car exists.
 	 * @param network    Simulated network on which this car will communicate.
 	 */
-	public SimulatedCar(double length, World world, SimulatedNetwork network) {
-		super(length);
-		networkInterface = new SimulatedNetworkModule(this, network);
+	public SimulatedCar(double wheelBase, World world, SimulatedNetwork network) {
+
+		super(wheelBase);
+
+		SimulatedNetworkModule snm = new SimulatedNetworkModule(this, network);
+		snm.setEmergencyHandler(m -> stop());
+
+		networkInterface = snm;
 		sensorInterface = new FaultySensorModule(this, world);
 		driveInterface = new SimulatedDriveModule(this);
+
 	}
 
 	/**
@@ -113,7 +119,7 @@ public class SimulatedCar extends PhysicsCar implements BeaconInterface {
 	 * Stop the vehicle
 	 */
 	public void stop() {
-		//controller.emergencyStop();
+		controller.emergencyStop();
 	}
 
 	/**

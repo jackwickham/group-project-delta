@@ -28,6 +28,11 @@ public class SimulatedNetworkModule implements NetworkInterface
 	private List<MessageReceipt> messageBuffer;
 
 	/**
+	 * Handler function to call when an emergency message is received.
+	 */
+	private EmergencyHandler emergencyHandler;
+
+	/**
 	 * Construct simulated network interface, for the world given.
 	 * @param car        The car that transmits and receives messages.
 	 * @param network    The network on which to communicate.
@@ -62,6 +67,19 @@ public class SimulatedNetworkModule implements NetworkInterface
 	}
 
 	/**
+	 * Handle a received message.
+	 * @param message    The message received.
+	 */
+	public synchronized void handleMessage(byte[] message) {
+		if (emergencyHandler != null && MessageReceipt.isEmergencyMessage(message)) {
+			emergencyHandler.handle(message);
+		}
+		else {
+			messageBuffer.add(new MessageReceipt(message));
+		}
+	}
+
+	/**
 	 * Fetches the node's current position.
 	 * @return    The current position.
 	 */
@@ -70,10 +88,24 @@ public class SimulatedNetworkModule implements NetworkInterface
 	}
 
 	/**
-	 * Handle a received message.
-	 * @param message    The message received.
+	 * Set the emergency message handler.
+	 * @param emergencyHandler    Handler callback.
 	 */
-	public synchronized void handleMessage(byte[] message) {
-		this.messageBuffer.add(new MessageReceipt(message));
+	public void setEmergencyHandler(EmergencyHandler emergencyHandler) {
+		this.emergencyHandler = emergencyHandler;
 	}
+
+	/**
+	 * Functional interface for emergency message handling.
+	 */
+	@FunctionalInterface
+	public interface EmergencyHandler {
+		/**
+		 * Handle an emergency message.
+		 * @param message    The byte array received that contains the emergency
+		 *                   message.
+		 */
+		void handle(byte[] message);
+	}
+
 }

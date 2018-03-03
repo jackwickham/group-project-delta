@@ -8,11 +8,13 @@ import static org.junit.Assert.*;
 public class SimulatedSensorModuleTest {
 	private World world;
 	private SimulatedSensorModule classUnderTest;
+	private double carLength;
 
 	@Before
 	public void setup() {
 		world = new World();
 		PhysicsCar car = new PhysicsCar(1);
+		carLength = car.getLength();
 		world.getBodies().add(car);
 		classUnderTest = new SimulatedSensorModule(car, world);
 	}
@@ -30,16 +32,20 @@ public class SimulatedSensorModuleTest {
 
 	@Test
 	public void testFrontProximityWhenStraightAhead() {
-		addCar(new Vector2D(0, 2));
+		addCar(new Vector2D(0, 3));
 
-		assertEquals(2.0, classUnderTest.getFrontProximity(), 0.1);
+		// The distance from the front of this car to the back of the other should be the 3 (the
+		// distance between their centres) - 2 * 1/2 * carLength
+		assertEquals(3.0 - carLength, classUnderTest.getFrontProximity(), 0.02);
 	}
 
 	@Test
 	public void testFrontProximityWhenOffsetSlightly() {
-		addCar(new Vector2D(0.5, 2));
+		addCar(new Vector2D(0.5, 3));
 
-		assertEquals(Math.sqrt(0.5*0.5 + 2*2), classUnderTest.getFrontProximity(), 0.05);
+		double yDistance = 3 - carLength / 2;
+		double xDistance = 0.5;
+		assertEquals(Math.sqrt(xDistance*xDistance + yDistance*yDistance) - carLength / 2, classUnderTest.getFrontProximity(), 0.05);
 	}
 
 	@Test
@@ -50,9 +56,11 @@ public class SimulatedSensorModuleTest {
 
 	@Test
 	public void testFrontProximityWhenOffsetNegative() {
-		addCar(new Vector2D(-0.5, 2));
+		addCar(new Vector2D(-0.5, 3));
 
-		assertEquals(Math.sqrt(0.5*0.5 + 2*2), classUnderTest.getFrontProximity(), 0.05);
+		double yDistance = 3 - carLength / 2;
+		double xDistance = -0.5;
+		assertEquals(Math.sqrt(xDistance*xDistance + yDistance*yDistance) - carLength / 2, classUnderTest.getFrontProximity(), 0.05);
 	}
 
 	@Test

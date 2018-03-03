@@ -122,19 +122,21 @@ public abstract class Algorithm {
 			}
 		}
 
-
 		// read data from sensors
 		algorithmData.acceleration = algorithmData.sensorInterface.getAcceleration();
 		algorithmData.speed = algorithmData.sensorInterface.getSpeed();
 		algorithmData.turnRate = algorithmData.sensorInterface.getTurnRate();
 
 		algorithmData.beacons = algorithmData.sensorInterface.getBeacons();
+
+		algorithmData.previousAngle = algorithmData.angle;
 		//find closest beacon within maximum sensor distance
 		double min = Double.POSITIVE_INFINITY;
 		for (Beacon beacon : algorithmData.beacons) {
 			if (beacon.getDistanceLowerBound() <= min) {
 				min = beacon.getDistanceLowerBound();
 				algorithmData.closestBeacon = beacon;
+				algorithmData.angle = algorithmData.closestBeacon.getAngle();
 			}
 		}
 
@@ -151,8 +153,9 @@ public abstract class Algorithm {
 		} else {
 			algorithmData.frontProximity = null;
 		}
+
 		// get initial distance reading from sensor, distance null if no distance reading
-		algorithmData.previousDistance = algorithmData.sensorFrontProximity;
+		algorithmData.previousDistance = algorithmData.frontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}
@@ -174,9 +177,12 @@ public abstract class Algorithm {
 		algorithmData.commsInterface.sendMessage(sendMessageData);
 	}
 
-	protected void emergencyStop() {
-		algorithmData.driveInterface.stop();
-		algorithmData.commsInterface.notifyEmergency();
+	public void emergencyStop() {
+		if (!algorithmData.emergencyOccurred) {
+			algorithmData.emergencyOccurred = true;
+			algorithmData.driveInterface.stop();
+			algorithmData.commsInterface.notifyEmergency();
+		}
 	}
 
 	private void sendInstruction() {
@@ -224,10 +230,13 @@ public abstract class Algorithm {
 	 * Runs one loop of algorithm
 	 */
 	public void update() {
-		runOneLoop();
+		if (!algorithmData.emergencyOccurred) {
+			runOneLoop();
+		}
 	}
 
-	/** Runs algorithm every ALGORITM_LOOP_DURATION  nanoseconds until an emergency occurs
+	/**
+	 * Runs algorithm every ALGORITHM_LOOP_DURATION  nanoseconds until an emergency occurs
 	 */
 	public void run() {
 		initialise();
@@ -251,4 +260,25 @@ public abstract class Algorithm {
 		}
 		Log.debug("Algorithm has finished running");
 	}
+
+	public boolean isLeader() {
+		return algorithmData.commsInterface.isLeader();
+	}
+
+	public int getVehicleId() {
+		return algorithmData.controlLayer.getVehicleId();
+	}
+
+	public int getPlatoonId() {
+		return algorithmData.controlLayer.getPlatoonId();
+	}
+
+	public int getPlatoonPosition() {
+		return algorithmData.controlLayer.getCurrentPosition();
+	}
+
+	public int getLeaderId() {
+		return algorithmData.controlLayer.getLeaderId();
+	}
+
 }
