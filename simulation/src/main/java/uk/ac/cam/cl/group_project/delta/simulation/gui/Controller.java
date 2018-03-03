@@ -591,6 +591,7 @@ public class Controller {
 	@FXML
 	public void onViewPaneMousePressed(MouseEvent event) {
 		onGenericMouseEvent(event.getX(), event.getY());
+		viewPane.requestFocus();
 	}
 
 	/**
