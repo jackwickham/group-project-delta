@@ -34,24 +34,41 @@ local pf_type_field = ProtoField.uint8("platoon.type", "Message Type", base.DEC,
 local pf_platoon_field = ProtoField.uint32("platoon.platoon", "Destination Platoon")
 local pf_vehicle_field = ProtoField.uint32("platoon.vehicle", "Vehicle ID")
 
--- Missing data lookup
+-- Data fields
+local pf_speed_field = ProtoField.double("platoon.data.speed", "Speed (m/s)")
+local pf_accel_field = ProtoField.double("platoon.data.accel", "Acceleration (m/s/s)")
+local pf_tr_field = ProtoField.double("platoon.data.tr", "Turn Rate (rad/s)")
+local pf_chosen_speed_field = ProtoField.double("platoon.data.chosen_speed", "Chosen Speed (m/s)")
+local pf_chosen_accel_field = ProtoField.double("platoon.data.chosen_accel", "Chosen Acceleration (m/s/s)")
+local pf_chosen_tr_field = ProtoField.double("platoon.data.chosen_tr", "Chosen Turn Rate (rad/s)")
 
+
+-- Merging fields
 local pf_transaction_field = ProtoField.uint32("platoon.merging.transaction_id", "Merge Transaction ID")
-local pf_merging_platoon_field = ProtoField.uint32("platoon.merging.rtm.merging_platoon", "Merging Platoon ID")
 local pf_length_platoon_field = ProtoField.uint24("platoon.merging.length_platoon", "Length of the platoon")
 local pf_platoon_member_field = ProtoField.uint32("platoon.merging.platoon_member", "Platoon Member")
-local pf_merge_accepted_field = ProtoField.bool("platoon.merging.atm.accepted", "Merge Accepted?", 16, {"Yes", "No"}, 0x0100)
--- Currently missing name lookups
 
+ -- RTM specific
+local pf_merging_platoon_field = ProtoField.uint32("platoon.merging.rtm.merging_platoon", "Merging Platoon ID")
+
+-- ATM specific
+local pf_merge_accepted_field = ProtoField.bool("platoon.merging.atm.accepted", "Merge Accepted?", 16, {"Yes", "No"}, 0x0100)
+local pf_length_rename_field = ProtoField.uint32("platoon.merging.atm.length_renames", "Number of renames")
+local pf_name_initial_field = ProtoField.uint32("platoon.merging.atm.name_initial", "Initial name")
+local pf_name_final_field = ProtoField.uint32("platoon.merging.atm.name_final", "Final name")
+
+-- Beacon Q/A fields
 local pf_beacon_id_field = ProtoField.uint32("platoon.beacon.id", "Beacon ID")
 local pf_beacon_asking_field = ProtoField.uint32("platoon.beacon.ask_id", "The platoon being asked")
-local pf_beacon_response_field = ProtoField.uint32("platoon.beacon.response_id", "The ")
+local pf_beacon_response_field = ProtoField.uint32("platoon.beacon.response_id", "The responding platoon")
 
 -- Register the fields
 platoon.fields = {pf_type_field, pf_platoon_field, pf_vehicle_field,
     pf_transaction_field, pf_merging_platoon_field, pf_length_platoon_field,
     pf_platoon_member_field, pf_merge_accepted_field, pf_beacon_id_field,
-    pf_beacon_asking_field, pf_beacon_response_field
+    pf_beacon_asking_field, pf_beacon_response_field, pf_length_rename_field,
+    pf_name_initial_field, pf_name_final_field, pf_speed_field, pf_accel_field,
+    pf_tr_field, pf_chosen_speed_field, pf_chosen_accel_field, pf_chosen_tr_field
 }
 
 
@@ -62,6 +79,9 @@ local vehicle_field = Field.new("platoon.vehicle")
 
 -- Actually assign the dissector
 function platoon.dissector(tvbuf, pktinfo, root)
+
+    -- Set the protocol column to show our protocol name
+    pktinfo.cols.protocol:set("Platoon Merge")
 
     -- Find out the packet size
     local pktlen = tvbuf:reported_length_remaining()
@@ -80,9 +100,6 @@ function platoon.dissector(tvbuf, pktinfo, root)
     tree:add(pf_platoon_field, tvbuf:range(4,4))
 
     tree:add(pf_vehicle_field, tvbuf:range(8,4))
-
-    -- Set the protocol column to show our protocol name
-    pktinfo.cols.protocol:set("Platoon Merge, "..types_field().display)
 
     -- Set the info field of the packet
     pktinfo.cols.info:set(types_field().display ..", Platoon: " ..
@@ -108,9 +125,32 @@ function platoon.dissector(tvbuf, pktinfo, root)
                 length_tree:add(pf_platoon_member_field, tvbuf(pos, 4))
                 pos = pos + 4
             end
+            local rename_tree = merge_tree:add(pf_length_rename_field, tvbuf:range(pos, 4))
+            local rename_length = tvbuf:range(pos, 4):uint()
+            for i = 0, rename_length-1, 1 do
+                rename_tree:add(pf_name_initial_field, tvbuf(pos, 4))
+                pos = pos + 4
+                rename_tree:add(pf_name_final_field, tvbuf(pos, 4))
+                pos = pos + 4
+            end
         end
-    end
+    elseif type == BEACON_A_TYPE or type == BEACON_Q_TYPE then
+        if type == BEACON_Q_TYPE then
+            tree:add(pf_beacon_asking_field, tvbuf:range(12,4))
+        else
+            tree:add(pf_beacon_response_field, tvbuf:range(12,4))
+        end
+        tree:add(pf_beacon_id_field, tvbuf:range(16,4))
+    elseif type == DATA_TYPE then
+        local data_tree = tree:add("Data")
 
+        data_tree:add(pf_speed_field, tvbuf:range(12,8))
+        data_tree:add(pf_accel_field, tvbuf:range(20,8))
+        data_tree:add(pf_tr_field, tvbuf:range(28,8))
+        data_tree:add(pf_chosen_speed_field, tvbuf:range(36,8))
+        data_tree:add(pf_chosen_accel_field, tvbuf:range(44,8))
+        data_tree:add(pf_chosen_tr_field, tvbuf:range(52,8))
+    end
 
     return pktlen
 end
