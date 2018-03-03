@@ -7,7 +7,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 public abstract class Algorithm {
 
 	public static final int ALGORITHM_LOOP_DURATION = 50000000; // 50ms
-	public static final int MAXIMUM_MESSAGE_AGE = 200000000; //200ms
+	public static final int MAXIMUM_MESSAGE_AGE = ALGORITHM_LOOP_DURATION*4; //200ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -111,10 +111,15 @@ public abstract class Algorithm {
 		// note: individual algorithms handle case in which no message ever received
 		for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
 			//loop through messages starting with predecessor up to leader
-			if (algorithmData.receiveMessageData == null ||
-					message.getStartTime() + ALGORITHM_LOOP_DURATION < algorithmData.receiveMessageData.getStartTime()) {
-				//if message is at least ALGORITHM_LOOP_DURATION time newer than use it instead
-				algorithmData.receiveMessageData = message;
+			if(message != null) {
+				if (algorithmData.receiveMessageData != null) {
+					if (message.getStartTime() > algorithmData.receiveMessageData.getStartTime() + ALGORITHM_LOOP_DURATION) {
+						//if message is at least ALGORITHM_LOOP_DURATION time newer than use it instead
+						algorithmData.receiveMessageData = message;
+					}
+				} else {
+					algorithmData.receiveMessageData = message;
+				}
 			}
 		}
 		if(algorithmData.receiveMessageData != null &&
