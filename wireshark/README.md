@@ -5,7 +5,9 @@ This is a wireshark plugin written in Lua which can parse the packet structure u
 In order to use the plugin you must run Wireshark with the Lua file as a parameter.
 On the command line this involves the command (assuming Wireshark is on the PATH):
 
-`wireshark -X lua_script:platoon-dissector.lua`
+```bash
+wireshark -X lua_script:platoon-dissector.lua
+```
 
 
 There is a Wireshark colours file included, this will highlight the different packet types in different colours.

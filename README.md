@@ -32,6 +32,8 @@ echo -n -e \\x00\\x00\\x00\\x0C\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 | nc -4u
 ```
 on Linux (and probably MacOS) to emergency stop all vehicles on the network. If you're running Windows, you can try the Linux subsystem, but otherwise you're doomed.
 
+To aid with debugging, a Wireshark plugin has been provided which allows packets to be inspected and allows highlighting based on the packet type. The plugin and its documentation can be found in the [Wireshark directory](wireshark).
+
 ## Testing
 All of the unit tests in the project can be run using `gradle test`. For a more comprehensive check, which includes code style validation too, you can run `gradle check`.
 
