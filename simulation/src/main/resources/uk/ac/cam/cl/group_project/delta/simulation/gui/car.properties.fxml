@@ -245,9 +245,6 @@
 						<ColumnConstraints hgrow="SOMETIMES"/>
 						<ColumnConstraints halignment="RIGHT"/>
 					</columnConstraints>
-					<rowConstraints>
-						<RowConstraints prefHeight="30"/>
-					</rowConstraints>
 				</GridPane>
 			</AnchorPane>
 		</TitledPane>

@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
@@ -418,6 +419,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 			controller.beaconList.setItems(beaconList);
 
 			ParameterEnum[] supportedParameters = algorithm.getParameterList();
+			RowConstraints rowHeightConstraint = new RowConstraints(30.0);
 			for (int i = 0; i < supportedParameters.length; i++) {
 				final ParameterEnum param = supportedParameters[i];
 				Label label = new Label(param.name());
@@ -427,6 +429,7 @@ public class SimulatedCarNode extends SimulatedBodyNode implements Paneable {
 				);
 				controller.algorithmParameters.add(label, 0, i);
 				controller.algorithmParameters.add(valueInput, 1, i);
+				controller.algorithmParameters.getRowConstraints().add(rowHeightConstraint);
 			}
 
 			return pane;
