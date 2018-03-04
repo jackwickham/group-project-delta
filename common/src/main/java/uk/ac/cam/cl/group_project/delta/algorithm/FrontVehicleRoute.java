@@ -122,13 +122,13 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeTwo() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, MoveType.ACCELERATION, 0.01));
-		moves.add(new Move(3, MoveType.ACCELERATION, 0));
-		moves.add(new Move(4, MoveType.TURN_RATE, 0.3));
-		moves.add(new Move(6, MoveType.TURN_RATE, -0.3));
-		moves.add(new Move(10, MoveType.TURN_RATE, 0.3));
-		moves.add(new Move(13, MoveType.TURN_RATE, 0));
-		moves.add(new Move(14, MoveType.ACCELERATION, -0.01));
+		moves.add(new Move(1, MoveType.ACCELERATION, 0.01));
+		moves.add(new Move(4, MoveType.ACCELERATION, 0));
+		moves.add(new Move(5, MoveType.TURN_RATE, 0.3));
+		moves.add(new Move(7, MoveType.TURN_RATE, -0.3));
+		moves.add(new Move(11, MoveType.TURN_RATE, 0.3));
+		moves.add(new Move(14, MoveType.TURN_RATE, 0));
+		moves.add(new Move(15, MoveType.ACCELERATION, -0.01));
 		return moves;
 	}
 
@@ -138,13 +138,13 @@ public class FrontVehicleRoute {
 	 */
 	private static List<Move> routeThree() {
 		List<Move> moves = new ArrayList<>();
-		moves.add(new Move(0, MoveType.ACCELERATION, 0.05));
-		moves.add(new Move(3, MoveType.ACCELERATION, 0));
-		moves.add(new Move(5, MoveType.TURN_RATE, 0.5));
-		moves.add(new Move(7, MoveType.TURN_RATE, 0));
-		moves.add(new Move(10, MoveType.TURN_RATE, -0.8));
-		moves.add(new Move(13, MoveType.TURN_RATE, 0));
-		moves.add(new Move(14, MoveType.ACCELERATION, -0.05));
+		moves.add(new Move(1, MoveType.ACCELERATION, 0.05));
+		moves.add(new Move(4, MoveType.ACCELERATION, 0));
+		moves.add(new Move(6, MoveType.TURN_RATE, 0.5));
+		moves.add(new Move(8, MoveType.TURN_RATE, 0));
+		moves.add(new Move(11, MoveType.TURN_RATE, -0.8));
+		moves.add(new Move(14, MoveType.TURN_RATE, 0));
+		moves.add(new Move(15, MoveType.ACCELERATION, -0.05));
 		return moves;
 	}
 
