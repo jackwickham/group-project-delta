@@ -31,8 +31,8 @@ public class CACC_Algorithm extends Algorithm {
 	private double pidD_NoNetwork = 10;
 
 	//turning PD parameters
-	private double turnP = 0.5;
-	private double turnD = 0.6;
+	private double turnP = 2.0;
+	private double turnD = 2.0;
 
 	//maximum and minimum acceleration in m/s
 	private double maxAcc = 0.2;
@@ -104,6 +104,10 @@ public class CACC_Algorithm extends Algorithm {
 				} else {
 					usePrediction = false;
 				}
+			case TurningPidP:
+				turnP = value;
+			case TurningPidD:
+				turnD = value;
 		}
 	}
 
@@ -140,6 +144,10 @@ public class CACC_Algorithm extends Algorithm {
 				} else {
 					return 0.0;
 				}
+			case TurningPidP:
+				return turnP;
+			case TurningPidD:
+				return turnD;
 		}
 		return null;
 	}
@@ -148,7 +156,8 @@ public class CACC_Algorithm extends Algorithm {
 		return new ParameterEnum[]{ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D,
 			ParameterEnum.MaxAcc, ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime,
 			ParameterEnum.EmergencyDistance, ParameterEnum.MaxSensorDist, ParameterEnum.pidP_NoNetwork,
-			ParameterEnum.pidD_NoNetwork, ParameterEnum.proximitySmoothing, ParameterEnum.usePrediction};
+			ParameterEnum.pidD_NoNetwork, ParameterEnum.proximitySmoothing, ParameterEnum.usePrediction,
+			ParameterEnum.TurningPidP, ParameterEnum.TurningPidD};
 	}
 
 	@Override

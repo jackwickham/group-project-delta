@@ -9,6 +9,7 @@ import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 import uk.ac.cam.cl.group_project.delta.algorithm.FrontVehicleRoute;
+import uk.ac.cam.cl.group_project.delta.algorithm.ParameterEnum;
 
 import java.io.IOException;
 
@@ -35,6 +36,8 @@ class MainClass {
 					beacon,
 					FrontVehicleRoute.RouteNumber.ROUTE_THREE
 			);
+			algo.setParameter(ParameterEnum.TurningPidP, 0.5);
+			algo.setParameter(ParameterEnum.TurningPidD, 0.6);
 			new MindstormsColourManager(colourSensor, algo).start();
 			algo.run();
 		} finally {
