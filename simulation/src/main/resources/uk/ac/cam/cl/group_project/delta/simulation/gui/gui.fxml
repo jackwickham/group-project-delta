@@ -319,7 +319,7 @@
 								   onMousePressed="#onViewPaneMousePressed"
 								   onScroll="#onViewPaneScroll" scaleY="-1.0">
 							<children>
-								<Pane fx:id="scene">
+								<Pane fx:id="scene" maxWidth="0" maxHeight="0">
 									<children>
 										<Line endX="10.0" startX="-10.0"/>
 										<Line endY="10.0" startY="-10.0"/>

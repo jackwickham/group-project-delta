@@ -419,13 +419,31 @@ public class Controller {
 	}
 
 	/**
+	 * Get the current position of the scene origin with respect to the view
+	 * pane origin.
+	 * @return    X-component of the translation.
+	 */
+	private double getSceneTranslationX() {
+		return scene.getTranslateX() + scene.getLayoutX();
+	}
+
+	/**
+	 * Get the current position of the scene origin with respect to the view
+	 * pane origin.
+	 * @return    Y-component of the translation.
+	 */
+	private double getSceneTranslationY() {
+		return scene.getTranslateY() + scene.getLayoutY();
+	}
+
+	/**
 	 * Translate an x-coordinate from relative to the bottom-right
 	 * of the view-pane in pixels to relative to the displayed world origin.
 	 * @param x    X-coordinate, in view-pane space.
 	 * @return     X-coordinate, in world space.
 	 */
 	private double fromViewPaneToWorldSpaceX(double x) {
-		return (x - scene.getTranslateX()) / (scene.getScaleX() * UNITS_PER_METRE);
+		return (x - getSceneTranslationX()) / (scene.getScaleX() * UNITS_PER_METRE);
 	}
 
 	/**
@@ -435,7 +453,7 @@ public class Controller {
 	 * @return     Y-coordinate, in world space.
 	 */
 	private double fromViewPaneToWorldSpaceY(double y) {
-		return (y - scene.getTranslateY()) / (scene.getScaleY() * UNITS_PER_METRE);
+		return (y - getSceneTranslationY()) / (scene.getScaleY() * UNITS_PER_METRE);
 	}
 
 	/**
@@ -445,7 +463,7 @@ public class Controller {
 	 * @return     X-coordinate, in view-pane space.
 	 */
 	private double fromWorldToViewPaneSpaceX(double x) {
-		return x * scene.getScaleX() * UNITS_PER_METRE + scene.getTranslateX();
+		return x * scene.getScaleX() * UNITS_PER_METRE + getSceneTranslationX();
 	}
 
 	/**
@@ -455,7 +473,7 @@ public class Controller {
 	 * @return     Y-coordinate, in view-pane space.
 	 */
 	private double fromWorldToViewPaneSpaceY(double y) {
-		return y * scene.getScaleY() * UNITS_PER_METRE + scene.getTranslateY();
+		return y * scene.getScaleY() * UNITS_PER_METRE + getSceneTranslationY();
 	}
 
 	/**
@@ -606,8 +624,12 @@ public class Controller {
 		scene.translateYProperty().unbind();
 
 		// Calculate relative drag
-		scene.setTranslateX(scene.getTranslateX() + event.getX() - cursorPosition.getX());
-		scene.setTranslateY(scene.getTranslateY() + event.getY() - cursorPosition.getY());
+		scene.setTranslateX(
+			scene.getTranslateX() + event.getX() - cursorPosition.getX()
+		);
+		scene.setTranslateY(
+			scene.getTranslateY() + event.getY() - cursorPosition.getY()
+		);
 
 		onGenericMouseEvent(event.getX(), event.getY());
 
@@ -629,8 +651,12 @@ public class Controller {
 		scene.setScaleY(scene.getScaleY() * scaling);
 
 		if (!scene.translateXProperty().isBound()) {
-			scene.setTranslateX(event.getX() - mouseWorldX * scene.getScaleX() * UNITS_PER_METRE);
-			scene.setTranslateY(event.getY() - mouseWorldY * scene.getScaleY() * UNITS_PER_METRE);
+			scene.setTranslateX(
+				event.getX() - scene.getLayoutX() - mouseWorldX * scene.getScaleX() * UNITS_PER_METRE
+			);
+			scene.setTranslateY(
+				event.getY() - scene.getLayoutY() - mouseWorldY * scene.getScaleY() * UNITS_PER_METRE
+			);
 		}
 
 	}
