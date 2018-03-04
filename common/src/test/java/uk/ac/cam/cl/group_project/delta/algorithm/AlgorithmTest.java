@@ -44,8 +44,8 @@ public class AlgorithmTest {
 	@Parameterized.Parameters(name = "{0}: Proximity: {1}, Beacons:{2}, Message:{3}")
 	public static Collection<Object[]> data() {
 		AlgorithmEnum[] algorithmEnums = AlgorithmEnum.values();
-		Double[] proximities = new Double[]{null, 0.0, 20.0};
-		Double[] beacons = new Double[]{null, 0.0, 20.0};
+		Double[] proximities = new Double[]{null, 0.0, 1.0, 20.0};
+		Double[] beacons = new Double[]{null, 0.0, 1.0,20.0};
 		Double[][] messages = {null, {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, {5.0, 2.0, 0.0, 5.0, 2.0, 0.0}};
 
 		ArrayList<Object[]> result = new ArrayList<>();

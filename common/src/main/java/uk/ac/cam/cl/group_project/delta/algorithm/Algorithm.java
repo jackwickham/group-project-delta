@@ -7,6 +7,7 @@ import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
 public abstract class Algorithm {
 
 	public static final int ALGORITHM_LOOP_DURATION = 50000000; // 50ms
+	public static final int MAXIMUM_MESSAGE_AGE = ALGORITHM_LOOP_DURATION*4; //200ms
 
 	public AlgorithmData algorithmData = new AlgorithmData();
 	protected FrontVehicleRoute frontVehicleRoute;
@@ -48,16 +49,16 @@ public abstract class Algorithm {
 			BeaconInterface beacons,
 			FrontVehicleRoute.RouteNumber routeNumber) {
 		switch (algorithmEnum) {
-		case BasicAlgorithm:
-			return new BasicAlgorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithm2:
-			return new BasicAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithm3:
-			return new BasicAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithmPID:
-			return new BasicAlgorithmPID(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
-		case BasicAlgorithmPID2:
-			return new BasicAlgorithmPID2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Naive1:
+			return new NaiveAlgorithm1(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Naive2:
+			return new NaiveAlgorithm2(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Naive3:
+			return new NaiveAlgorithm3(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Adaptive_Cruise_Control:
+			return new ACC_Algorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+		case Cooperative_Adaptive_Cruise_Control:
+			return new CACC_Algorithm(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 		}
 		return null;
 	}
@@ -106,20 +107,33 @@ public abstract class Algorithm {
 	private void readSensors() {
 		// try to get predecessors messages, trying next car infront if message null, upto the front of platoon
 		// note: leader check not needed as if leader then getPredecessorMessages() returns an empty list
-		//TODO: use timestamp in message to decide which to use
+		//uses timestamp in message to decide which to use
 		// note: individual algorithms handle case in which no message ever received
 		for (VehicleData message : algorithmData.commsInterface.getPredecessorMessages()) {
-			algorithmData.receiveMessageData = message;
-			if (algorithmData.receiveMessageData != null) {
-				algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
-				algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
-				algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
-				algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
-				algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
-				algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
-				//break if predecessor has a message otherwise loop to try one vehicle infront
-				break;
+			//loop through messages starting with predecessor up to leader
+			if(message != null) {
+				if (algorithmData.receiveMessageData != null) {
+					if (message.getStartTime() > algorithmData.receiveMessageData.getStartTime() + ALGORITHM_LOOP_DURATION) {
+						//if message is at least ALGORITHM_LOOP_DURATION time newer than use it instead
+						algorithmData.receiveMessageData = message;
+					}
+				} else {
+					algorithmData.receiveMessageData = message;
+				}
 			}
+		}
+		if(algorithmData.receiveMessageData != null &&
+				Time.getTime() - algorithmData.receiveMessageData.getStartTime() > MAXIMUM_MESSAGE_AGE) {
+			//if message age is longer than MAXIMUM_MESSAGE_AGE discard message
+			algorithmData.receiveMessageData = null;
+		}
+		if (algorithmData.receiveMessageData != null) {
+			algorithmData.predecessorAcceleration = algorithmData.receiveMessageData.getAcceleration();
+			algorithmData.predecessorSpeed = algorithmData.receiveMessageData.getSpeed();
+			algorithmData.predecessorTurnRate = algorithmData.receiveMessageData.getTurnRate();
+			algorithmData.predecessorChosenAcceleration = algorithmData.receiveMessageData.getChosenAcceleration();
+			algorithmData.predecessorChosenSpeed = algorithmData.receiveMessageData.getChosenSpeed();
+			algorithmData.predecessorChosenTurnRate = algorithmData.receiveMessageData.getChosenTurnRate();
 		}
 
 		// read data from sensors
@@ -155,7 +169,7 @@ public abstract class Algorithm {
 		}
 
 		// get initial distance reading from sensor, distance null if no distance reading
-		algorithmData.previousDistance = algorithmData.frontProximity;
+		//algorithmData.previousDistance = algorithmData.frontProximity;
 		algorithmData.previousSpeed = algorithmData.speed;
 		algorithmData.previousAcceleration = algorithmData.acceleration;
 	}

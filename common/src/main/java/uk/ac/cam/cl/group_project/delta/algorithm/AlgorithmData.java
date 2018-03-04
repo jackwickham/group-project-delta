@@ -51,6 +51,7 @@ public class AlgorithmData {
 	public double predictedPredecessorMovement;
 	public double predictedMovement;
 	public Double predictedFrontProximity;
+	public Double previousPredictedProximity;
 
 	//null if no previous distance reading
 	public Double previousDistance;

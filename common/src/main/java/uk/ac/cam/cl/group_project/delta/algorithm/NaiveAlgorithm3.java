@@ -7,22 +7,20 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.Time;
 
 /**
- * As basic algorithm 2: additionally modifies the chosen acceleration by a
+ * As naive algorithm 2: additionally modifies the chosen acceleration by a
  * linear function of the front proximity Additionally, combine the front
  * proximity predicted from the vehicle states at the beginning of the previous
  * time period, and the sensor proximity data
  */
 
-public class BasicAlgorithm3 extends Algorithm{
+public class NaiveAlgorithm3 extends Algorithm{
 
 	private double buffDist = 0.3;
 	private double maxSensorDist = 0.5;
 
-	public BasicAlgorithm3(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
+	public NaiveAlgorithm3(DriveInterface driveInterface,
+			SensorInterface sensorInterface, NetworkInterface networkInterface,
+			BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 

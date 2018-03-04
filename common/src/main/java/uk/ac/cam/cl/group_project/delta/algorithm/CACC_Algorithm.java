@@ -4,13 +4,19 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 import uk.ac.cam.cl.group_project.delta.*;
 
 /**
- *Uses the formula found in the research paper
+ * Main Cooperative cruise control Algorithm
+ * If message received over network:
+ * then takes the acceleration of the car in-front
+ * and corrects for errors in the buffer distance by using a PID.
+ * The PID uses the velocity and acceleration from the predecessor as the
+ *
+ * If no message has been received:
+ * then just uses a PID, with the D term calculated using the rate of change of error in the buffer distance.
  */
 
-public class BasicAlgorithmPID2 extends Algorithm {
+public class CACC_Algorithm extends Algorithm {
 
-	//note these defaults are not well configured
-	//ID parameters
+	// PID parameters
 	//increases response time
 	private double pidP = 4;
 	//helps prevent steady-state errors
@@ -18,9 +24,14 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//helps prevent overshoot
 	private double pidD = 2;
 
+	//these control the PID parameters when no network packets are detected
+	//Note: these will probably have to be higher than the normal values to prevent collisions when networking is down
+	private double pidP_NoNetwork = 0.5;
+	private double pidD_NoNetwork = 10;
+
 	//turning PD parameters
-	private double turnP = 0.5;//3;
-	private double turnD = 0.6;
+	private double turnP = 2.0;
+	private double turnD = 2.0;
 
 	//maximum and minimum acceleration in m/s
 	private double maxAcc = 0.2;
@@ -42,11 +53,9 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//higher value will help to smooth out spikes in the proximity sensor but will decrease the response time
 	private double proximitySmoothing = 0.5;
 
-	public BasicAlgorithmPID2(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
+	public CACC_Algorithm(DriveInterface driveInterface,
+			SensorInterface sensorInterface, NetworkInterface networkInterface,
+			BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
@@ -78,6 +87,26 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				emerDist = value;
 			case MaxSensorDist:
 				maxSensorDist = value;
+				break;
+			case pidP_NoNetwork:
+				pidP_NoNetwork = value;
+				break;
+			case pidD_NoNetwork:
+				pidD = value;
+				break;
+			case proximitySmoothing:
+				proximitySmoothing = value;
+				break;
+			case usePrediction:
+				if(value > 0) {
+					usePrediction = true;
+				} else {
+					usePrediction = false;
+				}
+			case TurningPidP:
+				turnP = value;
+			case TurningPidD:
+				turnD = value;
 		}
 	}
 
@@ -102,14 +131,32 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				return emerDist;
 			case MaxSensorDist:
 				return maxSensorDist;
+			case pidP_NoNetwork:
+				return pidP_NoNetwork;
+			case pidD_NoNetwork:
+				return pidD_NoNetwork;
+			case proximitySmoothing:
+				return proximitySmoothing;
+			case usePrediction:
+				if(usePrediction) {
+					return 1.0;
+				} else {
+					return 0.0;
+				}
+			case TurningPidP:
+				return turnP;
+			case TurningPidD:
+				return turnD;
 		}
 		return null;
 	}
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return new ParameterEnum[] {ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D, ParameterEnum.MaxAcc,
-				ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime,
-				ParameterEnum.EmergencyDistance, ParameterEnum.MaxSensorDist};
+		return new ParameterEnum[]{ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D,
+			ParameterEnum.MaxAcc, ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime,
+			ParameterEnum.EmergencyDistance, ParameterEnum.MaxSensorDist, ParameterEnum.pidP_NoNetwork,
+			ParameterEnum.pidD_NoNetwork, ParameterEnum.proximitySmoothing, ParameterEnum.usePrediction,
+			ParameterEnum.TurningPidP, ParameterEnum.TurningPidD};
 	}
 
 	@Override
@@ -118,26 +165,34 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
-		if (algorithmData.frontProximity == null && algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
-			algorithmData.frontProximity = algorithmData.closestBeacon.getDistanceLowerBound();
-		}
 
-		//if prediction is turned on use messagedata and previous front proximity to estimate the current front proximity
+		// if prediction is turned on use the data from the message
+		// and previous front proximity to estimate the current front proximity
 		if(usePrediction) {
 			if (algorithmData.lastTime != null && algorithmData.predictedFrontProximity != null) {
 				double delay = (Time.getTime() - algorithmData.lastTime) / 1E9;
 				//calculate the distance us and our predecessor have travelled since message received
-				algorithmData.predictedPredecessorMovement = Math.max(0.0, algorithmData.predecessorSpeed * delay
-						+ 0.5 * algorithmData.predecessorAcceleration * delay * delay);
-				algorithmData.predictedMovement = Math.max(0.0, algorithmData.previousSpeed * delay
-						+ 0.5 * algorithmData.previousAcceleration * delay * delay);
-				algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
-						- algorithmData.predictedMovement + algorithmData.predictedFrontProximity;
+				if(algorithmData.predecessorSpeed > 0.1) {
+					algorithmData.predictedPredecessorMovement = Math.max(0, algorithmData.predecessorSpeed * delay
+							+ 0.5 * algorithmData.predecessorAcceleration * delay * delay);
+				} else {
+					algorithmData.predictedMovement = 0;
+				}
+				if(algorithmData.previousSpeed > 0.1) {
+					algorithmData.predictedMovement = Math.max(0, algorithmData.previousSpeed * delay
+							+ 0.5 * algorithmData.previousAcceleration * delay * delay);
+				} else {
+					algorithmData.predictedMovement = 0;
+				}
+				// for safety reasons do not predict that distance has increased
+				algorithmData.predictedFrontProximity = Math.min(0,algorithmData.predictedPredecessorMovement
+						- algorithmData.predictedMovement) + algorithmData.predictedFrontProximity;
 			}
 		}
 
 		double pTerm;
-		double iTerm =0;
+		double iTerm = 0;
+		double dTerm = 0;
 		if(algorithmData.frontProximity != null && algorithmData.frontProximity < maxSensorDist) {
 			if(algorithmData.predictedFrontProximity != null) {
 				//update predicted proximity with new sensor data, weighting by proximitySmoothing coefficient
@@ -152,6 +207,8 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				emergencyStop();
 			}
 			if (algorithmData.receiveMessageData != null) {
+				//Proximity, Networking
+
 				//This multiplies the error by a constant term PID_P
 				double error = (algorithmData.predictedFrontProximity -
 						(headTime * algorithmData.speed + buffDist));
@@ -164,26 +221,39 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				iTerm = pidI * algorithmData.errorSum;
 
 			} else {
+				//Proximity, No Networking
+
 				//if no message received just use sensor data
-				pTerm = pidP * (algorithmData.predictedFrontProximity - buffDist);
+				pTerm = pidP_NoNetwork * (algorithmData.predictedFrontProximity - buffDist);
+				if(algorithmData.previousPredictedProximity != null) {
+					dTerm = pidD_NoNetwork * (algorithmData.predictedFrontProximity - algorithmData.previousPredictedProximity);
+				}
 			}
 		} else {
+			//No Proximity
+
 			//without front proximity reading p Term is not used
 			pTerm = 0;
 			iTerm = 0;
+
+			if(algorithmData.receiveMessageData == null) {
+				//if no network packet and no proximity sensor then emergency stop
+				emergencyStop();
+			}
 		}
-		double dTerm = 0;
 		if (algorithmData.receiveMessageData != null) {
 			//Multiplies the rate of change of error by a constant term PID_D
 			dTerm = pidD * (algorithmData.predecessorSpeed -
 					algorithmData.speed - headTime * algorithmData.acceleration);
-		} else {
-			//if no message has ever been received d Term not used
-			dTerm = 0;
 		}
 
-		//use predecessors acceleration as feedforward
-		double chosenAcceleration = pTerm + dTerm + iTerm + algorithmData.predecessorAcceleration;
+		double chosenAcceleration;
+		//use predecessors acceleration as feed-forward
+		if(algorithmData.receiveMessageData != null) {
+			chosenAcceleration = pTerm + dTerm + iTerm + algorithmData.predecessorAcceleration;
+		} else {
+			chosenAcceleration = pTerm + dTerm + iTerm;
+		}
 
 		//clamp chosen acceleration within range min and max acceleration
 		if (chosenAcceleration > maxAcc) {
@@ -216,5 +286,6 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		}
 
 		algorithmData.lastTime = Time.getTime();
+		algorithmData.previousPredictedProximity = algorithmData.predictedFrontProximity;
 	}
 }
