@@ -38,6 +38,7 @@ class MainClass {
 			);
 			algo.setParameter(ParameterEnum.TurningPidP, 0.5);
 			algo.setParameter(ParameterEnum.TurningPidD, 0.6);
+			algo.setParameter(ParameterEnum.PID_P, 2.0);
 			new MindstormsColourManager(colourSensor, algo).start();
 			algo.run();
 		} finally {
