@@ -16,8 +16,7 @@ import uk.ac.cam.cl.group_project.delta.*;
 
 public class CACC_Algorithm extends Algorithm {
 
-	//note these defaults are not well configured
-	//ID parameters
+	// PID parameters
 	//increases response time
 	private double pidP = 4;
 	//helps prevent steady-state errors
