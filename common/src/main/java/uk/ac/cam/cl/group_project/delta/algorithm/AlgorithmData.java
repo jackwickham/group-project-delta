@@ -62,4 +62,6 @@ public class AlgorithmData {
 
 	//sum of errors used by PID
 	public Double errorSum;
+
+	public Long lastTime;
 }

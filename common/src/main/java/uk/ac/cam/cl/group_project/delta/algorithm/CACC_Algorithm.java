@@ -19,11 +19,11 @@ public class CACC_Algorithm extends Algorithm {
 	//note these defaults are not well configured
 	//ID parameters
 	//increases response time
-	private double pidP = 1.5;
+	private double pidP = 4;
 	//helps prevent steady-state errors
 	private double pidI = 0;
 	//helps prevent overshoot
-	private double pidD = 3;
+	private double pidD = 2;
 
 	//these control the PID parameters when no network packets are detected
 	//Note: these will probably have to be higher than the normal values to prevent collisions when networking is down
@@ -31,17 +31,17 @@ public class CACC_Algorithm extends Algorithm {
 	private double pidD_NoNetwork = 10;
 
 	//turning PD parameters
-	private double turnP = 10;
-	private double turnD = 0;
+	private double turnP = 0.5;
+	private double turnD = 0.6;
 
 	//maximum and minimum acceleration in m/s
-	private double maxAcc = 2;
+	private double maxAcc = 0.2;
 	private double minAcc = -2;
 
 	//constant buffer distance in m
 	private double buffDist = 0.3;
 	//constant headway time in s
-	private double headTime = 0.1;
+	private double headTime = 0.0;
 
 	//distance below which emergency stop happens
 	private double emerDist = 0.1;
@@ -55,8 +55,8 @@ public class CACC_Algorithm extends Algorithm {
 	private double proximitySmoothing = 0.5;
 
 	public CACC_Algorithm(DriveInterface driveInterface,
-	SensorInterface sensorInterface, NetworkInterface networkInterface,
-	BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
+	        SensorInterface sensorInterface, NetworkInterface networkInterface,
+	        BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
 		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
@@ -150,12 +150,19 @@ public class CACC_Algorithm extends Algorithm {
 
 	@Override
 	public void makeDecision() {
+		// Fall back to beacon proximity if no real proximity available
+		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
+			algorithmData.frontProximity = null;
+		}
+		if (algorithmData.frontProximity == null && algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
+			algorithmData.frontProximity = algorithmData.closestBeacon.getDistanceLowerBound();
+		}
+
 		// if prediction is turned on use the data from the message
 		// and previous front proximity to estimate the current front proximity
-		//algorithmData.receiveMessageData = null;
 		if(usePrediction) {
-			if (algorithmData.receiveMessageData != null && algorithmData.predictedFrontProximity != null) {
-				double delay = ALGORITHM_LOOP_DURATION/1E9;
+			if (algorithmData.lastTime != null && algorithmData.predictedFrontProximity != null) {
+				double delay = (Time.getTime() - algorithmData.lastTime) / 1E9;
 				//calculate the distance us and our predecessor have travelled since message received
 				if(algorithmData.predecessorSpeed > 0.1) {
 					algorithmData.predictedPredecessorMovement = Math.max(0, algorithmData.predecessorSpeed * delay
@@ -175,6 +182,9 @@ public class CACC_Algorithm extends Algorithm {
 			}
 		}
 
+		double pTerm;
+		double iTerm = 0;
+		double dTerm = 0;
 		if(algorithmData.frontProximity != null && algorithmData.frontProximity < maxSensorDist) {
 			if(algorithmData.predictedFrontProximity != null) {
 				//update predicted proximity with new sensor data, weighting by proximitySmoothing coefficient
@@ -183,15 +193,7 @@ public class CACC_Algorithm extends Algorithm {
 				//if first time sensor is working then use front proximity as smoothed prediction
 				algorithmData.predictedFrontProximity = algorithmData.frontProximity;
 			}
-		} else {
-			//if front proximity is null or above maxSensorDistance set distance to null to not use it
-			algorithmData.predictedFrontProximity = null;
-		}
 
-		double pTerm;
-		double iTerm = 0;
-		double dTerm = 0;
-		if (algorithmData.predictedFrontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
 			if (algorithmData.predictedFrontProximity < emerDist) {
 				emergencyStop();
@@ -255,18 +257,27 @@ public class CACC_Algorithm extends Algorithm {
 		algorithmData.chosenAcceleration = chosenAcceleration;
 
 		//Note: This is not calculated
-		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+		algorithmData.chosenSpeed = algorithmData.speed;
 
 		//basic turning PD
-		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
 			double p = turnP * algorithmData.angle;
-			double d = turnD * (algorithmData.angle - algorithmData.angle);
+			if (algorithmData.speed < 0.1) {
+				// Prevent swerving at low speeds
+				p *= algorithmData.speed * 10;
+			}
+			double d;
+			if (algorithmData.previousAngle == null) {
+				d = 0;
+			} else {
+				d = turnD * (algorithmData.angle - algorithmData.previousAngle);
+			}
 			algorithmData.chosenTurnRate = p + d;
 		} else {
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		}
 
+		algorithmData.lastTime = Time.getTime();
 		algorithmData.previousPredictedProximity = algorithmData.predictedFrontProximity;
 	}
 }
