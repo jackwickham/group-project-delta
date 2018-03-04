@@ -166,9 +166,6 @@ public class CACC_Algorithm extends Algorithm {
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
-		if (algorithmData.frontProximity == null && algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
-			algorithmData.frontProximity = algorithmData.closestBeacon.getDistanceLowerBound();
-		}
 
 		// if prediction is turned on use the data from the message
 		// and previous front proximity to estimate the current front proximity
