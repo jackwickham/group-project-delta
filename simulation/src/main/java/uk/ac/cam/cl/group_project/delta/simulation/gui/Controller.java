@@ -418,10 +418,20 @@ public class Controller {
 
 	}
 
+	/**
+	 * Get the current position of the scene origin with respect to the view
+	 * pane origin.
+	 * @return    X-component of the translation.
+	 */
 	private double getSceneTranslationX() {
 		return scene.getTranslateX() + scene.getLayoutX();
 	}
 
+	/**
+	 * Get the current position of the scene origin with respect to the view
+	 * pane origin.
+	 * @return    Y-component of the translation.
+	 */
 	private double getSceneTranslationY() {
 		return scene.getTranslateY() + scene.getLayoutY();
 	}
