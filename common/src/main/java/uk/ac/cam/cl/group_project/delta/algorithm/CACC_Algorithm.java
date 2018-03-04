@@ -99,7 +99,7 @@ public class CACC_Algorithm extends Algorithm {
 				proximitySmoothing = value;
 				break;
 			case usePrediction:
-				if(value == 1) {
+				if(value > 0) {
 					usePrediction = true;
 				} else {
 					usePrediction = false;
@@ -131,7 +131,7 @@ public class CACC_Algorithm extends Algorithm {
 			case pidP_NoNetwork:
 				return pidP_NoNetwork;
 			case pidD_NoNetwork:
-					return pidD_NoNetwork;
+				return pidD_NoNetwork;
 			case proximitySmoothing:
 				return proximitySmoothing;
 			case usePrediction:
@@ -145,7 +145,10 @@ public class CACC_Algorithm extends Algorithm {
 	}
 	@Override
 	public ParameterEnum[] getParameterList() {
-		return ParameterEnum.values();
+		return new ParameterEnum[]{ParameterEnum.PID_P, ParameterEnum.PID_I, ParameterEnum.PID_D,
+			ParameterEnum.MaxAcc, ParameterEnum.MinAcc, ParameterEnum.BufferDistance, ParameterEnum.HeadTime,
+			ParameterEnum.EmergencyDistance, ParameterEnum.MaxSensorDist, ParameterEnum.pidP_NoNetwork,
+			ParameterEnum.pidD_NoNetwork, ParameterEnum.proximitySmoothing, ParameterEnum.usePrediction};
 	}
 
 	@Override
