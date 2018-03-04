@@ -32,7 +32,7 @@ public class BeaconTracker {
 	 *
 	 * From my measurements, 45°=15 arbitrary turn units, which gives this conversion for radians
 	 */
-	private final double RADIANS_PER_ANGLE_UNIT = 0.052359878;
+	private final double RADIANS_PER_ANGLE_UNIT = -0.052359878;
 
 	/**
 	 * Create a new instance for the provided robot

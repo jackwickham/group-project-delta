@@ -113,7 +113,7 @@ public class BeaconTrackerTest {
 		mockSensorMode.setMockSample(sample);
 
 		List<Beacon> result = classUnderTest.getBeaconData();
-		assertEquals("Wrong angle returned", Math.PI / 4, result.get(0).getAngle(), 0.02);
+		assertEquals("Wrong angle returned", -Math.PI / 4, result.get(0).getAngle(), 0.02);
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class BeaconTrackerTest {
 		mockSensorMode.setMockSample(sample);
 
 		List<Beacon> result = classUnderTest.getBeaconData();
-		assertEquals("Wrong angle returned", -Math.PI / 4, result.get(0).getAngle(), 0.03);
+		assertEquals("Wrong angle returned", Math.PI / 4, result.get(0).getAngle(), 0.03);
 	}
 
 
