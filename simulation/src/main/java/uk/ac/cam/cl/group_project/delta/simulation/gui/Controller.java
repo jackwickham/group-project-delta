@@ -471,7 +471,7 @@ public class Controller {
 				if (currentSelection != null) {
 					SimulatedCar car = currentSelection.getCar();
 					synchronized (car) {
-						car.setEnginePower(0.5);
+						car.setEnginePower(0.25);
 					}
 				}
 				break;

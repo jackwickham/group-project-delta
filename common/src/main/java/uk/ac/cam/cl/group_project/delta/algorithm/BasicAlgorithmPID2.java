@@ -12,24 +12,24 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	//note these defaults are not well configured
 	//ID parameters
 	//increases response time
-	private double pidP = 1.5;
+	private double pidP = 4;
 	//helps prevent steady-state errors
 	private double pidI = 0;
 	//helps prevent overshoot
-	private double pidD = 3;
+	private double pidD = 2;
 
 	//turning PD parameters
-	private double turnP = 10;
-	private double turnD = 0;
+	private double turnP = 0.5;//3;
+	private double turnD = 0.6;
 
 	//maximum and minimum acceleration in m/s
-	private double maxAcc = 2;
+	private double maxAcc = 0.2;
 	private double minAcc = -2;
 
 	//constant buffer distance in m
 	private double buffDist = 0.3;
 	//constant headway time in s
-	private double headTime = 0.1;
+	private double headTime = 0.0;
 
 	//distance below which emergency stop happens
 	private double emerDist = 0.1;
@@ -40,7 +40,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 	private boolean usePrediction = true;
 
 	//higher value will help to smooth out spikes in the proximity sensor but will decrease the response time
-	private double proximitySmoothing = 0.8;
+	private double proximitySmoothing = 0.5;
 
 	public BasicAlgorithmPID2(DriveInterface driveInterface,
 			SensorInterface sensorInterface,
@@ -114,20 +114,30 @@ public class BasicAlgorithmPID2 extends Algorithm {
 
 	@Override
 	public void makeDecision() {
+		// Fall back to beacon proximity if no real proximity available
+		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
+			algorithmData.frontProximity = null;
+		}
+		if (algorithmData.frontProximity == null && algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
+			algorithmData.frontProximity = algorithmData.closestBeacon.getDistanceLowerBound();
+		}
+
 		//if prediction is turned on use messagedata and previous front proximity to estimate the current front proximity
 		if(usePrediction) {
-			if (algorithmData.receiveMessageData != null && algorithmData.predictedFrontProximity != null) {
-				double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
+			if (algorithmData.lastTime != null && algorithmData.predictedFrontProximity != null) {
+				double delay = (Time.getTime() - algorithmData.lastTime) / 1E9;
 				//calculate the distance us and our predecessor have travelled since message received
-				algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
-						+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
-				algorithmData.predictedMovement = algorithmData.previousSpeed * delay
-						+ 0.5 * algorithmData.previousAcceleration * delay * delay;
+				algorithmData.predictedPredecessorMovement = Math.max(0.0, algorithmData.predecessorSpeed * delay
+						+ 0.5 * algorithmData.predecessorAcceleration * delay * delay);
+				algorithmData.predictedMovement = Math.max(0.0, algorithmData.previousSpeed * delay
+						+ 0.5 * algorithmData.previousAcceleration * delay * delay);
 				algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 						- algorithmData.predictedMovement + algorithmData.predictedFrontProximity;
 			}
 		}
 
+		double pTerm;
+		double iTerm =0;
 		if(algorithmData.frontProximity != null && algorithmData.frontProximity < maxSensorDist) {
 			if(algorithmData.predictedFrontProximity != null) {
 				//update predicted proximity with new sensor data, weighting by proximitySmoothing coefficient
@@ -136,14 +146,7 @@ public class BasicAlgorithmPID2 extends Algorithm {
 				//if first time sensor is working then use front proximity as smoothed prediction
 				algorithmData.predictedFrontProximity = algorithmData.frontProximity;
 			}
-		} else {
-			//if front proximity is null or above maxSensorDistance set distance to null to not use it
-			algorithmData.predictedFrontProximity = null;
-		}
 
-		double pTerm;
-		double iTerm =0;
-		if (algorithmData.predictedFrontProximity != null) {
 			//decide on chosen acceleration, speed and turnRate
 			if (algorithmData.predictedFrontProximity < emerDist) {
 				emergencyStop();
@@ -192,16 +195,26 @@ public class BasicAlgorithmPID2 extends Algorithm {
 		algorithmData.chosenAcceleration = chosenAcceleration;
 
 		//Note: This is not calculated
-		algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
+		algorithmData.chosenSpeed = algorithmData.speed;
 
 		//basic turning PD
-		//d term not currently not used as overshoot is not a problem
 		if (algorithmData.closestBeacon != null && algorithmData.closestBeacon.getDistanceLowerBound() < maxSensorDist) {
 			double p = turnP * algorithmData.angle;
-			double d = turnD * (algorithmData.angle - algorithmData.angle);
+			if (algorithmData.speed < 0.1) {
+				// Prevent swerving at low speeds
+				p *= algorithmData.speed * 10;
+			}
+			double d;
+			if (algorithmData.previousAngle == null) {
+				d = 0;
+			} else {
+				d = turnD * (algorithmData.angle - algorithmData.previousAngle);
+			}
 			algorithmData.chosenTurnRate = p + d;
 		} else {
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
 		}
+
+		algorithmData.lastTime = Time.getTime();
 	}
 }
