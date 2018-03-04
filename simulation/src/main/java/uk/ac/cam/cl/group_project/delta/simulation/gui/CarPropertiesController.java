@@ -3,6 +3,7 @@ package uk.ac.cam.cl.group_project.delta.simulation.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 
 public class CarPropertiesController {
@@ -57,5 +58,8 @@ public class CarPropertiesController {
 
 	@FXML
 	public ListView<String> beaconList;
+
+	@FXML
+	public GridPane algorithmParameters;
 
 }
