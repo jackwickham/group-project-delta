@@ -21,9 +21,9 @@ public class ACC_Algorithm extends Algorithm{
 	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double buffDist = 0.8;
+	private double buffDist = 0.4;
 	//constant headway time in s
-	private double headTime = 0.2;
+	private double headTime = 0.1;
 
 	private double maxSensorDist = 2;
 
@@ -109,11 +109,12 @@ public class ACC_Algorithm extends Algorithm{
 	public void makeDecision() {
 		//decide on chosen acceleration, speed and turnRate
 
-		//calculate time since message received
-		Double weightedFrontProximity;
 		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
-			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
-			//calculate the distance us and our predecessor have travelled since message received
+
+			//calculate time since message received
+			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 1e9;
+
+			// Calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 					+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
 			algorithmData.predictedMovement = algorithmData.previousSpeed * delay
@@ -123,17 +124,23 @@ public class ACC_Algorithm extends Algorithm{
 
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
-		} else {
-			//no message received or no previous distance
+
+		}
+		else {
+			// No message received or no previous distance
 			algorithmData.predictedFrontProximity = null;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
+
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
-		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-				algorithmData.frontProximity);
+
+		Double weightedFrontProximity = weightFrontProximity(
+			algorithmData.predictedFrontProximity,
+			algorithmData.frontProximity
+		);
 
 		if (weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity
