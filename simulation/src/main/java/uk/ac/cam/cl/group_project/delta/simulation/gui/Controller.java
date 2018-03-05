@@ -814,6 +814,10 @@ public class Controller {
 			}
 		}
 
+		// Reset controls
+		pauseButton.setSelected(false);
+		timeDilationSlider.setValue(1.0);
+
 		// Clear network log
 		clearNetworkLog();
 
