@@ -743,15 +743,11 @@ public class Controller {
 					currentSelection = node;
 					// (x, y) = (viewDimension / 2 - pos) * scale
 					scene.translateXProperty().bind(
-						viewPane.widthProperty()
-							.divide(2)
-							.subtract(node.translateXProperty())
+						node.translateXProperty()
 							.multiply(scene.scaleXProperty())
 					);
 					scene.translateYProperty().bind(
-						viewPane.heightProperty()
-							.divide(2)
-							.subtract(node.translateYProperty())
+						node.translateYProperty()
 							.multiply(scene.scaleYProperty())
 					);
 				});
