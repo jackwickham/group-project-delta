@@ -745,10 +745,12 @@ public class Controller {
 					scene.translateXProperty().bind(
 						node.translateXProperty()
 							.multiply(scene.scaleXProperty())
+							.negate()
 					);
 					scene.translateYProperty().bind(
 						node.translateYProperty()
 							.multiply(scene.scaleYProperty())
+							.negate()
 					);
 				});
 				vehicleContextMenu.show(node, e.getScreenX(), e.getScreenY());
