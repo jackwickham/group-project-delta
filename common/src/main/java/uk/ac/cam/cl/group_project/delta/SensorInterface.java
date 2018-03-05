@@ -5,21 +5,21 @@ import java.util.List;
 public interface SensorInterface {
 
 	/**
-	 * Returns a floating point value representing the distance 
-	 * to the nearest object. The value returned will likely be 
-	 * approximate. This method may not be implemented, depending 
+	 * Returns a floating point value representing the distance
+	 * to the nearest object. The value returned will likely be
+	 * approximate. This method may not be implemented, depending
 	 * on the hardware available, and will return null in this case.
-	 * 
+	 *
 	 * @return the distance in m or null if there is no hardware support
 	 */
 	public Double getFrontProximity();
 
 	/**
-	 * Returns a list of objects that represent the visible beacons 
-	 * and their positions relative to this vehicle. Beacons are installed 
-	 * in all platooning vehicles, but are not exclusive to these vehicles. 
+	 * Returns a list of objects that represent the visible beacons
+	 * and their positions relative to this vehicle. Beacons are installed
+	 * in all platooning vehicles, but are not exclusive to these vehicles.
 	 * Position accuracy may degrade with distance and have significant noise.
-	 * 
+	 *
 	 * @return list containing Beacons visible
 	 */
 	public List<Beacon> getBeacons();
@@ -35,7 +35,7 @@ public interface SensorInterface {
 	 * @return speed in m/s
 	 */
 	public double getSpeed();
-	
+
 	/**
 	 * Returns the current turn rate.
 	 * @return turn rate in rad/s
@@ -44,7 +44,7 @@ public interface SensorInterface {
 
 	/**
 	 * Returns the current position of the vehicle in some standard
-	 * coordinate system. 
+	 * coordinate system.
 	 * @returns current position 2D vector
 	 */
 	// public Vector getAbsolutePosition();

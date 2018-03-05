@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import java.util.List;
+
 public interface CommsInterface {
 
 	/**
@@ -18,7 +20,7 @@ public interface CommsInterface {
 	 *
 	 * @return the latest leader's message
 	 */
-	public VehicleData getLeaderMessage();
+	//public VehicleData getLeaderMessage();
 
 	/**
 	 * Retrieves the last received message from a vehicle ahead,
@@ -30,7 +32,18 @@ public interface CommsInterface {
 	 * @return the latest message from the vehicle (inFront)
 	 * 		or null if this is beyond the leader
 	 */
-	public VehicleData getPredecessorMessage(int inFront);
+	//public VehicleData getPredecessorMessage(int inFront);
+
+	/**
+	 * Retrieves an ordered list of the data from the vehicles in front of
+	 * the current vehicle. The list will be empty but not null if the
+	 * current vehicle is the leader. The list will contain null values for
+	 * messages which have not been received recently by vehicles in front of
+	 * this one. The list will be ordered so the leader is the final message.
+	 *
+	 * @return the list of messages from vehicles in front
+	 */
+	public List<VehicleData> getPredecessorMessages();
 
 	/**
 	 * Returns a boolean value indicating if this vehicle is the current

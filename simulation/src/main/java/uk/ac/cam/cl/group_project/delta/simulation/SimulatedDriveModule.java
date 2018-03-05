@@ -29,7 +29,7 @@ public class SimulatedDriveModule implements DriveInterface {
 	 * @param acceleration in m/s^2
 	 */
 	public void setAcceleration(double acceleration) {
-		car.setEnginePower(acceleration);
+		car.setAcceleration(acceleration);
 	}
 
 	/**
@@ -41,13 +41,7 @@ public class SimulatedDriveModule implements DriveInterface {
 	 * @param turnRate in rad/s
 	 */
 	public void setTurnRate(double turnRate) {
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
-		car.setWheelAngle(
-			turnRate * car.getVelocity().dot(vecHeading)
-		);
+		car.setTurnRate(turnRate);
 	}
 
 	/**

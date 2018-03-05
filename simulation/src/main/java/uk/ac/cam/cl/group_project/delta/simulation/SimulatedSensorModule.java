@@ -22,9 +22,9 @@ public class SimulatedSensorModule implements SensorInterface {
 	private PhysicsCar car;
 
 	/**
-	 * Maximum angle from view normal that the sensor can detect, in degrees.
+	 * Maximum angle from view normal that the sensor can detect, in radians.
 	 */
-	public static final double VIEW_HALF_ANGLE = 25.0;
+	public static final double VIEW_HALF_ANGLE = Math.PI / 4; // 45°
 
 	/**
 	 * Constructs a sensor module for given car in provided world.
@@ -45,28 +45,24 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return the distance in m or null if there is no hardware support
 	 */
 	public Double getFrontProximity() {
-
 		List<PhysicsBody> bodies = world.getBodies();
 
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		Vector2D vecHeading = car.getHeadingVector();
 
 		double distance = Double.POSITIVE_INFINITY;
 
 		for (PhysicsBody body : bodies) {
+			if (body != car) {
+				Vector2D ray = body.getPosition().subtract(car.getSensorPosition()).normalise();
+				Vector2D collisionLocation = body.getRayCollisionPosition(ray);
+				Vector2D relPos = collisionLocation.subtract(car.getSensorPosition());
+				double relDistance = relPos.magnitude();
+				double angle = vecHeading.angleTo(relPos);
 
-			Vector2D relPos = body.getPosition().subtract(car.getPosition());
-			double relDistance = relPos.magnitude();
-			double angle = Math.acos(
-				relPos.dot(vecHeading) / relDistance
-			);
-
-			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
-				distance = Math.min(distance, relDistance);
+				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
+					distance = Math.min(distance, relDistance);
+				}
 			}
-
 		}
 
 		return distance;
@@ -86,28 +82,24 @@ public class SimulatedSensorModule implements SensorInterface {
 		List<Beacon> beacons = new ArrayList<>();
 		List<PhysicsBody> bodies = world.getBodies();
 
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
+		Vector2D vecHeading = car.getHeadingVector();
 
 		for (PhysicsBody body : bodies) {
+			if (body != car && body instanceof SimulatedCar) {
+				SimulatedCar otherCar = (SimulatedCar) body;
+				Vector2D relPos = otherCar.getBeaconPosition().subtract(car.getSensorPosition());
+				double relDistance = relPos.magnitude();
+				double angle = vecHeading.angleTo(relPos);
 
-			Vector2D relPos = body.getPosition().subtract(car.getPosition());
-			double relDistance = relPos.magnitude();
-			double angle = Math.acos(
-				relPos.dot(vecHeading) / relDistance
-			);
-
-			if (Math.abs(angle) < VIEW_HALF_ANGLE) {
-				beacons.add(new Beacon(
-					body.getUuid(),
-					relDistance,
-					relDistance,
-					angle
-				));
+				if (Math.abs(angle) < VIEW_HALF_ANGLE) {
+					beacons.add(new Beacon(
+						otherCar.getUuid(),
+						relDistance,
+						relDistance,
+						angle
+					));
+				}
 			}
-
 		}
 
 		return beacons;
@@ -119,7 +111,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return acceleration in m/s^2
 	 */
 	public double getAcceleration() {
-		return car.getAcceleration().magnitude();
+		return car.getAcceleration();
 	}
 
 	/**
@@ -127,7 +119,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return speed in m/s
 	 */
 	public double getSpeed() {
-		return car.getVelocity().magnitude();
+		return car.getSpeed();
 	}
 
 	/**
@@ -135,12 +127,7 @@ public class SimulatedSensorModule implements SensorInterface {
 	 * @return turn rate in rad/s
 	 */
 	public double getTurnRate() {
-		double heading = car.getHeading();
-		Vector2D vecHeading = new Vector2D(
-			-Math.sin(heading), Math.cos(heading)
-		);
-		double radius = car.getWheelBase() / Math.sin(car.getWheelAngle());
-		return car.getVelocity().dot(vecHeading) / radius;
+		return car.getTurnRate();
 	}
 
 	/**

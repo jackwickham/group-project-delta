@@ -1,5 +1,8 @@
 package uk.ac.cam.cl.group_project.delta.algorithm.communications;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.ac.cam.cl.group_project.delta.algorithm.CommsInterface;
 import uk.ac.cam.cl.group_project.delta.algorithm.VehicleData;
 
@@ -10,31 +13,30 @@ public class Communications implements CommsInterface {
 	 * passed through
 	 */
 	private ControlLayer messageLayer;
-	
+
 	/**
 	 * The mapping from relative positions in the platoon to the latest message
 	 * this vehicle has received from them. Where get(0) indicates the current vehicle
 	 * and get(1) indicates the vehicle in front.
 	 */
 	private PlatoonLookup messageLookup;
-	
+
 	/**
 	 * The implementation of the top layer of the communications stack.
 	 * Passes messages down to the MessageReceiver as gets messages through the PlatoonLookup
-	 * 
+	 *
 	 * @param messageLayer - the layer through which messages are passed
 	 * @param messageLookup - the mapping from relative positions to their latest message
 	 */
 	public Communications(
-			ControlLayer messageLayer, 
-			PlatoonLookup messageLookup) {
-		this.messageLookup = messageLookup;
+			ControlLayer messageLayer) {
+		this.messageLookup = messageLayer.getPlatoonLookup();
 		this.messageLayer = messageLayer;
 	}
-	
+
 	/**
 	 * Send a message by passing it to the lower layer
-	 * 
+	 *
 	 * @param message - the message to be sent
 	 */
 	@Override
@@ -43,39 +45,20 @@ public class Communications implements CommsInterface {
 	}
 
 	/**
-	 * Return the message last received by the leader
-	 * 
-	 * @return the latest message from the leader
+	 * Return the messages from vehicles in front of this one
 	 */
 	@Override
-	public VehicleData getLeaderMessage() {
+	public List<VehicleData> getPredecessorMessages() {
 		messageLayer.updateMessages();
-		
-		if(messageLookup.containsKey(messageLayer.getCurrentPosition())) {
-			return messageLookup.get(messageLayer.getCurrentPosition());
-		} else {
-			return null;
+		List<VehicleData> data = new ArrayList<>(messageLayer.getCurrentPosition());
+		for(int i = 1; i <= messageLayer.getCurrentPosition(); i++) {
+			if(messageLookup.containsKey(i)) {
+				data.add(messageLookup.get(i));
+			} else {
+				data.add(null);
+			}
 		}
-	}
-
-	/**
-	 * Return the latest message from the vehicle which is inFront ahead
-	 * 
-	 * @param inFront - the relative position ahead to return
-	 * @throws IllegalArgumentException - if the inFront argument is negative or 0
-	 * @return the latest message for the requested vehicle, null if there is no data
-	 */
-	@Override
-	public VehicleData getPredecessorMessage(int inFront) {
-		messageLayer.updateMessages();
-		if(inFront <= 0) {
-			throw new IllegalArgumentException("Tried to get the message from vehicles behind.");
-		}
-		if(messageLookup.containsKey(inFront)) {
-			return messageLookup.get(inFront);
-		} else {
-			return null;
-		}
+		return data;
 	}
 
 	/**

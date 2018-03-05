@@ -2,7 +2,10 @@ package uk.ac.cam.cl.group_project.delta.algorithm;
 
 import java.nio.ByteBuffer;
 
-public class VehicleData {
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.Message;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.MessageType;
+
+public class VehicleData extends Message {
 
 	private final double speed;
 	private final double acceleration;
@@ -11,11 +14,11 @@ public class VehicleData {
 	private final double chosenAcceleration;
 	private final double chosenTurnRate;
 	private long startTime;
-	
+
 	/**
 	 * Create an immutable MessageData object to be passed to the algorithm
 	 * or to be broadcast over the network
-	 * 
+	 *
 	 * @param speed
 	 * @param acceleration
 	 * @param turnRate
@@ -36,28 +39,27 @@ public class VehicleData {
 	/**
 	 * Recreate the message from the bytebuffer, the bytebuffer should be
 	 * positioned at the start of the data, not at the start of the packet
-	 * 
+	 *
 	 * @param rawBytes the bytes to be converted
 	 * @return a new data packet with the specific data
 	 */
-	public static VehicleData generateDataFromBytes(ByteBuffer bytes) {
-		return new VehicleData(
-				bytes.getDouble(),								// speed
-				bytes.getDouble(),								// acceleration
-				bytes.getDouble(),								// turnRate
-				bytes.getDouble(),								// chosenSpeed
-				bytes.getDouble(),								// chosenAcceleration
-				bytes.getDouble()								// chosenTurnRate
-				);
+	public VehicleData(ByteBuffer bytes) {
+		this.speed = bytes.getDouble();
+		this.acceleration = bytes.getDouble();
+		this.turnRate = bytes.getDouble();
+		this.chosenSpeed = bytes.getDouble();
+		this.chosenAcceleration = bytes.getDouble();
+		this.chosenTurnRate = bytes.getDouble();
 	}
-	
+
 	/**
 	 * Append the data in this object to the bytebuffer, the bytebuffer
 	 * should be positioned at the start of the data section or information
 	 * will be overwritten
-	 * 
+	 *
 	 * @return a byte representation of the data
 	 */
+	@Override
 	public ByteBuffer appendToBuffer(ByteBuffer bytes) {
 		bytes.putDouble(speed);
 		bytes.putDouble(acceleration);
@@ -66,6 +68,11 @@ public class VehicleData {
 		bytes.putDouble(chosenAcceleration);
 		bytes.putDouble(chosenTurnRate);
 		return bytes;
+	}
+
+	@Override
+	public MessageType getType() {
+		return MessageType.Data;
 	}
 
 	public double getSpeed() {

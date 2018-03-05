@@ -1,8 +1,10 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
+import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.MessageReceipt;
 import uk.ac.cam.cl.group_project.delta.NetworkInterface;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -10,6 +12,7 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -19,7 +22,7 @@ import java.util.List;
  *
  * @author Jack Wickham
  */
-public class Network implements NetworkInterface {
+public class Network implements NetworkInterface, Closeable {
 	/**
 	 * The socket used to communicate with other robots
 	 */
@@ -38,27 +41,27 @@ public class Network implements NetworkInterface {
 	/**
 	 * A list of messages received since the last call to {@link #pollData}
 	 */
-	private final List<MessageReceipt> receivedMessages;
+	private final LinkedHashSet<MessageReceipt> receivedMessages;
 
 	/**
 	 * The thread which will run the algorithm, this can be interrupted when
 	 * an emergency message is received.
 	 */
 	private final Thread algorithmThread;
-	
+
 	/**
 	 * Construct a new network instance, the algorithm thread is passed as an argument
 	 * so that the thread which creates the interfaces isn't then tied to running the
 	 * algorithm.
 	 *
 	 * @param algorithmThread - the thread the algorithm will run on
-	 * 
+	 *
 	 * @throws IOException if no suitable broadcast address can be found
 	 * @throws IOException if it is unable to bind to udp:0.0.0.0:5187
 	 */
 	public Network (Thread algorithmThread) throws IOException {
 		this.algorithmThread = algorithmThread;
-		
+
 		// Find the broadcast IP
 		java.net.NetworkInterface iface = java.net.NetworkInterface.getByName("wlan0");
 		List<InterfaceAddress> interfaceAddresses = iface.getInterfaceAddresses();
@@ -79,7 +82,7 @@ public class Network implements NetworkInterface {
 		socket.setBroadcast(true);
 
 		// Start the listener
-		receivedMessages = new ArrayList<>();
+		receivedMessages = new LinkedHashSet<>();
 		ListenerThread lt = new ListenerThread();
 		lt.setDaemon(true);
 		lt.start();
@@ -97,6 +100,7 @@ public class Network implements NetworkInterface {
 			socket.send(packet);
 		} catch (IOException e) {
 			// This isn't good, but we want to try to keep going
+			Log.warn(e);
 		}
 	}
 
@@ -120,6 +124,7 @@ public class Network implements NetworkInterface {
 	/**
 	 * Shut down the connection
 	 */
+	@Override
 	public void close () {
 		socket.close();
 	}
@@ -132,27 +137,33 @@ public class Network implements NetworkInterface {
 		public void run () {
 			try {
 				while (true) {
-					byte[] data = new byte[200];
+					byte[] data = new byte[NetworkInterface.MAXIMUM_PACKET_SIZE];
 					DatagramPacket receivedPacket = new DatagramPacket(data, data.length);
 					socket.receive(receivedPacket);
-					if (receivedPacket.getLength() > 200) {
-						// TODO: log error - packet too large
+					if (receivedPacket.getLength() > NetworkInterface.MAXIMUM_PACKET_SIZE) {
+						Log.warn("Received a packet that was too long (" +
+								Integer.toString(receivedPacket.getLength()) + "B)");
+
 						continue;
 					}
 					byte[] receivedData = Arrays.copyOf(receivedPacket.getData(), receivedPacket.getLength());
-					
+
 					if(MessageReceipt.isEmergencyMessage(receivedData)) {
 						algorithmThread.interrupt();
 						// Can continue, but shouldn't be necessary
 						// Might be useful to log the messages after this or something
 					}
 					synchronized (receivedMessages) {
-						receivedMessages.add(new MessageReceipt(receivedData));
+						MessageReceipt receipt = new MessageReceipt(receivedData);
+						// Remove then add it so that it is in the correct location in the collection
+						// If we received messages with the same header, the most recent copy
+						receivedMessages.remove(receipt);
+						receivedMessages.add(receipt);
 					}
 				}
 			} catch (IOException e) {
 				if (!socket.isClosed()) {
-					// TODO: Log error
+					Log.critical(e);
 				}
 			}
 		}

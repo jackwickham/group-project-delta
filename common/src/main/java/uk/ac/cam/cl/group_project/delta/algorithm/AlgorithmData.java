@@ -1,47 +1,67 @@
 package uk.ac.cam.cl.group_project.delta.algorithm;
 
+import uk.ac.cam.cl.group_project.delta.Beacon;
 import uk.ac.cam.cl.group_project.delta.DriveInterface;
 import uk.ac.cam.cl.group_project.delta.SensorInterface;
+import uk.ac.cam.cl.group_project.delta.algorithm.communications.ControlLayer;
+
+import java.util.List;
 
 //class for storing and passing data used by algorithm
 public class AlgorithmData {
 
-	CommsInterface commsInterface;
-	SensorInterface sensorInterface;
-	DriveInterface driveInterface;
+	public ControlLayer controlLayer;
+	public CommsInterface commsInterface;
+	public SensorInterface sensorInterface;
+	public DriveInterface driveInterface;
 
-	VehicleData receiveMessageData;
-	
+	public VehicleData receiveMessageData;
+
 	// True when an emergency has occurred
-	boolean emergencyOccurred = false;
+	public boolean emergencyOccurred = false;
 
 	//current vehicle state
-	double acceleration;
-	double speed;
-	double turnRate;
-	double sensorFrontProximity;
-	double chosenSpeed;
-	double chosenAcceleration;
-	double chosenTurnRate;
+	public double acceleration;
+	public double speed;
+	public double turnRate;
+
+	//null if no reading
+	public Double sensorFrontProximity;
+
+	public List<Beacon> beacons;
+	public Beacon closestBeacon;
+	public Double angle;
+
+	//frontProximity derived from beacons and sensor front proximity
+	public Double frontProximity;
+
+	public double chosenSpeed;
+	public double chosenAcceleration;
+	public double chosenTurnRate;
 
 
 	//predecessor vehicle state
-	double predecessorAcceleration;
-	double predecessorSpeed;
-	double predecessorTurnRate;
-	double predecessorChosenAcceleration;
-	double predecessorChosenSpeed;
-	double predecessorChosenTurnRate;
+	public double predecessorAcceleration;
+	public double predecessorSpeed;
+	public double predecessorTurnRate;
+	public double predecessorChosenAcceleration;
+	public double predecessorChosenSpeed;
+	public double predecessorChosenTurnRate;
 
-	double predictedPredecessorMovement;
-	double predictedMovement;
-	double predictedFrontProximity;
+	public double predictedPredecessorMovement;
+	public double predictedMovement;
+	public Double predictedFrontProximity;
+	public Double previousPredictedProximity;
 
-	double timePeriod;
+	//null if no previous distance reading
+	public Double previousDistance;
+	public double previousSpeed;
+	public double previousAcceleration;
 
-	double previousDistance;
-	double previousSpeed;
-	double previousAcceleration;
+	public Double previousAngle;
 
-	MiniPID miniPID;
+	//sum of errors used by PID
+	public Double errorSum;
+
+	public Long lastTime;
 }

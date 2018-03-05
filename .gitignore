@@ -182,3 +182,7 @@ gradle-app.setting
 gradle/wrapper/*
 
 !/lib/*
+
+# Ignore the output from the simulation
+sim_*.csv
+out/

@@ -10,10 +10,12 @@ public class Sensor implements SensorInterface {
 
 	private Drive drive;
 	private Ultrasound ultrasound;
+	private BeaconTracker beaconTracker;
 
-	public Sensor(EV3 ev3, Drive drive) {
-		this.drive = drive;
-		this.ultrasound = new Ultrasound(ev3);
+	public Sensor(Drive d, EV3 ev3) {
+		drive = d;
+		ultrasound = new Ultrasound(ev3);
+		beaconTracker = new BeaconTracker(ev3);
 	}
 
 	/**
@@ -39,7 +41,7 @@ public class Sensor implements SensorInterface {
 	 */
 	@Override
 	public List<Beacon> getBeacons() {
-		return null;
+		return beaconTracker.getBeaconData();
 	}
 
 	/**

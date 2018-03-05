@@ -16,56 +16,33 @@ public class CommunicationsTest {
 	public void getLeaderMessageTest() {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		assertNotNull(controlLayer);
-		
+
 		PlatoonLookup lookup = new PlatoonLookup();
+
+		when(controlLayer.getPlatoonLookup()).thenReturn(lookup);
+
 		VehicleData data = new VehicleData(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 		lookup.put(2, data);
-		
-		Communications comms = new Communications(controlLayer, lookup);
-		
-		assertEquals(comms.getLeaderMessage(), data);
+
+		Communications comms = new Communications(controlLayer);
+
+		assertEquals(comms.getPredecessorMessages().get(comms.getPredecessorMessages().size()-1), data);
 	}
 
 	@Test
 	public void getPredecessorMessageValidTest() {
 		ControlLayer controlLayer = mock(ControlLayer.class);
 		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		assertNotNull(controlLayer);
-		
+
 		PlatoonLookup lookup = new PlatoonLookup();
+
+		when(controlLayer.getPlatoonLookup()).thenReturn(lookup);
+
 		VehicleData data = new VehicleData(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 		lookup.put(1, data);
-		
-		Communications comms = new Communications(controlLayer, lookup);
-		
-		assertEquals(comms.getPredecessorMessage(1), data);
-	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void getPredecessorMessageNegativeTest() {
-		ControlLayer controlLayer = mock(ControlLayer.class);
-		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		assertNotNull(controlLayer);
-		
-		PlatoonLookup lookup = new PlatoonLookup();
-		
-		Communications comms = new Communications(controlLayer, lookup);
-		
-		// Throws IllegalArgumentException
-		comms.getPredecessorMessage(-1);
-	}
+		Communications comms = new Communications(controlLayer);
 
-	@Test
-	public void getPredecessorMessageOutOfBoundsTest() {
-		ControlLayer controlLayer = mock(ControlLayer.class);
-		when(controlLayer.getCurrentPosition()).thenReturn(2);
-		assertNotNull(controlLayer);
-		
-		PlatoonLookup lookup = new PlatoonLookup();
-		
-		Communications comms = new Communications(controlLayer, lookup);
-		
-		assertNull(comms.getPredecessorMessage(5));
+		assertEquals(comms.getPredecessorMessages().get(0), data);
 	}
 }

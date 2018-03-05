@@ -2,6 +2,36 @@ apply plugin: 'application'
 
 mainClassName = 'uk.ac.cam.cl.group_project.delta.simulation.MainClass'
 
+// Use Java 8
+sourceCompatibility = 8
+targetCompatibility = 8
+
 dependencies {
 	compile project(':common')
+}
+
+compileJava {
+	// Reset to Java 8 compilation
+	options.bootstrapClasspath = null
+}
+
+buildscript {
+	dependencies {
+		classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+	}
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+}
+
+// Ensure that common has been compiled to a jar so that the most up to date files will be included in our jar
+jar.dependsOn(":common:jar")
+
+apply plugin: 'javafx-gradle-plugin'
+
+jfx {
+	mainClass = 'uk.ac.cam.cl.group_project.delta.simulation.gui.Gui'
+	vendor = 'Delta'
+	runJavaParameter = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
 }
