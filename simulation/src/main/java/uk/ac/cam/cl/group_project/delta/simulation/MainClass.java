@@ -46,7 +46,7 @@ class MainClass {
 			world.getBodies().add(car);
 
 			car.setController(Algorithm.createAlgorithm(
-					AlgorithmEnum.BasicAlgorithm,
+					AlgorithmEnum.Naive1,
 					car.getDriveInterface(),
 					car.getSensorInterface(),
 					car.getNetworkInterface(),

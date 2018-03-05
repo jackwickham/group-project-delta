@@ -1,7 +1,6 @@
 package uk.ac.cam.cl.group_project.delta.lego;
 
 import lejos.hardware.BrickFinder;
-import lejos.hardware.Keys;
 import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -10,6 +9,7 @@ import uk.ac.cam.cl.group_project.delta.Log;
 import uk.ac.cam.cl.group_project.delta.algorithm.Algorithm;
 import uk.ac.cam.cl.group_project.delta.algorithm.AlgorithmEnum;
 import uk.ac.cam.cl.group_project.delta.algorithm.FrontVehicleRoute;
+import uk.ac.cam.cl.group_project.delta.algorithm.ParameterEnum;
 
 import java.io.IOException;
 
@@ -29,13 +29,16 @@ class MainClass {
 		try {
 			network = new Network(Thread.currentThread());
 			Algorithm algo = Algorithm.createAlgorithm(
-					AlgorithmEnum.BasicAlgorithmPID2,
+					AlgorithmEnum.Cooperative_Adaptive_Cruise_Control,
 					drive,
 					sensor,
 					network,
 					beacon,
 					FrontVehicleRoute.RouteNumber.ROUTE_THREE
 			);
+			algo.setParameter(ParameterEnum.TurningPidP, 0.5);
+			algo.setParameter(ParameterEnum.TurningPidD, 0.6);
+			algo.setParameter(ParameterEnum.PID_P, 2.0);
 			new MindstormsColourManager(colourSensor, algo).start();
 			algo.run();
 		} finally {

@@ -7,10 +7,10 @@ import uk.ac.cam.cl.group_project.delta.SensorInterface;
 import uk.ac.cam.cl.group_project.delta.Time;
 
 /**
- * As basic algorithm 3.
- * Additionally, uses a PID to calculate the chosen acceleration
+ * Adaptive cruise control (no networking)
+ * Uses a PID to calculate the chosen acceleration
  */
-public class BasicAlgorithmPID extends Algorithm{
+public class ACC_Algorithm extends Algorithm{
 	//ID parameters
 	private double pidP = 0.5;
 	private double pidI = 0;
@@ -21,18 +21,16 @@ public class BasicAlgorithmPID extends Algorithm{
 	private double minAcc = -2;
 
 	//constant buffer distance in m
-	private double buffDist = 0.8;
+	private double buffDist = 0.4;
 	//constant headway time in s
-	private double headTime = 0.2;
+	private double headTime = 0.1;
 
 	private double maxSensorDist = 2;
 
-	public BasicAlgorithmPID(DriveInterface driveInterface,
-			SensorInterface sensorInterface,
-			NetworkInterface networkInterface,
-			BeaconInterface beacons,
-			FrontVehicleRoute.RouteNumber routeNumber) {
-		super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
+	public ACC_Algorithm(DriveInterface driveInterface,
+				SensorInterface sensorInterface, NetworkInterface networkInterface,
+				BeaconInterface beacons, FrontVehicleRoute.RouteNumber routeNumber) {
+				super(driveInterface, sensorInterface, networkInterface, beacons, routeNumber);
 	}
 
 	@Override
@@ -111,13 +109,12 @@ public class BasicAlgorithmPID extends Algorithm{
 	public void makeDecision() {
 		//decide on chosen acceleration, speed and turnRate
 
-		//calculate time since message received
-		//TODO: add something to take into account network delay
-		double desired_dist;
-		Double weightedFrontProximity;
 		if(algorithmData.receiveMessageData != null && algorithmData.previousDistance != null)  {
-			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 100000000;
-			//calculate the distance us and our predecessor have travelled since message received
+
+			//calculate time since message received
+			double delay = (Time.getTime() - algorithmData.receiveMessageData.getStartTime()) / 1e9;
+
+			// Calculate the distance us and our predecessor have travelled since message received
 			algorithmData.predictedPredecessorMovement = algorithmData.predecessorSpeed * delay
 					+ 0.5 * algorithmData.predecessorAcceleration * delay * delay;
 			algorithmData.predictedMovement = algorithmData.previousSpeed * delay
@@ -125,23 +122,25 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.predictedFrontProximity = algorithmData.predictedPredecessorMovement
 					- algorithmData.predictedMovement + algorithmData.previousDistance;
 
-			//calculate desired distance
-			desired_dist = buffDist + headTime * algorithmData.speed;
-
 			algorithmData.chosenSpeed = algorithmData.predecessorChosenSpeed;
 			algorithmData.chosenTurnRate = algorithmData.predecessorTurnRate;
-		} else {
-			//no message received or no previous distance
+
+		}
+		else {
+			// No message received or no previous distance
 			algorithmData.predictedFrontProximity = null;
-			desired_dist = buffDist;
 			algorithmData.chosenSpeed = algorithmData.speed;
 			algorithmData.chosenTurnRate = algorithmData.turnRate;
 		}
+
 		if (algorithmData.frontProximity != null && algorithmData.frontProximity > maxSensorDist) {
 			algorithmData.frontProximity = null;
 		}
-		weightedFrontProximity = weightFrontProximity(algorithmData.predictedFrontProximity,
-				algorithmData.frontProximity);
+
+		Double weightedFrontProximity = weightFrontProximity(
+			algorithmData.predictedFrontProximity,
+			algorithmData.frontProximity
+		);
 
 		if (weightedFrontProximity != null) {
 			//get chosen acceleration from PID by giving it our proximity
@@ -160,7 +159,7 @@ public class BasicAlgorithmPID extends Algorithm{
 			algorithmData.chosenAcceleration = chosenAcceleration;
 		} else {
 			//no messages received and proximity sensor not working
-			algorithmData.chosenAcceleration = 0;
+			emergencyStop();
 		}
 		//update previous state variables so that they are correct in next time period
 		if (weightedFrontProximity != null) {
