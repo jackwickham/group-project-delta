@@ -743,16 +743,14 @@ public class Controller {
 					currentSelection = node;
 					// (x, y) = (viewDimension / 2 - pos) * scale
 					scene.translateXProperty().bind(
-						viewPane.widthProperty()
-							.divide(2)
-							.subtract(node.translateXProperty())
+						node.translateXProperty()
 							.multiply(scene.scaleXProperty())
+							.negate()
 					);
 					scene.translateYProperty().bind(
-						viewPane.heightProperty()
-							.divide(2)
-							.subtract(node.translateYProperty())
+						node.translateYProperty()
 							.multiply(scene.scaleYProperty())
+							.negate()
 					);
 				});
 				vehicleContextMenu.show(node, e.getScreenX(), e.getScreenY());
@@ -813,6 +811,10 @@ public class Controller {
 				scene.getChildren().remove(node);
 			}
 		}
+
+		// Reset controls
+		pauseButton.setSelected(false);
+		timeDilationSlider.setValue(1.0);
 
 		// Clear network log
 		clearNetworkLog();
