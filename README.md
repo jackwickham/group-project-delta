@@ -2,7 +2,7 @@
 
 Implementing platooning for LEGOⓇ Mindstorms vehicles, testable both on the vehicles and in simulation.
 
-[![Build Status](https://travis-ci.com/jackwickham/group-project-delta.svg?token=DtrLKaeqQLW7MbyBRvfb&branch=master)](https://travis-ci.com/jackwickham/group-project-delta)
+[![Build Status](https://travis-ci.org/jackwickham/group-project-delta.svg?branch=master)](https://travis-ci.org/jackwickham/group-project-delta)
 
 ## Project Structure
 The code is structured for Gradle, with three subprojects. `lego` and `simulation` contain LEGO- and simulation-specific code respectively, while `common` has the core algorithm and communication code, as well as interfaces and utility functions, and is used by both.
