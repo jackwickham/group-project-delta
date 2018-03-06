@@ -39,6 +39,31 @@ This tab gives the option to reset the simulation and to modify various error
 injection options to stress test the current simulated platoon on more realistic
 peripherals.
 
+-	**Network delivery modifier**: A value of 0 means that packets should never
+	be dropped, and any value larger than that is permitted. A value of 1 will
+	give about 95% packet delivery at 1m, 85% at 2m, and 50% at 3m, while a
+	value of 2 will give about 90% at 1m, 50% at 1.5m and 25% at 2m.
+	
+-	**Front proximity enabled**: Enables or disables the front proximity
+	sensors for simulated vehicles.
+-	**Front proximity standard deviation**: The standard deviation for the front
+	proximity sensor's readings.
+-	**Front proximity failure rate**: The proportion of the time when the
+	proximity sensor will incorrectly report no reading.
+	
+-	**Beacons emulate Mindstorms**: Whether the beacons should attempt to match
+	the LEGO Mindstorms' behaviour.
+-	**Beacon distance standard deviation**: The standard deviation for the
+	distance measured by the beacons.
+-	**Beacon angle standard deviation**: the standard deviation for the angle
+	measured by the beacons.
+	
+-	**Acceleration standard deviation**: The standard deviation for the
+	acceleration error.
+-	**Speed standard deviation**: The standard deviation for the speed error.
+-	**Turn rate standard deviation**: The standard deviation for the turn rate
+	error.
+
 ### Main View
 
 The main view shows the current simulation state. It can be navigated using
