@@ -26,6 +26,7 @@ The filters are:
 -	**Data**: all heartbeat data messages, which broadcast a vehicle's current
 	state.
 -	**Merges**: all messages pertaining to the merging of platoons.
+-	**Queries**: all beacon ID question and answer messages.
 
 >	**Note**: the filters will only affect messages received after the filter
 >	was changed, previously received messages are not filtered.
